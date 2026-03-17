@@ -13,7 +13,7 @@
 ## Phase A: Fundament (MUSS ZUERST)
 
 ```
-A1. [ ] SQLite-Speicherung implementieren
+A1. [X] SQLite-Speicherung implementieren
     - [x] fsn-shared.db: übergreifende Settings, i18n-Auswahl, Audit-Log — SeaORM via fsd-db
     - [x] fsn-desktop.db: Widget-Positionen, Shortcuts, Profil, Layout, aktives Theme — SeaORM via fsd-db
     - fsn-conductor.db: Service-Konfigurationen, Quadlets, Variablen
@@ -24,9 +24,9 @@ A1. [ ] SQLite-Speicherung implementieren
     - JEDE Einstellung MUSS in SQLite landen
     - Beim Start: DB lesen → UI befüllen
 
-A2. [ ] Window X-Button fixen
+A2. [X] Window X-Button fixen
 
-A3. [ ] FsnObject-System implementieren (siehe technik/ui-objekte.md)
+A3. [X] FsnObject-System implementieren (siehe technik/ui-objekte.md)
     - Resize: 5px Toleranz, alle Kanten + Ecken, Fullscreen-Overlay
     - Drag: Am Kopf, Fullscreen-Overlay
     - Minimize: → Icon mit pulsierendem grünem Punkt
@@ -34,7 +34,7 @@ A3. [ ] FsnObject-System implementieren (siehe technik/ui-objekte.md)
     - Object-Sidebar: Icons / Icons+Text bei Hover
     - EINMAL definieren, für Window/Widget/Modal/Panel nutzen
 
-A4. [ ] Scrollbars global (.fsn-scrollable überall)
+A4. [X] Scrollbars global (.fsn-scrollable überall)
 ```
 
 ## Phase B: Theme-System reparieren
@@ -66,11 +66,11 @@ B5. [x] Theme-Aspekte konfigurierbar (Window-Chrome, Buttons, Animationen, Mausz
 ## Phase C: Store funktionsfähig
 
 ```
-C1. [ ] Store-Catalog TOML fixen
-C2. [ ] Sprachen installierbar (Download, DB-Registrierung, Dropdown)
-C3. [ ] Themes installierbar (Download, DB, Live-Wechsel, Lösch-Dialog)
-C4. [ ] Widgets installierbar
-C5. [ ] Store-UI: Alle Pakettypen, Tabs, Suche über Tags, Detail-View
+C1. [X] Store-Catalog TOML fixen
+C2. [X] Sprachen installierbar (Download, DB-Registrierung, Dropdown)
+C3. [X] Themes installierbar (Download, DB, Live-Wechsel, Lösch-Dialog)
+C4. [X] Widgets installierbar
+C5. [X] Store-UI: Alle Pakettypen, Tabs, Suche über Tags, Detail-View
 ```
 
 ## Phase D: Widgets & Desktop
