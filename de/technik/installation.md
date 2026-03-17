@@ -1,29 +1,69 @@
 # Installation & Invite-System
 
-[← Zurück zum Index](../INDEX.md) | [Node](../programme/node/README.md)
+[← Zurück zum Index](../INDEX.md) | [Init](../programme/init/README.md) | [Node](../programme/node/README.md)
 
 ---
+
+## Der Installationsweg
+
+```
+1. User lädt FreeSynergy.Init herunter
+   (vorkompiliert von GitHub Releases ODER cargo install)
+
+2. Init klont den Store via gitoxide
+
+3. Store übernimmt — User wählt was installiert werden soll:
+
+   Server:
+     fsn store install server-minimal    # Node + Conductor + Proxy + S3
+     fsn store install server-full       # + Mail + Wiki + Chat + Git + ...
+
+   Desktop:
+     fsn store install desktop           # Desktop + Themes + Sprachen
+
+   Einzeln:
+     fsn store install kanidm
+     fsn store install outline
+
+4. Pakete werden installiert:
+   - Abhängigkeiten aufgelöst
+   - Signatur geprüft
+   - pre_install Script ausgeführt
+   - Dateien installiert
+   - post_install Script ausgeführt
+
+5. Bei Node-Installation:
+   - S3-Server wird gestartet (Teil von Node)
+   - Storage-Backend konfiguriert
+   - Conductor wird gestartet
+   - Services werden installiert
+```
 
 ## Zwei Installationspfade
 
 ### 1. Node (Server)
 
-1. Neues Netzwerk erstellen ODER bestehendem beitreten
-2. Bei Beitritt: Invite-Datei einlesen (Token + Host-Adresse + CA-Hash)
+1. Init → Store → `fsn store install server-minimal`
+2. Neues Netzwerk erstellen ODER bestehendem beitreten (Invite-Datei)
 3. IP-Typ (statisch → aktiver Modus, dynamisch → passiver Modus)
 4. Sprachen auswählen
 5. Zeitzone (nur für Anzeige — Server laufen immer UTC)
 6. Store-Quellen konfigurieren
 7. IAM wählen (Kanidm empfohlen)
 8. Proxy wählen (Zentinel empfohlen)
-9. Services installieren
+9. Weitere Services installieren
 
 ### 2. Desktop (Client)
 
-1. Invite-Datei einlesen (Token + Host-Adresse + CA-Hash)
-2. TLS-Verbindung aufbauen (CA-Hash verifiziert)
-3. IAM-Login via OAuth2/OIDC
-4. Fertig — Desktop ist API-Client, kein Admin
+1. Init → Store → `fsn store install desktop`
+2. Invite-Datei einlesen (Token + Host-Adresse + CA-Hash)
+3. TLS-Verbindung aufbauen (CA-Hash verifiziert)
+4. IAM-Login via OAuth2/OIDC
+5. Fertig — Desktop ist API-Client
+
+### 3. Mobile (Android/iOS)
+
+Kein Init, kein Store. Desktop-App aus dem App Store (Google Play / Apple). Verbindet sich per Invite-Token mit einem bestehenden Node. Reiner Client.
 
 ## Invite-Datei
 
@@ -38,12 +78,12 @@ expires_at = "2026-03-17T12:00:00Z"
 permissions = "full"    # full | readonly | desktop-only
 ```
 
-Die Datei ist verschlüsselt. Der Port kann für jede Einladung verschieden sein. Der Port wird nur solange geöffnet wie die Einladung gültig ist.
+Verschlüsselt. Port pro Einladung (öffnen/schließen). CA-Hash verhindert MITM.
 
 ## mDNS Discovery (optional)
 
-Im LAN: `_freesynergy._tcp.local` — findet Nodes automatisch. Token trotzdem erforderlich.
+Im LAN: `_freesynergy._tcp.local`. Token trotzdem erforderlich.
 
 ---
 
-Weiter: [Sicherheit](sicherheit.md) | [Node](../programme/node/README.md)
+Weiter: [Init](../programme/init/README.md) | [Store](../programme/store/README.md) | [Sicherheit](sicherheit.md)

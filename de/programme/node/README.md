@@ -6,14 +6,31 @@
 
 ## Was Node macht
 
-Node ist das zentrale Verwaltungsprogramm für ein FreeSynergy-Projekt. Es verwaltet:
+Node ist das zentrale Verwaltungsprogramm. Es verwaltet:
 
-- **Hosts** — Server die zum Projekt gehören (hinzufügen, entfernen, Status)
+- **Hosts** — Server die zum Projekt gehören
 - **Services** — Installation und Verwaltung über den [Conductor](../conductor/README.md)
+- **S3-Storage** — Eingebauter S3-Server ([Storage-Layer](../../technik/storage.md))
 - **Projekte** — Ein Projekt = eine Gruppe von Hosts + Services + Konfiguration
 - **Einladungen** — Join-Tokens für neue Hosts und Desktop-Clients
 - **Föderation** — Beitritt zu und Verwaltung von [Föderationen](../../konzepte/foederation.md)
 - **Netzwerk** — Später: VPN-Verbindungen, öffentlich/privat Topologie
+
+## Plattformen
+
+| OS | Status |
+|---|---|
+| Linux | ✅ Voll unterstützt (Podman, systemd, Quadlet) |
+| macOS | ⚠️ Später entscheiden (kein systemd) |
+| Windows | ⚠️ Später entscheiden (kein systemd) |
+
+Erstmal: Linux only für Node/Conductor.
+
+## S3-Server (eingebaut)
+
+Node IST der S3-Server. Kein externer Container (kein Garage, kein MinIO). Beim Node-Start wird der S3-Server automatisch gestartet.
+
+Siehe [Storage-Layer](../../technik/storage.md) für Details.
 
 ## Interfaces
 
@@ -38,11 +55,11 @@ expires_at = "2026-03-17T12:00:00Z"
 permissions = "full"
 ```
 
-Der Empfänger gibt die Datei ein (CLI: `fsn join invite.toml`, Desktop: Datei-Upload). Der Port in der Invite-Datei kann für jede Einladung unterschiedlich sein — der Port wird nur solange geöffnet wie die Einladung gültig ist.
+Der Port kann für jede Einladung unterschiedlich sein — wird nur solange geöffnet wie die Einladung gültig ist.
 
 ## Eigenständigkeit
 
-Node läuft OHNE Desktop, OHNE Store, OHNE Internet. Es braucht nur seine eigene Konfiguration und kann lokal alles verwalten. Wenn Store verfügbar ist, nutzt es ihn. Wenn Desktop angeschlossen wird, bedient es dessen API-Anfragen.
+Node läuft OHNE Desktop, OHNE Store, OHNE Internet. Wenn Store verfügbar ist, nutzt es ihn. Wenn Desktop angeschlossen wird, bedient es dessen API-Anfragen.
 
 ## Repo
 
@@ -52,6 +69,8 @@ https://github.com/FreeSynergy/Node
 
 | Crate | Zweck |
 |---|---|
+| `s3s` | S3-Server-Framework |
+| `opendal` | Storage-Backends (lokal, SFTP, S3, ...) |
 | `fsn-types` | Shared Types |
 | `fsn-config` | TOML-Konfiguration |
 | `fsn-db` | SQLite (fsn-core.db) |
@@ -66,4 +85,4 @@ https://github.com/FreeSynergy/Node
 
 ---
 
-Weiter: [Conductor](../conductor/README.md) | [Invite-System](../../technik/installation.md)
+Weiter: [Conductor](../conductor/README.md) | [Storage-Layer](../../technik/storage.md) | [Installation](../../technik/installation.md)

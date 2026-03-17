@@ -6,7 +6,7 @@
 
 ## fsn-* Crates (FreeSynergy/Lib)
 
-Alle wiederverwendbaren Libraries. Können auch von Drittprojekten (Wiki.rs, Decidim.rs) genutzt werden.
+Alle wiederverwendbaren Libraries. Können auch von Drittprojekten (Wiki.rs, Decidim.rs) genutzt werden. Libraries sind KEINE eigenständigen Store-Pakete — sie sind Abhängigkeiten die mit den Programmen mitkommen.
 
 | Crate | Zweck | Wichtige Dependencies |
 |---|---|---|
@@ -16,13 +16,13 @@ Alle wiederverwendbaren Libraries. Können auch von Drittprojekten (Wiki.rs, Dec
 | `fsn-i18n` | Sprach-Snippets, Fluent | `fluent`, `fluent-bundle`, `unic-langid` |
 | `fsn-db` | SQLite-Abstraktion | `sea-orm`, `rusqlite`, `sqlx` |
 | `fsn-sync` | CRDT-Synchronisation | `automerge` |
-| `fsn-store` | Store-Client | `reqwest`, `toml` |
-| `fsn-pkg` | Paket-Management, OCI | `oci-distribution` |
+| `fsn-store` | Store-Client | `reqwest`, `toml`, `gix` |
+| `fsn-pkg` | Paket-Management, Abhängigkeiten | `semver` |
 | `fsn-plugin-sdk` | Plugin-API für WASM | `wit-bindgen` |
 | `fsn-plugin-runtime` | WASM-Host | `wasmtime` |
 | `fsn-federation` | OIDC, SCIM, ActivityPub | `activitypub_federation`, `openidconnect` |
 | `fsn-auth` | OAuth2, JWT, Tokens | `oauth2`, `jsonwebtoken` |
-| `fsn-bus` | Message Bus | `tokio::broadcast`, `serde_json` |
+| `fsn-bus` | Message Bus (Pub/Sub + Direct) | `tokio::broadcast`, `serde_json` |
 | `fsn-channel` | Messenger-Adapter | Feature-flagged (siehe unten) |
 | `fsn-bot` | Bot-Framework | `fsn-bus`, `fsn-channel` |
 | `fsn-llm` | LLM-Integration | `reqwest` (Ollama API) |
@@ -30,49 +30,78 @@ Alle wiederverwendbaren Libraries. Können auch von Drittprojekten (Wiki.rs, Dec
 | `fsn-container` | Quadlet/systemctl-Interface | `tokio::process` |
 | `fsn-template` | Tera-Templates | `tera` |
 | `fsn-health` | Health-Checks | `reqwest`, `tokio` |
-| `fsn-crypto` | age-Encryption, mTLS | `age`, `rcgen`, `ed25519-dalek` |
+| `fsn-crypto` | age-Encryption, mTLS, Signierung | `age`, `rcgen`, `ed25519-dalek` |
 | `fsn-theme` | Theme-Laden, Prefix-System | `toml`, `fsn-config` |
 | `fsn-help` | Hilfe-System | `fsn-i18n` |
 | `fsn-ui` | Dioxus-Komponenten | `dioxus`, `fsn-theme` |
 
 ## Externe Dependencies
 
+### Kern-Infrastruktur
+
+| Crate | Wofür | Benutzt von |
+|---|---|---|
+| `s3s` | S3-Server-Framework (Samsung) | Node (eingebauter S3-Server) |
+| `s3s-fs` | S3 Dateisystem-Backend | Node |
+| `opendal` | 40+ Storage-Backends (Apache) | Node (S3-Backend: lokal, SFTP, S3, ...) |
+| `rust-s3` | S3-Client | Programme die mit S3 reden |
+| `gix` (gitoxide) | Git in reinem Rust | Init, Store |
+
+### Frameworks
+
 | Crate | Wofür | Benutzt von |
 |---|---|---|
 | `dioxus` 0.7.x | UI-Framework | Desktop |
-| `axum` | HTTP-Server/API | Node, Conductor |
+| `axum` | HTTP-Server/API | Node, Conductor, Store |
 | `clap` | CLI | Alle Programme |
-| `serde` / `serde_json` / `toml` | Serialisierung | Alle |
 | `tokio` | Async Runtime | Alle |
-| `reqwest` | HTTP-Client | Store, Desktop, LLM |
+
+### Serialisierung & Daten
+
+| Crate | Wofür | Benutzt von |
+|---|---|---|
+| `serde` / `serde_json` / `toml` | Serialisierung | Alle |
+| `serde_yaml` | YAML parsen | Conductor |
 | `sea-orm` | ORM für SQLite/Postgres | Alle mit DB |
+| `automerge` | CRDT | Sync, Offline-First |
+| `semver` | Versionen vergleichen | Store, Pkg |
+
+### Netzwerk & Sicherheit
+
+| Crate | Wofür | Benutzt von |
+|---|---|---|
+| `reqwest` | HTTP-Client | Store, Desktop, LLM |
+| `russh` | SSH-Client | Node (Host-Management) |
+| `age` | Encryption | Crypto, Secrets |
+| `ed25519-dalek` | Signierung (Default) | Crypto, Paket-Signierung |
+| `rcgen` | Zertifikats-Generierung | mTLS |
+
+### Templates & i18n
+
+| Crate | Wofür | Benutzt von |
+|---|---|---|
 | `tera` | Template-Engine | Conductor, Templates |
 | `fluent` | i18n Localization | i18n |
-| `automerge` | CRDT | Sync, Offline-First |
-| `teloxide` | Telegram Bot | Channel (feature: telegram) |
-| `matrix-sdk` | Matrix Client | Channel (feature: matrix) |
-| `serenity` + `poise` | Discord Bot | Channel (feature: discord) |
-| `slack-morphism` | Slack Client | Channel (feature: slack) |
-| `lettre` | Email senden | Channel (feature: email) |
-| `russh` | SSH-Client | Node (Host-Management) |
-| `age` | Encryption | Crypto |
+
+### Messenger (Feature-Flags bei fsn-channel)
+
+| Crate | Wofür | Feature-Flag |
+|---|---|---|
+| `teloxide` | Telegram Bot | `telegram` |
+| `matrix-sdk` | Matrix Client | `matrix` |
+| `serenity` + `poise` | Discord Bot | `discord` |
+| `slack-morphism` | Slack Client | `slack` |
+| `lettre` | Email senden | `email` |
+| `xmpp-rs` | XMPP | `xmpp` |
+| `irc` | IRC | `irc` |
+
+### WASM
+
+| Crate | Wofür | Benutzt von |
+|---|---|---|
 | `wasmtime` | WASM-Runtime | Plugin-Runtime |
-| `serde_yaml` | YAML parsen | Conductor |
-
-## Feature-Flags bei fsn-channel
-
-```toml
-[features]
-default = []
-telegram = ["teloxide"]
-matrix = ["matrix-sdk"]
-discord = ["serenity", "poise"]
-slack = ["slack-morphism"]
-email = ["lettre"]
-xmpp = ["xmpp-rs"]
-irc = ["irc"]
-```
+| `wit-bindgen` | WASM Interface Types | Plugin-SDK |
 
 ---
 
-Weiter: [Datenspeicherung](datenspeicherung.md) | [i18n](i18n.md)
+Weiter: [Datenspeicherung](datenspeicherung.md) | [Storage-Layer](storage.md) | [i18n](i18n.md)
