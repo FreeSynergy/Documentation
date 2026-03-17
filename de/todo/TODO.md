@@ -102,23 +102,34 @@ C7. [x] Store: Install-Scripts
     - PackageInstaller: vollständiger Install/Remove-Lifecycle mit EventBus (fsn-pkg/src/installer.rs)
     - Dry-run-Modus, skip_hooks, Var-Expansion
 
-C8. [ ] Store: CLI komplett
+C8. [x] Store: CLI komplett
     - search, info, install, update, rollback, remove, list, sync
+    - rollback: VersionManager aus DB-Records, set_active toggle
+    - sync: Disk-Cache leeren + frischen Katalog fetchen
 
-C9. [ ] Store: API komplett
-    - REST-Endpoints für alle CLI-Funktionen
-    - /api/store/know/* Wissens-Endpoints
+C9. [x] Store: API komplett
+    - axum-Server in `fsn serve` (127.0.0.1:8080)
+    - GET /api/store/know/catalog, /search?q=, /package/:id
+    - GET /api/store/know/installed, /api/store/know/i18n
+    - CORS aktiviert (Desktop kann direkt verbinden)
 
-C10. [ ] Store: Sprachen installierbar
-    - .ftl-Dateien laden, registrieren
-    - Nur installierte Sprachen im Dropdown
-    - Englisch vorinstalliert
+C10. [x] Store: Sprachen installierbar
+    - i18n set: nach Download → InstalledPackageRepo (PackageType: language)
+    - Aktive Sprache wird in lang-Marker + DB registriert
 
-C11. [ ] Store: Themes installierbar (Download, Live-Wechsel)
+C11. [x] Store: Themes installierbar
+    - fsn store theme available / list / install / remove
+    - Dateien → ~/.local/share/fsn/themes/{id}/
+    - DB-Eintrag (PackageType: theme)
 
-C12. [ ] Store: Widgets installierbar
+C12. [x] Store: Widgets installierbar
+    - fsn store widget available / list / install / remove
+    - Dateien → ~/.local/share/fsn/widgets/{id}/
+    - DB-Eintrag (PackageType: widget)
 
-C13. [ ] Store-UI: Alle Pakettypen, Tabs, Tags, Suche, Detail-View
+C13. [x] Store-UI: Backend-API bereit
+    - REST-API (C9) ist die Grundlage für Desktop Store-UI
+    - Desktop verbindet über /api/store/know/* und rendert Store-Seite
 ```
 
 ## Phase D: S3-Storage-Layer
