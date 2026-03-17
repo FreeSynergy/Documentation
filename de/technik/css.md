@@ -66,7 +66,29 @@ Erlaubte Variablen-Namen (OHNE Prefix):
 --font-family, --font-mono, --font-size, --font-size-sm, --font-size-lg
 ```
 
+**Komponenten-Stile** (optionale Aspekte, werden per Settings überschrieben):
+```
+--chrome-style      ("macos" | "kde" | "windows" | "minimal")
+--btn-radius        (konkrete CSS-Werte: "6px", "0px", "999px", "2px")
+--sidebar-style     ("solid" | "glass" | "transparent")
+--card-style        ("bordered" | "shadow" | "glass" | "flat")
+--input-style       ("underline" | "bordered" | "filled")
+--anim-enabled      ("1" | "0")
+--cursor            (CSS cursor-Wert: "default" | "url(...)" | "crosshair" usw.)
+```
+
 Ein Parser prüft bei Store-Upload ob alle Pflicht-Variablen gesetzt sind.
+
+### Pflicht-Variablen (Minimum für ein gültiges Theme)
+
+```
+--bg-base, --bg-surface, --bg-elevated, --bg-card, --bg-input
+--text-primary, --text-secondary, --text-muted
+--primary, --primary-hover, --primary-text
+--accent
+--success, --warning, --error
+--border, --border-focus
+```
 
 ---
 

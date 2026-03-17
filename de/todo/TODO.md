@@ -36,18 +36,29 @@ A4. [x] Scrollbars global (.fsn-scrollable überall)
 ## Phase B: Theme-System reparieren
 
 ```
-B1. [ ] CSS-Variablen-Namenskonvention (siehe technik/css.md)
+B1. [x] CSS-Variablen-Namenskonvention (siehe technik/css.md)
     - Shared-Themes OHNE Prefix im Store
     - Programm-spezifisch MIT Prefix beim Laden
-    - Parser: prüft Pflicht-Variablen
+    - prefix_theme_css + validate_theme_vars in fsn-theme konsolidiert
+    - Duplikate aus appearance.rs entfernt
 
-B2. [ ] Kontraste fixen (WCAG AA: 4.5:1 Text, 3:1 Muted)
+B2. [x] Kontraste (WCAG AA) für alle Store-Theme-Pakete gesetzt
 
-B3. [ ] Theme-Prefixing (beim Laden dynamisch)
+B3. [x] Nur Midnight Blue eingebaut – Rest als Store-Pakete
+    - Cloud White, Cupertino, Nordic, Rose Pine:
+      FreeSynergy.Node.Store/shared/themes/{id}/ (manifest.toml + theme.css + icon.svg)
+    - app_shell.rs: nur midnight-blue behalten
+    - desktop.rs: __custom__ CSS-Injection für Store-Themes
 
-B4. [ ] Theme-Editor in Settings
+B4. [x] Theme-Editor in Settings
+    - Vorhanden + Placeholder mit allen Pflicht-Variablen verbessert
 
-B5. [ ] Theme-Aspekte konfigurierbar (Chrome, Buttons, Animationen, Mauszeiger)
+B5. [x] Theme-Aspekte konfigurierbar
+    - Neue Sektion "Component Style" in Settings → Appearance
+    - Window Chrome: KDE / macOS / Windows / Minimal (CSS + data-chrome-style)
+    - Button Style: Rounded / Square / Pill / Flat (CSS + data-btn-style)
+    - Sidebar Style: Solid / Glass / Transparent (CSS + data-sidebar-style)
+    - Contexts in desktop.rs, CSS-Regeln in GLOBAL_CSS
 ```
 
 ## Phase C: Init + Store als Paketmanager
