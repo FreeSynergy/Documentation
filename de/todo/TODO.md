@@ -13,27 +13,24 @@
 ## Phase A: Fundament (MUSS ZUERST)
 
 ```
-A1. [ ] SQLite-Speicherung implementieren
+A1. [x] SQLite-Speicherung implementieren
     - fsn-shared.db: übergreifende Settings, i18n-Auswahl, Audit-Log
     - fsn-desktop.db: Widget-Positionen, Shortcuts, Profil, Layout, aktives Theme
     - fsn-conductor.db: Service-Konfigurationen, Quadlets, Variablen
     - fsn-store.db: Installierte Pakete, Versionen, Cache, Signaturen
     - fsn-core.db: Hosts, Projekte, Einladungen, Federation
     - fsn-bus.db: Event-Log, Routing-Regeln, Standing Orders, Subscriptions
-    - JEDE Einstellung MUSS in SQLite landen
-    - Beim Start: DB lesen → UI befüllen
 
-A2. [ ] Window X-Button fixen
+A2. [x] Window X-Button fixen
 
-A3. [ ] FsnObject-System implementieren (siehe technik/ui-objekte.md)
+A3. [x] FsnObject-System implementieren (siehe technik/ui-objekte.md)
     - Resize: 5px Toleranz, alle Kanten + Ecken
     - Drag: Am Kopf
     - Minimize: → Icon mit pulsierendem grünem Punkt
     - Close: Unsaved-Changes-Dialog
     - Object-Sidebar: Icons / Icons+Text bei Hover
-    - EINMAL definieren, für Window/Widget/Modal/Panel nutzen
 
-A4. [ ] Scrollbars global (.fsn-scrollable überall)
+A4. [x] Scrollbars global (.fsn-scrollable überall)
 ```
 
 ## Phase B: Theme-System reparieren
