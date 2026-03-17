@@ -179,13 +179,42 @@ E5. [x] Basis-Widgets (Clock, SystemInfo, QuickNotes, Messages, MyTasks)
 ## Phase F: Conductor neu bauen
 
 ```
-F1. [ ] Alten Conductor-Code LÖSCHEN
-F2. [ ] YAML-Parser (Services, Subservices, Volumes, Networks, Ports)
-F3. [ ] Variablen-Analyse (Typen, Rollen, Ober-/Unterrollen, Konfidenz)
-F4. [ ] Dry-Run + Validierung
-F5. [ ] Quadlet-Generator (kein Podman-Socket)
-F6. [ ] Store-Integration (ergänzen, nicht überschreiben)
-F7. [ ] Instanz-Namen (Benutzer vergibt, Subservices Auto-Prefix)
+F1. [x] Alten Conductor-Code LÖSCHEN
+    - commands/conductor.rs: alten Podman-subprocess Code entfernt
+    - Kein podman container exists, kein podman logs mehr
+    - Neues fsn-conductor Crate (cli/crates/fsn-conductor/)
+
+F2. [x] YAML-Parser (Services, Subservices, Volumes, Networks, Ports)
+    - compose.rs: ComposeFile, ComposeService, EnvVar, ComposeHealthcheck
+    - Environment: list-form + map-form Support
+    - Volumes/Ports: string + longform Support
+    - depends_on: list + map form Support
+
+F3. [x] Variablen-Analyse (Typen, Rollen, Ober-/Unterrollen, Konfidenz)
+    - analysis.rs: VarType (hostname/url/port/secret/email/connection-string/string)
+    - VarRole: Database/Cache/Smtp/Iam/Storage je mit Subkind
+    - Konfidenz 0–100 per Variable, summary() für Reports
+
+F4. [x] Dry-Run + Validierung
+    - validation.rs: ValidationReport mit IssueLevel (Error/Warning/Info)
+    - Checks: fehlende Services, fehlende Images, fehlende Healthchecks,
+      Netzwerk-Konsistenz, Port-Konflikte, Volume-Referenzen, depends_on-Refs
+
+F5. [x] Quadlet-Generator (kein Podman-Socket)
+    - converter.rs: ComposeFile → Vec<ServiceConfig> (fsn-container-Typen)
+    - pipeline.rs: analyze() + install() End-to-End
+    - QuadletManager aus fsn-container schreibt .container Dateien
+    - daemon-reload nach install
+
+F6. [x] Store-Integration (ergänzen, nicht überschreiben)
+    - store_client.rs: enrich() mit 5s Timeout, non-blocking, graceful fallback
+    - POST /api/store/know/{image} → StorePackageMeta
+    - Nur Lücken füllen, conductor-Werte werden nie überschrieben
+
+F7. [x] Instanz-Namen (Benutzer vergibt, Subservices Auto-Prefix)
+    - instance.rs: InstanceName mit Validation [a-z0-9-], max 48 Zeichen
+    - Default: erster Service-Name aus compose file
+    - Sub-Services: "{instance}-{svc}" (außer wenn name == service name)
 ```
 
 ## Phase G: Message Bus
