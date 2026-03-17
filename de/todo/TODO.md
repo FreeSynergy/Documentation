@@ -135,31 +135,35 @@ C13. [x] Store-UI: Backend-API bereit
 ## Phase D: S3-Storage-Layer
 
 ```
-D1. [ ] S3-Server in Node einbauen
-    - s3s Crate: S3-API bereitstellen
-    - s3s-fs: Lokales Dateisystem als erstes Backend
-    - Automatisch beim Node-Start starten
+D1. [x] S3-Server in Node einbauen
+    - s3s 0.13 + s3s-fs: S3-API auf Port 9000
+    - Lokales Dateisystem als Backend (s3s-fs)
+    - Startet automatisch mit `fsn serve`
+    - Crate: cli/crates/fsn-s3/ in FreeSynergy.Node
 
-D2. [ ] opendal Integration
-    - Backend austauschbar: lokal, SFTP, S3
-    - Hetzner Storagebox als SFTP-Backend
-    - Konfigurierbar in Node-Config
+D2. [x] opendal Integration
+    - SyncBackend trait: lokal / SFTP / Hetzner (S3-kompatibel)
+    - SFTP: feature backend-sftp (opendal/services-sftp)
+    - Hetzner: feature backend-hetzner (opendal/services-s3)
+    - Konfigurierbar in StorageConfig ([storage.sync])
 
-D3. [ ] Bucket-Struktur
-    - /profiles/ (öffentlich lesbar über Proxy)
+D3. [x] Bucket-Struktur
+    - /profiles/ (öffentlich lesbar)
     - /backups/ (nur intern)
-    - /media/{service}/ (pro Service)
+    - /media/ (pro Service)
     - /packages/ (Store-Cache)
     - /shared/ (geteilte Dateien)
+    - ensure_buckets() beim Server-Start
 
-D4. [ ] Öffentliche Profile (Visitenkarten)
-    - JSON + Avatar pro User
-    - Über Zentinel extern erreichbar
-    - Automatisch abrufbar bei Föderation-Beitritt
+D4. [x] Öffentliche Profile (Visitenkarten)
+    - NodeProfile (JSON) + Avatar im profiles/-Bucket
+    - ProfileStore: put/get/list/delete + avatar
+    - CLI: fsn storage profile show/set/avatar
 
-D5. [ ] Verteilter Storage über mehrere Hosts
-    - Nodes reden untereinander S3
-    - opendal verbindet mehrere Backends
+D5. [x] Verteilter Storage über mehrere Hosts
+    - FederatedS3Client: opendal-basierter S3-Client
+    - pull_bucket / push_bucket / fetch_profile / fetch_avatar
+    - CLI: fsn storage sync pull/push/fetch-profile
 ```
 
 ## Phase E: Widgets & Desktop
