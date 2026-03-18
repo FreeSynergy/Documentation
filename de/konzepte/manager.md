@@ -59,6 +59,28 @@ mgr.set_active("de")?;         // Sprache wechseln → schreibt in den Store
 
 Der Manager liefert immer ein konsistentes Ergebnis — unabhängig davon wo er aufgerufen wird.
 
+## UI-Integration
+
+### Shell-Sidebar
+
+In der System-Sektion der Shell-Sidebar gibt es einen **Managers**-Ordner mit fünf Sub-Items: Language, Theme, Icons, Container Apps, Bots. Ein Klick auf den Ordner öffnet die Sub-Ebene (Slide-Animation). Ein Pfeil-Button oben links führt zurück zur Haupt-Ebene.
+
+Die Folder-Navigation basiert auf `FsnSidebarItem::folder()` aus `FreeSynergy.Lib.UI`:
+
+```rust
+FsnSidebarItem::folder("Managers", Icon::Folder, vec![
+    FsnSidebarItem::new("Language", Icon::Language, AppTarget::Managers),
+    FsnSidebarItem::new("Theme",    Icon::Theme,    AppTarget::Managers),
+    // ...
+])
+```
+
+Items mit nicht-leerem `children`-Feld sind Folder-Items. Klick → Drill-down, kein App-Start.
+
+### fsd-managers App
+
+Das Crate `fsd-managers` (im Desktop-Repo) stellt die `ManagersApp` bereit — eine eigenständige App im LayoutB-Stil mit eigener Sidebar. Alle fünf Manager (Language, Theme, Icons, Container Apps, Bots) sind als Panels integriert. Die App wird über den App-Key `"app-managers"` registriert und von allen Sidebar-Sub-Items geöffnet.
+
 ## Berechtigungen
 
 Manager können nur dann in den Store schreiben, wenn sie die entsprechende Berechtigung haben. Die Rechte-Kaskade gilt wie überall: Schreib-Rechte können nur vom Node-Owner vergeben werden.
