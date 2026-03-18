@@ -9,10 +9,10 @@
 | Programm | Aufgabe |
 |---|---|
 | **[Store](../programme/store/README.md)** | Bot-Module als Pakete finden, installieren, aktualisieren |
-| **[Conductor](../programme/conductor/README.md)** | Bot konfigurieren (Tokens, Gruppen, Verbindungen, Plattform) |
+| **[Container App Manager](../programme/container_app/README.md)** | Bot konfigurieren (Tokens, Gruppen, Verbindungen, Plattform) |
 | **[BotManager](../programme/botmanager/README.md)** | Bot **benutzen** (Broadcasts senden, Gatekeeper verwalten, Status sehen) |
 
-Der BotManager ist ein **eigenständiges Programm** mit eigenem Repo (`FreeSynergy/BotManager`). Desktop bindet ihn als App ein (`app-botmanager`), aber er kann auch standalone laufen.
+Der BotManager ist ein **[Manager](manager.md)** — er lebt in `FreeSynergy.Managers` (`bots/`, Crate: `fsn-manager-bot`). Desktop bindet ihn als UI-Komponente ein (`app-botmanager`).
 
 ---
 

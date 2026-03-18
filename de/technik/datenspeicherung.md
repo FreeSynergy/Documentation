@@ -13,7 +13,7 @@
 | Datenbank | Programm | Inhalt |
 |---|---|---|
 | `fsn-core.db` | Node | Hosts, Projekte, Federation, Einladungen |
-| `fsn-conductor.db` | Conductor | Service-Konfigurationen, Quadlets, Variablen |
+| `fsn-container-app.db` | Container App Manager | Service-Konfigurationen, Quadlets, Variablen |
 | `fsn-desktop.db` | Desktop | Widgets, Layout, Shortcuts, Profil |
 | `fsn-store.db` | Store | Installierte Pakete, Cache, Versionen |
 | `fsn-bus.db` | Bus | Event-Log, Routing-Regeln |

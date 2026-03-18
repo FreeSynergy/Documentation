@@ -13,7 +13,7 @@
 
 ## Phase A–F: ✅ ERLEDIGT
 
-Siehe Git-History. Fundament, Themes, Store, S3, Widgets, Conductor — alles implementiert.
+Siehe Git-History. Fundament, Themes, Store, S3, Widgets, Container App Manager — alles implementiert.
 
 ---
 
@@ -235,7 +235,7 @@ N2. [ ] Control-Bot-Kern (FreeSynergy.Node oder eigenes Repo)
     - Trigger-Engine: Bus-Events → Modul-Handler aufrufen
     - Bot-Registry in fsn-inventory.db (welcher Bot auf welcher Plattform, welche Module aktiv)
     - Bus-Client: publiziert Events, empfängt Events (bot.*, chat.*)
-    - Conductor konfiguriert Tokens + Gruppen → Control-Bot liest Konfiguration
+    - Container App Manager konfiguriert Tokens + Gruppen → Control-Bot liest Konfiguration
 
 N3. [ ] Broadcast-Modul (bot-Paket im Store)
     - /subscribe <topic> Command → Subscription in Bus registrieren
@@ -312,7 +312,7 @@ Q8. [ ] Alle Stubs/toten Code entfernen
 ## Reihenfolge
 
 ```
-✅ Erledigt: A-F  (Fundament, Themes, Store, S3, Widgets, Conductor)
+✅ Erledigt: A-F  (Fundament, Themes, Store, S3, Widgets, Container App Manager)
 ✅ Erledigt: G    (Ressourcen-System & Inventory)
 ✅ Erledigt: H    (Bridges & Rollen-APIs)
 ✅ Erledigt: I    (Resource Builder — Builder-UI, CLI, Analyse-Pipeline)

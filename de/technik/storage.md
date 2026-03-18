@@ -156,7 +156,7 @@ Node-Installation:
   1. Node-Binary installieren
   2. S3-Server starten (Teil von Node)          ← HIER
   3. Storage-Backend konfigurieren
-  4. Conductor starten
+  4. Container App Manager starten
   5. Services installieren (nutzen S3)
 ```
 

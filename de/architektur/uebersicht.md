@@ -29,7 +29,7 @@ FreeSynergy basiert auf drei Grundgedanken:
 │            ┌─────────────┼─────────────┐                      │
 │            │             │             │                       │
 │      ┌─────▼────┐  ┌────▼─────┐  ┌───▼────┐                 │
-│      │   Node   │  │Conductor │  │  Store  │                 │
+│      │   Node   │  │Container App Manager │  │  Store  │                 │
 │      │Projekte, │  │Services, │  │Wissen,  │                 │
 │      │Hosts,    │  │Container,│  │Pakete,  │                 │
 │      │Föder.,   │  │Variablen │  │Suche    │                 │
@@ -56,7 +56,7 @@ FreeSynergy basiert auf drei Grundgedanken:
 |---|---|---|---|
 | [Init](../programme/init/README.md) | Bootstrap: Installiert den Store | Ja (Einmal-Tool) | `FreeSynergy/Init` |
 | [Node](../programme/node/README.md) | Projektverwalter + S3-Server | Ja | `FreeSynergy/Node` |
-| [Conductor](../programme/conductor/README.md) | Service-Orchestrierer | Ja | `FreeSynergy/Conductor` |
+| [Container App Manager](../programme/container_app/README.md) | Service-Orchestrierer | Ja | `FreeSynergy/Managers` |
 | [Builder](../programme/builder/README.md) | Ressourcen bauen & validieren | Ja | `FreeSynergy/Builder` |
 | [Desktop](../programme/desktop/README.md) | Mensch-Maschine-Schnittstelle | Ja (offline-fähig) | `FreeSynergy/Desktop` |
 | [Browser](../programme/browser/README.md) | Eingebetteter Web-Browser | Ja | `FreeSynergy/Browser` |

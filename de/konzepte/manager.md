@@ -38,12 +38,13 @@ Nicht jeder Manager macht überall Sinn. Bilder in einem Terminal ergeben keinen
 
 Alle Manager leben im Repo **FreeSynergy.Managers** (`git@github.com:FreeSynergy/Managers.git`).
 
-| Crate | Name | Zuständigkeit |
+| Unterordner | Crate | Zuständigkeit |
 |---|---|---|
-| `language` | `fsn-manager-language` | Aktive Sprache lesen, setzen, UI-Picker |
-| `theme` | `fsn-manager-theme` | Aktives Theme lesen, setzen, UI-Picker |
-| `container_app` | `fsn-manager-container-app` | Container-Apps installieren, starten, stoppen, entfernen |
-| `icons` | `fsn-manager-icons` | Icon-Sets kennen, Pfade auflösen, UI Icon-Picker |
+| `language/` | `fsn-manager-language` | Aktive Sprache lesen, setzen, UI-Picker |
+| `theme/` | `fsn-manager-theme` | Aktives Theme lesen, setzen, UI-Picker |
+| `container_app/` | `fsn-manager-container-app` | Container-Apps installieren, starten, stoppen, entfernen → [Container App Manager](../programme/container_app/README.md) |
+| `icons/` | `fsn-manager-icons` | Icon-Sets kennen, Pfade auflösen, UI Icon-Picker |
+| `bots/` | `fsn-manager-bot` | Bots benutzen: Broadcasts senden, Subscriptions, Gatekeeper → [BotManager](../programme/botmanager/README.md) |
 
 ## Verwendung
 
@@ -74,4 +75,4 @@ Siehe: [FreeSynergy.Icons](https://github.com/FreeSynergy/Icons)
 
 ---
 
-Weiter: [Store](../programme/store/README.md) | [Rechte-Kaskade](rechte.md) | [Themes](themes.md)
+Weiter: [Store](../programme/store/README.md) | [Rechte-Kaskade](rechte.md) | [Themes](themes.md) | [BotManager](../programme/botmanager/README.md) | [Container App Manager](../programme/container_app/README.md)

@@ -6,7 +6,7 @@
 
 ## Was Desktop macht
 
-Desktop ist die UI für den Menschen. Es zeigt was Node und Conductor tun, bietet den Store-Browser, den Bot Manager, das Task-System, Widgets, Lenses und einen eingebetteten [Browser](../browser/README.md).
+Desktop ist die UI für den Menschen. Es zeigt was Node und Container App Manager tun, bietet den Store-Browser, den Bot Manager, das Task-System, Widgets, Lenses und einen eingebetteten [Browser](../browser/README.md).
 
 Desktop ist auch UI für die Services selbst — Web-Interfaces werden im eingebetteten Browser geöffnet.
 
@@ -16,7 +16,7 @@ Desktop ist auch UI für die Services selbst — Web-Interfaces werden im eingeb
 |---|---|
 | 🏠 Home | Persönliches Dashboard, Widgets, Quick-Launch |
 | 📋 Tasks | Automatisierungs-Pipelines |
-| 🎛️ Conductor | Service-Konfiguration |
+| 🎛️ Container App Manager | Service-Konfiguration |
 | 🤖 Bots | [BotManager](../botmanager/README.md) — Broadcasts senden, Gatekeeper verwalten, Status |
 | 🔍 Lenses | Informations-Betrachter |
 | 🌐 Browser | Eingebetteter Web-Browser für Service-UIs |

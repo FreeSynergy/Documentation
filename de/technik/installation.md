@@ -15,7 +15,7 @@
 3. Store übernimmt — User wählt was installiert werden soll:
 
    Server:
-     fsn store install server-minimal    # Node + Conductor + Proxy + S3
+     fsn store install server-minimal    # Node + Container App Manager + Proxy + S3
      fsn store install server-full       # + Mail + Wiki + Chat + Git + ...
 
    Desktop:
@@ -35,7 +35,7 @@
 5. Bei Node-Installation:
    - S3-Server wird gestartet (Teil von Node)
    - Storage-Backend konfiguriert
-   - Conductor wird gestartet
+   - Container App Manager wird gestartet
    - Services werden installiert
 ```
 

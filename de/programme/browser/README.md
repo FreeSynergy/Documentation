@@ -30,7 +30,7 @@ Der Browser ist eine App im Desktop die Web-Seiten anzeigt. Da Dioxus bereits We
 |---|---|
 | URL-Leiste | Direkte URL-Eingabe |
 | Tabs | Mehrere Seiten gleichzeitig |
-| Service-Links | Klick auf Service im Conductor → öffnet dessen Web-UI |
+| Service-Links | Klick auf Service im Container App Manager → öffnet dessen Web-UI |
 | Lens-Links | Klick auf Ergebnis in Lens → öffnet im Browser |
 | Downloads | Dateien → S3 Storage |
 

@@ -9,7 +9,7 @@
 Der Resource Builder (`fsn-builder`) baut Ressourcen für den Store. Er prüft ob alle Daten da sind, validiert, und deployt ins Store-Git.
 
 **Abgrenzung:**
-- **Conductor** → stellt Container-Apps EIN (konfiguriert, startet)
+- **Container App Manager** → stellt Container-Apps EIN (konfiguriert, startet)
 - **Resource Builder** → BAUT Pakete (analysiert, validiert, veröffentlicht)
 
 ## Workflow: YAML → Store-Paket
@@ -90,4 +90,4 @@ Der Builder ist ein eigenständiges Programm mit eigenem Repo. Er kann ohne Node
 
 ---
 
-Weiter: [Ressourcen](../../konzepte/ressourcen.md) | [Conductor](../conductor/README.md) | [Store](../store/README.md)
+Weiter: [Ressourcen](../../konzepte/ressourcen.md) | [Container App Manager](../container_app/README.md) | [Store](../store/README.md)

@@ -1,6 +1,6 @@
 # Node — Der Projektverwalter
 
-[← Zurück zum Index](../../INDEX.md) | [Conductor](../conductor/README.md) | [Architektur](../../architektur/uebersicht.md)
+[← Zurück zum Index](../../INDEX.md) | [Container App Manager](../container_app/README.md) | [Architektur](../../architektur/uebersicht.md)
 
 ---
 
@@ -9,7 +9,7 @@
 Node ist das zentrale Verwaltungsprogramm. Es verwaltet:
 
 - **Hosts** — Server die zum Projekt gehören
-- **Services** — Installation und Verwaltung über den [Conductor](../conductor/README.md)
+- **Services** — Installation und Verwaltung über den [Container App Manager](../container_app/README.md)
 - **S3-Storage** — Eingebauter S3-Server ([Storage-Layer](../../technik/storage.md))
 - **Projekte** — Ein Projekt = eine Gruppe von Hosts + Services + Konfiguration
 - **Einladungen** — Join-Tokens für neue Hosts und Desktop-Clients
@@ -24,7 +24,7 @@ Node ist das zentrale Verwaltungsprogramm. Es verwaltet:
 | macOS | ⚠️ Später entscheiden (kein systemd) |
 | Windows | ⚠️ Später entscheiden (kein systemd) |
 
-Erstmal: Linux only für Node/Conductor.
+Erstmal: Linux only für Node/Container App Manager.
 
 ## S3-Server (eingebaut)
 
@@ -85,4 +85,4 @@ https://github.com/FreeSynergy/Node
 
 ---
 
-Weiter: [Conductor](../conductor/README.md) | [Storage-Layer](../../technik/storage.md) | [Installation](../../technik/installation.md)
+Weiter: [Container App Manager](../container_app/README.md) | [Storage-Layer](../../technik/storage.md) | [Installation](../../technik/installation.md)

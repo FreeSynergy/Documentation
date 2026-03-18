@@ -65,7 +65,7 @@ tui  = false   # Terminal-UI via ratatui (später, niedrige Priorität)
 
 **WGUI** steht für *Web-based GUI* — die UI wird immer in einer Web-Engine gerendert (HTML/CSS in webkit2gtk / WebView2 / WKWebView). Auch auf dem Desktop ist es technisch ein WebView, kein natives GTK/Qt.
 
-**TUI** kommt nicht automatisch aus WGUI — HTML/CSS lässt sich nicht in Terminal-Raster übersetzen. TUI wird nur für ausgewählte CLI-Funktionen umgesetzt (z.B. `fsn conductor status`, `fsn store search`) und nicht als vollständiger Desktop-Ersatz.
+**TUI** kommt nicht automatisch aus WGUI — HTML/CSS lässt sich nicht in Terminal-Raster übersetzen. TUI wird nur für ausgewählte CLI-Funktionen umgesetzt (z.B. `fsn container-app status`, `fsn store search`) und nicht als vollständiger Desktop-Ersatz.
 
 ## Pflicht-Metadaten
 
@@ -171,23 +171,23 @@ test     = "curl -f http://localhost:8080/health"
 interval = "30s"
 
 [network]
-auto = "ollama-backend"   # Conductor legt internes Netz automatisch an
+auto = "ollama-backend"   # Container App Manager legt internes Netz automatisch an
 
 [volumes]
 ollama_data    = { target = "/root/.ollama",        s3_path = "media/ollama" }
 openwebui_data = { target = "/app/backend/data",    s3_path = "media/open-webui" }
 ```
 
-Dieses Manifest plus eine zugehörige `podman-compose.yml` ergibt ein vollständiges Container-App-Paket. Der [Conductor](../programme/conductor/README.md) validiert und installiert es, der Store verwaltet Versionen und Abhängigkeiten.
+Dieses Manifest plus eine zugehörige `podman-compose.yml` ergibt ein vollständiges Container-App-Paket. Der [Container App Manager](../programme/container_app/README.md) validiert und installiert es, der Store verwaltet Versionen und Abhängigkeiten.
 
 ---
 
 ## Variable-System (für Container-Pakete)
 
-Variablen haben Basis-Typen und Rollen. Siehe [Conductor](../programme/conductor/README.md) für die Analyse und [Rollen](rollen.md) für die Hierarchie.
+Variablen haben Basis-Typen und Rollen. Siehe [Container App Manager](../programme/container_app/README.md) für die Analyse und [Rollen](rollen.md) für die Hierarchie.
 
 Secrets werden mit `age` verschlüsselt. Rollen-typisierte Variablen werden automatisch befüllt wenn ein passender Service installiert ist.
 
 ---
 
-Weiter: [Store](../programme/store/README.md) | [Conductor](../programme/conductor/README.md) | [Rollen](rollen.md)
+Weiter: [Store](../programme/store/README.md) | [Container App Manager](../programme/container_app/README.md) | [Rollen](rollen.md)

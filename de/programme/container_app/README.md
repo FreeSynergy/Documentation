@@ -1,6 +1,6 @@
 # Container App Manager — Der Container-App-Verwalter
 
-> **Hinweis:** Früher als "Conductor" bekannt. Umbenannt zu **Container App Manager** weil der Name genau beschreibt was er tut: Container-Apps verwalten. Lebt jetzt in **FreeSynergy.Managers** (`container_app/`).
+> **Hinweis:** Früher als "Container App Manager" bekannt. Umbenannt zu **Container App Manager** weil der Name genau beschreibt was er tut: Container-Apps verwalten. Lebt jetzt in **FreeSynergy.Managers** (`container_app/`).
 
 [← Zurück zum Index](../../INDEX.md) | [Node](../node/README.md) | [Store](../store/README.md) | [Manager](../../konzepte/manager.md)
 
@@ -44,7 +44,7 @@ Eingabe: docker-compose.yml oder Podman-YAML
 
 ### Schritt 3: Variablen-Analyse
 
-Jede Environment-Variable wird analysiert. Der Conductor erkennt Typen anhand von **Schlüsselwörtern im Variablennamen**:
+Jede Environment-Variable wird analysiert. Der Container App Manager erkennt Typen anhand von **Schlüsselwörtern im Variablennamen**:
 
 | Muster im Namen | Erkannter Basis-Typ | Erkannte Rolle |
 |---|---|---|
@@ -74,7 +74,7 @@ Jede Environment-Variable wird analysiert. Der Conductor erkennt Typen anhand vo
 | `LDAP` | `iam` | `iam.ldap` |
 | `S3`, `MINIO`, `STORAGE` | `storage` | `storage.s3` |
 
-**Wichtig:** Die Erkennung ist eine **Wahrscheinlichkeits-Einschätzung**, keine Garantie. Der Conductor gibt Konfidenz an:
+**Wichtig:** Die Erkennung ist eine **Wahrscheinlichkeits-Einschätzung**, keine Garantie. Der Container App Manager gibt Konfidenz an:
 
 ```
 SMTP_HOST → hostname, Rolle: smtp.host (Konfidenz: 95%)
@@ -92,15 +92,15 @@ Aus der analysierten YAML werden generiert:
 ### Schritt 5: Store-Integration (optional)
 
 Wenn der Store erreichbar ist:
-1. Conductor fragt: "Gibt es `kanidm/server` im Store?"
+1. Container App Manager fragt: "Gibt es `kanidm/server` im Store?"
 2. Store antwortet: "Ja, hier sind bekannte Variablen, Rollen, Beschreibungen, Icon"
-3. Conductor **ergänzt** seine Analyse — überschreibt NICHTS, füllt nur Lücken
+3. Container App Manager **ergänzt** seine Analyse — überschreibt NICHTS, füllt nur Lücken
 4. Bei Konflikten: Fragt den Benutzer
 
 ### Schritt 6: Speicherung
 
 Alles wird gespeichert:
-- In SQLite (`fsn-conductor.db`): Metadaten, Variablen, Status
+- In SQLite (`fsn-container-app.db`): Metadaten, Variablen, Status
 - Im Dateisystem: Quadlet-Dateien, Config-Templates unter `services/{paketname}/`
 - Der **Paketname = Hauptservice-Name** aus der YAML
 
@@ -108,12 +108,12 @@ Alles wird gespeichert:
 
 | Interface | Beispiel |
 |---|---|
-| CLI | `fsn conductor analyze compose.yml` |
-| CLI | `fsn conductor install compose.yml` |
-| CLI | `fsn conductor status kanidm` |
-| CLI | `fsn conductor start kanidm` / `stop` / `restart` |
-| API | `POST /api/conductor/analyze` mit YAML-Body |
-| UI | Conductor-View im [Desktop](../desktop/README.md) |
+| CLI | `fsn container-app analyze compose.yml` |
+| CLI | `fsn container-app install compose.yml` |
+| CLI | `fsn container-app status kanidm` |
+| CLI | `fsn container-app start kanidm` / `stop` / `restart` |
+| API | `POST /api/container-app/analyze` mit YAML-Body |
+| UI | Container App Manager-View im [Desktop](../desktop/README.md) |
 
 ## Podman: KEIN Socket
 
@@ -126,7 +126,7 @@ Der Container App Manager nutzt **keinen Podman-Socket**. Container werden aussc
 
 https://github.com/FreeSynergy/Managers (Crate: `container_app/`)
 
-Der Container App Manager lebt in **FreeSynergy.Managers** und teilt sich das Repo mit den anderen Managern (Language, Theme, Icons). Das alte `FreeSynergy/Conductor` Repo ist archiviert.
+Der Container App Manager lebt in **FreeSynergy.Managers** und teilt sich das Repo mit den anderen Managern (Language, Theme, Icons). Das alte `FreeSynergy/Managers` Repo ist archiviert.
 
 ## Bibliotheken
 
@@ -136,7 +136,7 @@ Der Container App Manager lebt in **FreeSynergy.Managers** und teilt sich das Re
 | `tera` | Template-Engine für Configs |
 | `fsn-types` | Shared Types, Rollen |
 | `fsn-config` | TOML laden/speichern |
-| `fsn-db` | SQLite (fsn-conductor.db) |
+| `fsn-db` | SQLite (fsn-container-app.db) |
 | `fsn-store` | Store-Client (optional) |
 | `fsn-error` | Fehlerbehandlung + Auto-Repair |
 

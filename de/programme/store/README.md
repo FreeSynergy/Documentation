@@ -8,7 +8,7 @@
 
 Der Store ist der **universelle Paketmanager** von FreeSynergy. Vergleichbar mit dnf/apt, aber flexibler. Er verwaltet ALLES: Programme, Services, Themes, Sprachen, Widgets, Bots, Tasks.
 
-Gleichzeitig ist er ein **Wissensspeicher** der allen Programmen hilft — der Conductor fragt "Kennst du diesen Service?" und der Store liefert Metadaten, Rollen, Variablen-Typen.
+Gleichzeitig ist er ein **Wissensspeicher** der allen Programmen hilft — der Container App Manager fragt "Kennst du diesen Service?" und der Store liefert Metadaten, Rollen, Variablen-Typen.
 
 ## Eigenständigkeit
 
@@ -20,7 +20,7 @@ Der Store funktioniert **ohne jedes andere FreeSynergy-Programm**. Er ist ein Gi
 FreeSynergy.Init (minimales Binary)
   → Klont den Store via gitoxide
     → Store installiert ALLES:
-       Node, Desktop, Conductor, Services, Themes, Sprachen, ...
+       Node, Desktop, Container App Manager, Services, Themes, Sprachen, ...
 ```
 
 Siehe [Init](../init/README.md).
@@ -31,7 +31,7 @@ Siehe [Init](../init/README.md).
 
 | Typ | Inhalt | Beispiele |
 |---|---|---|
-| `app` | FreeSynergy-Kernanwendung | Node, Desktop, Conductor |
+| `app` | FreeSynergy-Kernanwendung | Node, Desktop, Container App Manager |
 | `container` | Service-Modul (Quadlet + Config) | Kanidm, Forgejo, Outline |
 | `bundle` | Meta-Paket das andere Pakete zusammenfasst | server-minimal, desktop-full |
 | `language` | Sprach-Snippets (.ftl) | Deutsch, Französisch, Arabisch |
@@ -55,12 +55,12 @@ id = "server-minimal"
 name = "Server Minimal"
 type = "bundle"
 description = "Minimale Server-Installation"
-tags = ["server", "minimal", "node", "conductor", "proxy"]
+tags = ["server", "minimal", "node", "container-app", "proxy"]
 
 [bundle]
 packages = [
     "node",
-    "conductor",
+    "container-app",
     "zentinel",
     "kanidm",
 ]
@@ -173,7 +173,7 @@ homepage = "https://kanidm.com"
 source = "https://github.com/FreeSynergy/Store"
 ```
 
-**Jedes Paket ist ein Objekt** mit Icon und Metadaten. Überall wo ein Paket angezeigt wird (Store, Desktop, Conductor, Settings) sieht man Icon, Name, Version, Tags.
+**Jedes Paket ist ein Objekt** mit Icon und Metadaten. Überall wo ein Paket angezeigt wird (Store, Desktop, Container App Manager, Settings) sieht man Icon, Name, Version, Tags.
 
 Jedes Paket MUSS ein Icon haben. Kein Icon → generisches Icon für den Typ.
 
@@ -229,7 +229,7 @@ Jedes Paket kann Scripts haben:
 
 Die Scripts aus der alten `fsn-install.sh` werden aufgeteilt:
 - SSH-Key-Setup → Script im `node`-Paket
-- Podman/Quadlet-Setup → Script im `conductor`-Paket
+- Podman/Quadlet-Setup → Script im `container-app`-Paket
 - Firewall → Script im `zentinel`-Paket
 - IAM-Bootstrap → Script im `kanidm`-Paket
 - FCOS-spezifisches → Script im `fcos-support`-Paket
@@ -243,7 +243,7 @@ Pakete können Abhängigkeiten deklarieren:
 ```toml
 [dependencies]
 fsn-node = ">= 0.5.0"
-fsn-conductor = ">= 0.3.0"
+fsn-container-app = ">= 0.3.0"
 
 [optional-dependencies]
 kanidm = ">= 1.4.0"     # Empfohlen, aber nicht Pflicht
@@ -268,7 +268,7 @@ GET /api/store/know/compatible?role=iam
 → Welche installierten Services haben diese Rolle?
 ```
 
-Der [Conductor](../conductor/README.md) nutzt das bei der YAML-Analyse: "Kennst du diesen Service?" → Store ergänzt Daten, überschreibt NICHT.
+Der [Container App Manager](../container_app/README.md) nutzt das bei der YAML-Analyse: "Kennst du diesen Service?" → Store ergänzt Daten, überschreibt NICHT.
 
 ---
 

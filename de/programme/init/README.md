@@ -50,7 +50,7 @@ Init ist fertig. Der Store ist da. Ab jetzt:
 fsn store search --type bundle    # Zeige Installations-Bundles
 
 # Server-Installation
-fsn store install server-minimal  # Node + Conductor + Proxy + S3
+fsn store install server-minimal  # Node + Container App Manager + Proxy + S3
 fsn store install server-full     # + Mail + Wiki + Chat + Git + ...
 
 # Desktop-Installation

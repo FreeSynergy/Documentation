@@ -36,7 +36,7 @@ pub struct ResourceMeta {
 ```rust
 pub enum ResourceType {
     // Programme
-    App,              // Node, Desktop, Conductor
+    App,              // Node, Desktop, Container App Manager
     ContainerApp,     // Kanidm, Forgejo, Outline (bringt YAML mit)
     
     // Zusammenstellungen
@@ -127,7 +127,7 @@ pub enum AutoSource {
 
 Container-Apps haben **keine eigenen Übersetzungen** — das machen die Leute selbst.
 
-Die YAML wird mitgeliefert und ist separat downloadbar. Der Conductor macht daraus Quadlet-Dateien.
+Die YAML wird mitgeliefert und ist separat downloadbar. Der Container App Manager macht daraus Quadlet-Dateien.
 
 ---
 

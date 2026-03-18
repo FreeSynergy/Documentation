@@ -27,7 +27,7 @@
 |---|---|---|
 | Bilder nicht uploadbar | Kein Hintergrund-Upload möglich | FileEngine (Phase D4) |
 | Store: Nichts installierbar | Install-Button funktioniert nicht | Phase C2-C4 |
-| Alter Conductor-Code | Nutzt Podman-Socket (funktioniert nicht) | Phase E1 |
+| Alter Container App Manager-Code | Nutzt Podman-Socket (funktioniert nicht) | Phase E1 |
 
 ## Gering (🟢)
 

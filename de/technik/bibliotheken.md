@@ -52,7 +52,7 @@ Alle wiederverwendbaren Libraries. Können auch von Drittprojekten (Wiki.rs, Dec
 | Crate | Wofür | Benutzt von |
 |---|---|---|
 | `dioxus` 0.7.x | UI-Framework | Desktop |
-| `axum` | HTTP-Server/API | Node, Conductor, Store |
+| `axum` | HTTP-Server/API | Node, Container App Manager, Store |
 | `clap` | CLI | Alle Programme |
 | `tokio` | Async Runtime | Alle |
 
@@ -61,7 +61,7 @@ Alle wiederverwendbaren Libraries. Können auch von Drittprojekten (Wiki.rs, Dec
 | Crate | Wofür | Benutzt von |
 |---|---|---|
 | `serde` / `serde_json` / `toml` | Serialisierung | Alle |
-| `serde_yaml` | YAML parsen | Conductor |
+| `serde_yaml` | YAML parsen | Container App Manager |
 | `sea-orm` | ORM für SQLite/Postgres | Alle mit DB |
 | `automerge` | CRDT | Sync, Offline-First |
 | `semver` | Versionen vergleichen | Store, Pkg |
@@ -80,7 +80,7 @@ Alle wiederverwendbaren Libraries. Können auch von Drittprojekten (Wiki.rs, Dec
 
 | Crate | Wofür | Benutzt von |
 |---|---|---|
-| `tera` | Template-Engine | Conductor, Templates |
+| `tera` | Template-Engine | Container App Manager, Templates |
 | `fluent` | i18n Localization | i18n |
 
 ### Messenger (Feature-Flags bei fsn-channel)

@@ -88,7 +88,7 @@ pub struct BridgeInstance {
 | **Bus** | "Wer hat Rolle X?" → Route Events zur richtigen Bridge |
 | **Lenses** | "Welche Services bieten Daten zum Thema Y?" |
 | **Search** | "Welche Services unterstützen search-Recht?" |
-| **Conductor** | "Welche Services laufen, welche sind gestoppt?" |
+| **Container App Manager** | "Welche Services laufen, welche sind gestoppt?" |
 | **Widgets** | "Sind meine required_roles erfüllt?" |
 | **Store** | "Was ist installiert? Was braucht ein Update?" |
 | **Resource Builder** | "Welche Rollen sind lokal verfügbar für Tests?" |
