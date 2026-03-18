@@ -331,6 +331,59 @@ POST /api/store/sync
 
 ---
 
+## Binary-Verteilung
+
+Das Store-Git enthält ausschließlich **Manifeste** (TOML-Dateien, klein, textbasiert). Kompilierte Binaries gehören **nicht** ins Git — sie liegen auf **GitHub Releases**.
+
+```
+Store-Git (klein, nur Text):
+  apps/node/manifest.toml        ← Metadaten, Version, Download-URL
+  apps/desktop/manifest.toml
+  apps/conductor/manifest.toml
+
+GitHub Releases (große Dateien):
+  FreeSynergy/Node/releases/v0.5.0/
+    fsn-node-x86_64-linux.tar.gz
+    fsn-node-aarch64-linux.tar.gz
+  FreeSynergy/Desktop/releases/v0.5.0/
+    fsn-desktop-x86_64-linux.tar.gz
+```
+
+Der Store liest das Manifest, findet die Download-URL, lädt das Binary von GitHub Releases. So bleibt das Store-Repo schlank und schnell klonbar.
+
+**Regel für eigene Repos vs. Crates/Module:**
+
+| Eigenes Repo | Crate/Modul im Eltern-Repo |
+|---|---|
+| Kann **alleine** laufen (Node, Desktop, Store, Init) | Macht nur als **Teil** eines anderen Programms Sinn |
+| Beispiel: `FreeSynergy/Node`, `FreeSynergy/Desktop` | Beispiel: Browser → Crate in Desktop, Conductor → Crate in Node |
+
+```
+FreeSynergy/Desktop/          ← EIN Repo
+  crates/
+    fsn-ui/
+    fsn-browser/              ← Browser ist ein Crate, kein eigenes Repo
+    fsn-desktop/
+```
+
+---
+
+## Geplante Features
+
+Features die noch nicht implementiert sind, aber zum Store-Konzept gehören:
+
+| Feature | Beschreibung |
+|---|---|
+| **Store-Mirrors** | Andere Betreiber hosten eigene Stores. Mehrere Store-Quellen konfigurierbar (wie dnf-Repos). |
+| **Lokaler Cache** | Einmal heruntergeladen → offline verfügbar. Kein zweiter Download bei Neuinstallation. |
+| **Download-Statistiken** | Zählt wie oft ein Paket installiert wurde. Sichtbar im Store-UI. |
+| **Kompatibilitäts-Matrix** | Jedes Paket deklariert "Funktioniert mit Node >= 0.5.0". Warnung bei Inkompatibilität. |
+| **Screenshots/Previews** | SVG-Previews im Manifest (besonders sinnvoll für Themes und Widgets). |
+| **Changelog-Anzeige** | Automatisch aus Git-Tags generiert, direkt im Store sichtbar. |
+| **Bewertungen/Reviews** | Community-Bewertungen (erst wenn Community existiert). |
+
+---
+
 ## Verzeichnisstruktur
 
 ```

@@ -85,6 +85,69 @@ kanidm = ">= 1.4.0"
 
 Der Store löst Abhängigkeiten automatisch auf.
 
+## Container-Manifest (Erweitertes Beispiel)
+
+Container-Pakete (`type = "container"`) können mehrere Services definieren, Rollen deklarieren, Variablen typisieren und Healthchecks konfigurieren. Ein vollständiges Beispiel:
+
+```toml
+[package]
+id = "ollama"
+name = "Ollama + Open WebUI"
+version = "0.1.0"
+type = "container"
+description = "Local LLM with Web Interface"
+icon = "ollama"
+tags = ["llm", "ai", "chat", "ollama", "openwebui", "gpu"]
+author = "FreeSynergy"
+license = "MIT"
+
+[roles]
+provides = ["llm", "llm.chat", "llm.api"]
+requires_optional = ["iam.oidc-provider", "database.postgres"]
+
+[services.main]
+name = "open-webui"
+image = "ghcr.io/open-webui/open-webui:main"
+port = 3000
+
+[services.sub.ollama]
+name = "ollama"
+image = "docker.io/ollama/ollama:latest"
+port = 11434
+internal = true           # Nicht von außen erreichbar
+
+[variables]
+WEBUI_SECRET_KEY         = { type = "secret",            required = true }
+OLLAMA_BASE_URL          = { type = "url",               auto = "http://ollama:11434", internal = true }
+OLLAMA_HOST              = { type = "hostname",          default = "0.0.0.0" }
+ENABLE_OPENAI_API        = { type = "string",            default = "true" }
+ENABLE_SIGNUP            = { type = "string",            default = "true" }
+DO_NOT_TRACK             = { type = "string",            default = "true" }
+OPENID_PROVIDER_URL      = { type = "url",               role = "iam.oidc-discovery",  required = false }
+OAUTH_CLIENT_ID          = { type = "string",            role = "iam.oidc",            required = false }
+OAUTH_CLIENT_SECRET      = { type = "secret",            role = "iam.oidc",            required = false }
+DATABASE_URL             = { type = "connection-string", role = "database",            required = false }
+
+[healthcheck.ollama]
+test     = "curl -f http://localhost:11434/api/tags"
+interval = "30s"
+
+[healthcheck.open-webui]
+test     = "curl -f http://localhost:8080/health"
+interval = "30s"
+
+[network]
+auto = "ollama-backend"   # Conductor legt internes Netz automatisch an
+
+[volumes]
+ollama_data    = { target = "/root/.ollama",        s3_path = "media/ollama" }
+openwebui_data = { target = "/app/backend/data",    s3_path = "media/open-webui" }
+```
+
+Dieses Manifest plus eine zugehörige `podman-compose.yml` ergibt ein vollständiges Container-App-Paket. Der [Conductor](../programme/conductor/README.md) validiert und installiert es, der Store verwaltet Versionen und Abhängigkeiten.
+
+---
+
 ## Variable-System (für Container-Pakete)
 
 Variablen haben Basis-Typen und Rollen. Siehe [Conductor](../programme/conductor/README.md) für die Analyse und [Rollen](rollen.md) für die Hierarchie.
