@@ -20,6 +20,26 @@ Er ist **nicht** für die eigentliche Messenger-Kommunikation zuständig — das
 
 ---
 
+## Einstieg: Konten verbinden (Control Bot)
+
+Der erste Schritt ist immer, den **Control Bot** mit Messenger-Konten zu verbinden.
+Im Bereich "Konten" fügt man je Messenger die Zugangsdaten hinzu:
+
+| Messenger | Benötigte Daten |
+|---|---|
+| Telegram | Bot-Token, Telefonnummer (UserBot) |
+| Matrix | Homeserver-URL, Access Token |
+| Discord | Bot-Token |
+| Rocket.Chat | Server-URL, Benutzername, Passwort |
+| Mattermost | Server-URL, Bot-Token |
+| Slack | Bot-Token |
+| XMPP | JID (user@server.com), Passwort |
+
+Sobald ein Konto konfiguriert ist, verbindet sich der Control Bot automatisch.
+Alle anderen Bot-Module (Broadcast, Gatekeeper, usw.) laufen dann über den Control Bot.
+
+---
+
 ## Eigenständigkeit
 
 Der BotManager läuft als Crate in `FreeSynergy.Managers`. Desktop bindet ihn als Komponente ein (`app-botmanager`). Er hat kein eigenes Binary — er ist eine Bibliothek mit UI-Komponenten.
@@ -27,6 +47,10 @@ Der BotManager läuft als Crate in `FreeSynergy.Managers`. Desktop bindet ihn al
 ---
 
 ## Views
+
+### Accounts
+
+Übersicht aller konfigurierten Messenger-Konten. Hier werden Zugangsdaten für den Control Bot hinterlegt (siehe [Einstieg: Konten verbinden](#einstieg-konten-verbinden-control-bot)). Jedes Konto zeigt seinen Verbindungsstatus (verbunden / Fehler / nicht konfiguriert).
 
 ### Bot-Status
 
@@ -82,9 +106,9 @@ IAM-Status: ❌ Nicht im System
 
 Der BotManager publiziert `bot.gatekeeper.approve` / `.deny` — der Control-Bot führt die Aktion im Messenger aus.
 
-### Module
+### Bots
 
-Installierte Bot-Module je Bot, aktiv/inaktiv:
+Installierte Bot-Module je Bot, aktiv/inaktiv (start/stop):
 
 ```
 Control Bot (Telegram)

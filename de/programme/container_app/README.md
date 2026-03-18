@@ -1,6 +1,8 @@
 # Container App Manager — Der Container-App-Verwalter
 
-> **Hinweis:** Früher als "Container App Manager" bekannt. Umbenannt zu **Container App Manager** weil der Name genau beschreibt was er tut: Container-Apps verwalten. Lebt jetzt in **FreeSynergy.Managers** (`container_app/`).
+> **Hinweis:** Früher als zwei getrennte Programme bekannt (Container App Manager + Builder). Jetzt vereint in einem Programm mit den Bereichen: Installed, Install New, Build & Publish, Logs.
+
+> Lebt in **FreeSynergy.Desktop** (`crates/fsd-conductor/`). Früher in FreeSynergy.Managers.
 
 [← Zurück zum Index](../../INDEX.md) | [Node](../node/README.md) | [Store](../store/README.md) | [Manager](../../konzepte/manager.md)
 
@@ -122,11 +124,19 @@ Der Container App Manager nutzt **keinen Podman-Socket**. Container werden aussc
 - **systemctl** (start, stop, status, restart)
 - **journalctl** (Logs)
 
+## Build & Publish (früher: Builder)
+
+Der Builder ist jetzt direkt im Container Manager integriert.
+Im Bereich "Build & Publish" kannst du:
+1. Eine docker-compose.yml einfügen
+2. Analysieren lassen (Variablen, Rollen, Healthchecks)
+3. Direkt in den Store veröffentlichen
+
+Das separate Builder-Programm gibt es nicht mehr.
+
 ## Repo
 
-https://github.com/FreeSynergy/Managers (Crate: `container_app/`)
-
-Der Container App Manager lebt in **FreeSynergy.Managers** und teilt sich das Repo mit den anderen Managern (Language, Theme, Icons). Das alte `FreeSynergy/Managers` Repo ist archiviert.
+https://github.com/FreeSynergy/Desktop (Crate: `crates/fsd-conductor/`)
 
 ## Bibliotheken
 
