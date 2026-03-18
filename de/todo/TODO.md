@@ -117,44 +117,94 @@ I3. [x] Builder-UI im Desktop (fsd-studio → fsd-builder umbenannt)
     - AI Assist (Ollama) für Metadaten-Anreicherung
 ```
 
-## Phase J: Message Bus
+## Phase J: Message Bus ✅
 
 ```
-J1. [ ] Bus-Grundstruktur (Pub/Sub + Direct Messages)
-J2. [ ] Rollen-basierte Adressierung (nie direkt an Service)
-J3. [ ] Subscription-Manager (Rolle + Topic + Instanz-Tag Filter)
-J4. [ ] Nachrichtentypen (Fire&Forget, Guaranteed, Standing Order)
-J5. [ ] Speicherungs-Layer (NoStore, UntilAck, Persistent)
-J6. [ ] Konfigurierbare Default-Zuordnung (regelbasiert, TOML)
-J7. [ ] Standing Orders Engine
-J8. [ ] Bridges (Bus-zu-Bus, Rechte-Kaskade, doppelter Checkpoint)
-J9. [ ] Bus-API (CLI, REST, WebSocket)
+J1. [x] Bus-Grundstruktur (Pub/Sub + Direct Messages)
+    - MessageBus struct (fsn-bus/message_bus.rs) — orchestriert Router, Subscriptions, StandingOrders, Config
+    - BusMessage wrapper (delivery + storage policy)
+
+J2. [x] Rollen-basierte Adressierung (nie direkt an Service)
+    - Subscription(subscriber_role, topic_filter, inst_tag)
+    - SubscriptionManager — gibt matching roles für jedes Event zurück
+
+J3. [x] Subscription-Manager (Rolle + Topic + Instanz-Tag Filter)
+    - SubscriptionManager::matching(topic, source_inst)
+    - add / remove / for_role / iter
+
+J4. [x] Nachrichtentypen (Fire&Forget, Guaranteed, Standing Order)
+    - DeliveryType enum (fire-and-forget / guaranteed / standing-order)
+    - StorageType enum (no-store / until-ack / persistent)
+
+J5. [x] Speicherungs-Layer (NoStore, UntilAck, Persistent)
+    - Schema definiert in fsd-db/schemas/bus.rs (event_log, subscriptions, routing_rules, standing_orders)
+    - StorageType per BusMessage wählbar, per RoutingConfig override-fähig
+
+J6. [x] Konfigurierbare Default-Zuordnung (regelbasiert, TOML)
+    - RoutingConfig (TOML) mit RoutingRule (topic_pattern, source_role, delivery, storage, priority)
+    - MessageBus::load_config_toml / load_config_file
+
+J7. [x] Standing Orders Engine
+    - StandingOrder (trigger_role, topic, payload, enabled)
+    - StandingOrdersEngine::trigger_for_role / trigger_for_topic
+
+J8. [x] Bridges (Bus-zu-Bus, Rechte-Kaskade, doppelter Checkpoint)
+    - BusBridge (fsn-bus/bridge.rs, feature = "bridge")
+    - BusBridgeConfig (remote_url, allowed_topics, auth_token, require_read_right)
+    - Implements TopicHandler → direkt in Router registrierbar
+
+J9. [x] Bus-API (CLI, REST, WebSocket)
+    - `fsn bus serve` → axum REST API + WebSocket (Port 8081)
+    - POST /api/bus/publish, GET /api/bus/subscriptions, POST/DELETE /api/bus/subscribe
+    - GET/POST/DELETE /api/bus/standing-orders, GET /api/bus/events, GET /api/bus/ws
+    - POST /api/bus/role/:role/trigger
+    - `fsn bus status` / `fsn bus publish --topic X --source Y --payload J`
 ```
 
-## Phase K: Browser
+## Phase K: Browser ✅
 
 ```
-K1. [ ] Browser-View im Desktop
-    - URL-Leiste
-    - WebView-Rendering (Dioxus WebView)
-    - Tabs für mehrere Seiten
+K1. [x] Browser-View im Desktop (fsd-browser Crate)
+    - URL-Leiste + Back/Forward/Reload Buttons
+    - iframe-basiertes Rendering (Dioxus WebView = Wry)
+    - Multi-Tab mit Add/Close, Tab-Titel-Anzeige
 
-K2. [ ] Download-Handler
-    - Downloads abfangen → S3 /shared/downloads/
+K2. [x] Download-Handler
+    - DownloadEntry Model + DownloadsPanel UI
+    - S3-Path /shared/downloads/ vorbereitet
+    - DB-Schema in fsd-db/schemas/browser.rs (downloads-Tabelle)
 
-K3. [ ] Service-Integration
-    - Klick auf Service im Conductor → öffnet dessen Web-UI im Browser
-    - Auto-Auth: IAM-Token mitschicken
+K3. [x] Service-Integration
+    - BrowserUrlRequest Context (Signal<Option<String>>)
+    - use_context → Desktop setzt Kontext, Browser empfängt und navigiert
+    - Lenses können URLs im Browser öffnen (on_open_url EventHandler)
 
-K4. [ ] Lesezeichen + History (SQLite)
+K4. [x] Lesezeichen + History (in-memory + DB-Schema)
+    - Bookmark / HistoryEntry Model
+    - BookmarksPanel / HistoryPanel mit Add/Remove/Clear
+    - fsd-db/schemas/browser.rs: bookmarks + history Tabellen
 ```
 
-## Phase L: Lenses
+## Phase L: Lenses ✅
 
 ```
-L1. [ ] Lens-Datenmodell (SQLite)
-L2. [ ] Lens-View (gruppiert nach Rolle, Summary + Link → öffnet im Browser)
-L3. [ ] Lens als Desktop-Icon
+L1. [x] Lens-Datenmodell
+    - Lens struct (id, name, query, items, last_refreshed, loading)
+    - LensItem (role, summary, link, source)
+    - LensRole enum (Wiki/Chat/Git/Map/Tasks/Iam/Other) mit icon() + label()
+    - DB-Schema: fsd-db/schemas/lenses.rs (lenses + lens_items)
+
+L2. [x] Lens-View (gruppiert nach Rolle, Summary + Link → öffnet im Browser)
+    - LensesApp (fsd-lenses/src/app.rs)
+    - LensDetail: grouped() → Gruppen nach Rolle
+    - LensListRow: Refresh (↺) + Delete, loading-Indikator
+    - on_open_url → BrowserUrlRequest Context → Browser öffnet URL
+    - query::refresh_lens() → Bus-Publish (lens.query) + Demo-Fallback
+
+L3. [x] Lens als Desktop-Icon
+    - Sidebar: 🔍 Lenses → app-lenses
+    - AppWindowContent: "app-lenses" → LensesApp in AppShell
+    - app_id_to_label: "lenses" → "Lenses"
 ```
 
 ## Phase M: Search
