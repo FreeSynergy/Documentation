@@ -313,6 +313,74 @@ fsn store sync
 fsn store sync --offline
 ```
 
+## GUI — Store-Oberfläche im Desktop
+
+### Sideboard (Pinned)
+
+Der unterste Punkt im Sideboard ist **immer** ⚙️ **Einstellungen** (angepinnt). Dieser führt zur Repository-Verwaltung:
+
+- Alle konfigurierten Repositories werden aufgelistet
+- Jedes Repository kann **aktiviert** oder **deaktiviert** werden
+- Repositories können **hinzugefügt** oder **entfernt** werden
+- **Ausnahme:** Das Haupt-Repository (`freesynergy-main`) kann nur deaktiviert, aber **nicht gelöscht** werden
+
+### Paket-Filter
+
+Oben in der Store-Ansicht stehen vier Filter:
+
+| Filter | Zeigt |
+|---|---|
+| **Alle** | Alle verfügbaren Pakete aller aktiven Repositories |
+| **Installiert** | Nur installierte Pakete |
+| **Verfügbar** | Pakete die noch nicht installiert sind |
+| **Aktualisierbar** | Installierte Pakete für die eine neue Version vorliegt |
+
+### Icons
+
+Jedes Paket **muss** ein Icon haben. Im Store-UI werden Icons überall angezeigt: in der Paketliste, in der Detailansicht, in der Installationsbestätigung. Fehlt ein Icon im Paket, wird das generische Icon für den jeweiligen Pakettyp verwendet.
+
+### Schnell-Installation vs. Detailansicht
+
+Von der Paketliste aus gibt es zwei Wege:
+
+1. **Direkt installieren** — ein Klick auf den Install-Button startet die Installation sofort
+2. **Detailansicht** — Klick auf das Paket öffnet die Detailseite; von dort aus kann ebenfalls installiert werden
+
+Ein **Pfeil oben links** (← Zurück) führt von der Detailansicht zurück zur Liste.
+
+### Installations-Feedback
+
+Nach einer Installation erscheint ein einfaches **Popup**:
+- ✅ Installation erfolgreich
+- ❌ Installation fehlgeschlagen
+
+Kein Konfigurations-Zwischenschritt, keine weiteren Dialoge. Fertig.
+
+### Detailansicht eines Pakets
+
+Die Detailansicht zeigt alle relevanten Informationen zu einem Paket — schön aufbereitet:
+
+| Bereich | Inhalt |
+|---|---|
+| **Header** | Icon, Name, Version, Typ-Badge, Kurzebeschreibung |
+| **Vollständigkeit** | Ist das Paket vollständig? Sind alle Pflichtfelder gesetzt? (Icon, Beschreibung, Tags, Signatur, i18n, …) |
+| **Sprachen** | Welche Sprachdateien (.ftl) sind enthalten? Liste der unterstützten Sprachen |
+| **Icon** | Vorschau des Paket-Icons |
+| **Tags** | Alle Tags als klickbare Filter-Chips |
+| **Metadaten** | Autor, Lizenz, Homepage, Quell-Repository, Release-Channel |
+| **Abhängigkeiten** | Direkte Abhängigkeiten + optionale Abhängigkeiten |
+| **Signatur** | Signatur-Status (signiert / unsigniert + Key-ID) |
+| **Screenshots/Previews** | Vorschaubilder wenn im Manifest hinterlegt |
+
+### Bundles in der Detailansicht
+
+Für Pakete vom Typ `bundle` zeigt die Detailansicht zusätzlich:
+- Liste aller **enthaltenen Pakete** (inkl. Icons und Kurzbeschreibung)
+- Liste der **optionalen Pakete**
+- Jedes Paket in der Liste ist **anklickbar** → öffnet die Detailansicht des jeweiligen Pakets
+
+---
+
 ## API-Interface
 
 ```

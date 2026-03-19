@@ -10,21 +10,47 @@ Desktop ist die UI für den Menschen. Es zeigt was Node und Container App Manage
 
 Desktop ist auch UI für die Services selbst — Web-Interfaces werden im eingebetteten Browser geöffnet.
 
-## Sidebar-Tabs
+## Sideboard (Sidebar)
 
-| Tab | Funktion |
-|---|---|
-| 🏠 Home | Persönliches Dashboard, Widgets, Quick-Launch |
-| 📋 Tasks | Automatisierungs-Pipelines |
-| 🎛️ Container App Manager | Service-Konfiguration |
-| 🤖 Bots | [BotManager](../botmanager/README.md) — Broadcasts senden, Gatekeeper verwalten, Status |
-| 🔍 Lenses | Informations-Betrachter |
-| 🌐 Browser | Eingebetteter Web-Browser für Service-UIs |
-| 📦 Store | Pakete installieren |
-| 🔎 Search | Suche über alle Services |
-| 🔨 Builder | Resource Builder (Pakete bauen) |
-| ⚙️ Settings | Themes, Shortcuts, Profil, Layout |
-| ❓ Help | Dokumentation |
+Die Sidebar — das **Sideboard** — ist die primäre Navigation des Desktops. Es ist in zwei Bereiche aufgeteilt:
+
+### Oberer Bereich (scrollbar)
+
+Enthält die regulären Navigationspunkte. Wenn zu viele Einträge vorhanden sind, wird dieser Bereich **scrollbar** — der untere Bereich bleibt davon unberührt.
+
+### Unterer Bereich (Pinned Section — immer sichtbar)
+
+Der untere Bereich ist **immer sichtbar**, egal wie viele Einträge im oberen Bereich stehen. Er enthält dauerhaft angepinnte Punkte (z.B. Einstellungen). Dieser Bereich scrollt nie weg.
+
+### Ordner-Struktur
+
+Im Sideboard können **Ordner** angelegt werden. Ordner gehören immer zu dem Bereich, in dem sie sich befinden:
+- Ordner im **oberen Bereich** → Unterelemente erscheinen im oberen Bereich
+- Ordner in der **Pinned Section** → Unterelemente erscheinen im unteren Bereich
+
+Wenn man einen Ordner öffnet, ersetzt sein Inhalt die normale Liste im jeweiligen Bereich. Das **erste Element** ist immer ein **Pfeil nach hinten** (← Zurück), um zur vorherigen Ansicht zu gelangen.
+
+**Besonderheit:** Hat ein Ordner nur **ein einziges Element**, wird kein Ordner angezeigt — der Inhalt erscheint direkt als normaler Eintrag.
+
+### Installations-Orte aus Paketen
+
+Pakete definieren selbst, **wo** sie im Sideboard erscheinen (oberer Bereich, Pinned Section, in welchem Ordner). Diese Struktur wird direkt aus den Paket-Metadaten übernommen und in der UI so dargestellt. Kein manuelles Sortieren notwendig.
+
+### Sidebar-Tabs
+
+| Tab | Bereich | Funktion |
+|---|---|---|
+| 🏠 Home | Oben | Persönliches Dashboard, Widgets, Quick-Launch |
+| 📋 Tasks | Oben | Automatisierungs-Pipelines |
+| 🎛️ Container App Manager | Oben | Service-Konfiguration |
+| 🤖 Bots | Oben | [BotManager](../botmanager/README.md) — Broadcasts senden, Gatekeeper verwalten, Status |
+| 🔍 Lenses | Oben | Informations-Betrachter |
+| 🌐 Browser | Oben | Eingebetteter Web-Browser für Service-UIs |
+| 📦 Store | Oben | Pakete installieren |
+| 🔎 Search | Oben | Suche über alle Services |
+| 🔨 Builder | Oben | Resource Builder (Pakete bauen) |
+| ⚙️ Settings | **Pinned** | Themes, Shortcuts, Profil, Layout |
+| ❓ Help | Oben | Dokumentation |
 
 ## Interface-Typen
 
