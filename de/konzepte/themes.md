@@ -1,6 +1,6 @@
 # Themes
 
-[← Zurück zum Index](../INDEX.md) | [CSS-System](../technik/css.md)
+[← Zurück zum Index](../INDEX.md) | [CSS-System](../technik/css.md) | [UI-Standards](ui-standards.md)
 
 ---
 
