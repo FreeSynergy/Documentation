@@ -121,7 +121,17 @@ collab
 ├── collab.encrypted
 ├── collab.documents
 └── collab.spreadsheets
+
+synthesizer
+├── synthesizer.text        ← erzeugt Freitext (Beschreibungen, Dokumentation)
+├── synthesizer.structured  ← erzeugt strukturierte Daten (TOML/JSON) → Manager-Integration
+├── synthesizer.image       ← erzeugt Bilder / SVG-Grafiken
+└── synthesizer.code        ← erzeugt Code (Skripte, Konfigurationen)
 ```
+
+**Synthesizer** ist die Rolle für Dienste die aus einer Text-Beschreibung Ausgabe erzeugen — Sprachmodelle, Diffusions-Modelle, generative Werkzeuge jeder Art. Die Manager-Integration (Cursor-Sets, Icon-Sets, Themes, ...) setzt `synthesizer.structured` voraus.
+
+→ Ausführliche Beschreibung: [Synthesizer-Konzept](synthesizer.md)
 
 ## Wie Rollen in der Variablen-Analyse genutzt werden
 

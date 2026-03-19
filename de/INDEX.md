@@ -26,6 +26,7 @@ FreeSynergy dreht das um: **Die Information steht im Vordergrund, nicht das Werk
 - [Builder](programme/builder/README.md) — **ARCHIVIERT** — Funktionalität jetzt im Container Manager
 - [Theme Manager](programme/theme/README.md) — Themes, Farben, Mauszeiger, Fenster-Stil
 - [Icon Manager](programme/icons/README.md) — Icon-Sets verwalten, Repository-Verwaltung, Icon-Picker für alle Programme
+- [Cursor Manager](programme/icons/cursor-manager.md) — Mauszeiger-Sets verwalten, erstellen (manuell + Synthesizer), animierte Cursor
 - [Desktop](programme/desktop/README.md) — Die Mensch-Maschine-Schnittstelle
 - [Browser](programme/browser/README.md) — Der eingebettete Web-Browser (eigenständig)
 - [Store](programme/store/README.md) — Der Paketmanager & Das Wissen
@@ -48,6 +49,7 @@ FreeSynergy dreht das um: **Die Information steht im Vordergrund, nicht das Werk
 - [UI-Standards](konzepte/ui-standards.md) — Mauszeiger-Sets, Aktions-Icons, Menüpunkte: Naming Convention + Austauschbarkeit
 - [Manager](konzepte/manager.md) — Kleber zwischen Store und Programmen (Language, Theme, ContainerApp, Icons)
 - [Repository Manager](konzepte/repository-manager.md) — Gemeinsame Abstraktion für Repository-Verwaltung (Store, Icons, Bundles)
+- [Synthesizer](konzepte/synthesizer.md) — Beschreibung → strukturierte Ausgabe: Formular-Vorausfüllung in allen Managern
 
 ### Technik
 - [Storage-Layer (S3)](technik/storage.md) — Eigener S3-Server, opendal, Profiles
