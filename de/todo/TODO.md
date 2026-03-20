@@ -253,7 +253,7 @@ N2. [x] Messenger-Adapter als Store-Pakete (type = "messenger-adapter")
     - Inventory: services_with_role("chat") liefert aktive Adapter
     - Store-Verzeichnis: shared/messenger-adapters/
 
-N3. [ ] BotCommand-Trait (FreeSynergy.Lib)
+N3. [x] BotCommand-Trait (FreeSynergy.Lib)
     - Einheitliche Schnittstelle für alle Bot-Module und Bot-Typen:
         fn name() → &str
         fn description() → &str
@@ -262,7 +262,7 @@ N3. [ ] BotCommand-Trait (FreeSynergy.Lib)
     - Bot sammelt Befehle aus allen aktiven Modulen automatisch
     - /help generiert sich selbst aus registrierten Befehlen
 
-N4. [ ] Bot-Kern (FreeSynergy.Managers, bots/)
+N4. [x] Bot-Kern (FreeSynergy.Managers, bots/)
     - Jede Bot-Instanz läuft als eigener Prozess (eigenes Binary)
     - Runtime: startet, hält Verbindungen zu allen konfigurierten Messengern
     - Module-Loader: lädt bot-Pakete aus Inventory, initialisiert Module
