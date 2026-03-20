@@ -377,38 +377,33 @@ P3. [ ] Rechte-Kaskade (read/write/execute/search, Audit-Log)
 P4. [ ] Föderaler Bus (Bridge-Konfiguration)
 ```
 
-## Phase R: Mail-Server (Stalwart-Fork, Multi-Tenant)
+## Phase R: Mail-Server (Stalwart, kein Fork)
 
 ```
-Lizenz-Entscheidung:
-  Stalwart ist AGPL-3.0 (open source). Fork ist erlaubt.
-  Enterprise-Features (Multi-Tenancy) sind proprietär/BSL → NICHT kopieren.
-  Wir forken die AGPL-Basis und implementieren Multi-Tenancy selbst.
-  FreeSynergy ist selbst open source → AGPL-Pflicht (Änderungen veröffentlichen) ist kein Problem.
+Architektur-Entscheidung:
+  Kein Fork. Stalwart wird unverändert als FSN-App-Paket installiert.
+  "Multi-Tenancy" entsteht durch die FSN-Federation: jeder Node hat seine eigene
+  Stalwart-Instanz mit eigener Domain. Das ist dasselbe Prinzip wie bei E-Mail
+  und Matrix — dezentral statt zentral multi-tenant.
+  → Keine Lizenzfragen, keine Fork-Divergenz, automatische Updates über den Store.
 
-R1. [ ] Stalwart forken (AGPL-Basis, Enterprise-Code entfernen)
-    - Nur AGPL-lizenzierte Dateien behalten
-    - Enterprise-Module entfernen (kein BSL/proprietärer Code)
-    - Als FSN-App-Paket strukturieren
+R1. [ ] Stalwart als FSN-App-Paket
+    - Stalwart (freie Version, AGPL) unverändert verwenden
+    - AppResource mit Rollen: smtp, imap, jmap
+    - Installation via FSN Store auf jedem Node
 
-R2. [ ] Multi-Tenancy implementieren
-    - Tenant-Konzept: eine Instanz, mehrere Orgs/Communities
-    - Jeder Tenant hat eigene Domain, eigene Nutzer, gemeinsame Infrastruktur
-    - Tenant-Isolation: Mailboxen, Aliase, Regeln per Tenant getrennt
-    - Admin-Ebenen: Node-Admin (alle Tenants) + Tenant-Admin (eigener Tenant)
-
-R3. [ ] IAM-Integration (Kanidm-Bridge)
+R2. [ ] IAM-Integration (Kanidm via OIDC/LDAP)
     - Nutzer aus Kanidm automatisch als Mailbox-Nutzer
-    - SSO: Login via Kanidm-Session, kein separates Mail-Passwort
+    - Stalwart unterstützt OIDC/LDAP in der freien Version
+    - SSO: Login via Kanidm, kein separates Mail-Passwort
 
-R4. [ ] FSN-App-Paket
-    - AppResource für Stalwart-Fork
-    - Rollen: smtp, imap, jmap
-    - Bridge: smtp_bridge(), imap_bridge() in fsn-bridge/catalog.rs
+R3. [ ] Bridge implementieren
+    - smtp_bridge(), imap_bridge() in fsn-bridge/catalog.rs
+    - Rollen: smtp (senden), imap (empfangen/lesen)
 
-R5. [ ] GitHub Actions: Auto-Sync mit Stalwart-Upstream
-    - Täglicher Sync-Workflow (nur AGPL-Teile, kein Enterprise)
-    - Bei Konflikten: PR statt direktes Merge
+R4. [ ] Domain-Konfiguration pro Node
+    - Jeder Node konfiguriert seine eigene Mail-Domain
+    - Standard-Setup via Node-Wizard (Phase P)
 ```
 
 ## Phase S: Kontakte & Kalender
@@ -419,8 +414,8 @@ Alternativ: eigene Implementierung auf Basis von `icalendar` + `vcard4` Crates
 
 S1. [ ] Rustical evaluieren (CalDAV + CardDAV)
     - Lizenz prüfen
-    - Multi-Tenancy-Potential bewerten
-    - Entscheidung: Fork oder eigene Implementierung
+    - Wie Stalwart: pro Node eine Instanz, kein zentrales Multi-Tenant nötig
+    - Entscheidung: unverändert nutzen oder eigene Implementierung
 
 S2. [ ] Kontakte-Backend
     - vCard 4.0 Speicherung (SQLite + S3 für Avatare)
