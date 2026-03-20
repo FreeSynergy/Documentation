@@ -44,7 +44,9 @@ FreeSynergy dreht das um: **Die Information steht im Vordergrund, nicht das Werk
 - [Rechte-Kaskade](konzepte/rechte.md) — Rechte können nur abnehmen
 - [Message Bus](konzepte/bus.md) — Pub/Sub, Rollen-basiert, Bridges
 - [Föderation](konzepte/foederation.md) — Zusammenarbeit zwischen Projekten
-- [Pakete](konzepte/pakete.md) — Store-Paket-System mit Versionierung
+- [Pakete](konzepte/pakete.md) — Store-Paket-System: Kategorien (Server/App/Desktop), Typen, Versionierung
+- [Node-Plattformen](konzepte/node-plattformen.md) — Linux-only Entscheidung, Szenarien (Pi, VPS, WSL2, macOS)
+- [VPN & Netzwerk](konzepte/vpn.md) — WireGuard, Heimzugriff, Node-Mesh, das dezentrale Netz
 - [Tasks](konzepte/tasks.md) — Automatisierungs-Pipelines
 - [Bots](konzepte/bots.md) — Bot-Framework
 - [Themes](konzepte/themes.md) — Visuelles Design-System

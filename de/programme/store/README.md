@@ -27,21 +27,25 @@ Siehe [Init](../init/README.md).
 
 ---
 
-## Paket-Typen
+## Paket-Kategorien und Typen
 
-| Typ | Inhalt | Beispiele |
-|---|---|---|
-| `app` | FreeSynergy-Kernanwendung | Node, Desktop, Container App Manager |
-| `container` | Service-Modul (Quadlet + Config) | Kanidm, Forgejo, Outline |
-| `bundle` | Meta-Paket das andere Pakete zusammenfasst | server-minimal, desktop-full |
-| `language` | Sprach-Snippets (.ftl) | Deutsch, Französisch, Arabisch |
-| `theme` | Visuelles Theme | Midnight Blue, Nordic |
-| `widget` | Desktop-Widget | Uhr, System-Info, Nachrichten |
-| `bot` | Bot-Definition | Broadcast, Gatekeeper |
-| `bridge` | Service-zu-Service-Adapter | Forgejo→Matrix |
-| `task` | Automatisierungs-Template | "Docs ins Wiki", "Daily Digest" |
+Pakete haben eine **Kategorie** (Store-Tab) und einen spezifischen **Typ**:
+
+| Kategorie | Typ | Inhalt | Beispiele |
+|---|---|---|---|
+| `server` | `container_app` | Container-Service (Podman + Config) | Kanidm, Forgejo, Outline |
+| `server` | `bridge` | Service-zu-Service-Adapter | Forgejo→Matrix |
+| `app` | `app` | FreeSynergy-Binary (Cross-Platform) | Desktop, Init |
+| `desktop` | `widget` | Desktop-Widget | Uhr, System-Info, Nachrichten |
+| `desktop` | `language` | Sprach-Snippets (Mozilla Fluent) | Deutsch, Arabisch |
+| `desktop` | `theme` | Visuelles Theme | Midnight Blue, Nordic |
+| `desktop` | `bot` | Bot-Definition | Broadcast, Gatekeeper |
+| `desktop` | `task` | Automatisierungs-Template | "Docs ins Wiki" |
+| — | `bundle` | Meta-Paket aus beliebigen Paketen | server-minimal, desktop-full |
 
 **Hinweis:** Libraries (`fsn-*` Crates) sind KEINE eigenständigen Pakete. Sie sind Abhängigkeiten die mit den Anwendungen mitkommen und in einem shared-Ordner leben.
+
+Details zu Typen und Manifest-Felder: [Pakete](../../konzepte/pakete.md)
 
 ---
 
@@ -315,6 +319,28 @@ fsn store sync --offline
 
 ## GUI — Store-Oberfläche im Desktop
 
+### Drei Haupt-Tabs
+
+Die Store-Oberfläche ist in drei Tabs gegliedert — immer sichtbar, unabhängig von der Plattform:
+
+| Tab | Zeigt | Verfügbar wenn |
+|---|---|---|
+| **Server** | Container-Apps, Bridges — alles was auf dem Node läuft | Immer sichtbar |
+| **Apps** | FreeSynergy-Binaries (Desktop, Browser, ...) | Immer sichtbar |
+| **Desktop** | Widgets, Themes, Sprachen, Bots, Tasks | Immer sichtbar |
+
+**Warum immer sichtbar?** Der Store ist ein Katalog — er zeigt was möglich ist, nicht was gerade installiert werden kann. Ein Windows-Nutzer ohne Node soll trotzdem sehen welche Server-Pakete es gibt und was er mit einem Node bekäme.
+
+**Server-Tab ohne Node-Verbindung:**
+```
+┌──────────────────────────────────────────────────────┐
+│  Für Server-Apps wird ein Node (Linux) benötigt.     │
+│  Mehr erfahren →  [Node einrichten]                  │
+│                                                      │
+│  [Pakete werden dennoch angezeigt — nur read-only]   │
+└──────────────────────────────────────────────────────┘
+```
+
 ### Sideboard (Pinned)
 
 Der unterste Punkt im Sideboard ist **immer** ⚙️ **Einstellungen** (angepinnt). Dieser führt zur Repository-Verwaltung:
@@ -324,13 +350,13 @@ Der unterste Punkt im Sideboard ist **immer** ⚙️ **Einstellungen** (angepinn
 - Repositories können **hinzugefügt** oder **entfernt** werden
 - **Ausnahme:** Das Haupt-Repository (`freesynergy-main`) kann nur deaktiviert, aber **nicht gelöscht** werden
 
-### Paket-Filter
+### Status-Filter (innerhalb eines Tabs)
 
-Oben in der Store-Ansicht stehen vier Filter:
+Innerhalb jedes Tabs gibt es vier Status-Filter:
 
 | Filter | Zeigt |
 |---|---|
-| **Alle** | Alle verfügbaren Pakete aller aktiven Repositories |
+| **Alle** | Alle verfügbaren Pakete dieses Typs |
 | **Installiert** | Nur installierte Pakete |
 | **Verfügbar** | Pakete die noch nicht installiert sind |
 | **Aktualisierbar** | Installierte Pakete für die eine neue Version vorliegt |

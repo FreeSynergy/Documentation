@@ -4,20 +4,41 @@
 
 ---
 
+## Store-Kategorien
+
+Der Store trennt Pakete in drei Ober-Kategorien. Diese Trennung ist sichtbar im Store-UI (drei Tabs) und im Manifest (`category`-Feld):
+
+| Kategorie | Läuft auf | Beispiele |
+|---|---|---|
+| **`server`** | Node (Linux, dauerhaft) | Kanidm, Forgejo, Matrix, Outline |
+| **`app`** | Gerät des Menschen (jede Plattform) | FreeSynergy Desktop, Browser |
+| **`desktop`** | Desktop-Oberfläche | Widgets, Themes, Sprachpakete |
+
+**Warum drei Kategorien?**
+- `server` braucht einen laufenden Node (Linux) — darf nicht auf Desktop-Geräten installiert werden
+- `app` läuft auf jedem Betriebssystem — Cross-Platform
+- `desktop` sind UI-Komponenten — Widgets haben nichts mit allgemeinen Apps zu tun
+
+---
+
 ## Ressource-Typen
 
-Alles was der Store verwaltet ist eine **Ressource**. Rust-Enum: `ResourceType` in `fsn-types/src/resources/meta.rs`.
+Innerhalb der Kategorien gibt es spezifische **Typen**. Rust-Enum: `ResourceType` in `fsn-types/src/resources/meta.rs`.
 
-| Typ | Rust-Variant | Inhalt | Beispiele |
-|---|---|---|---|
-| `app` | `App` | FreeSynergy-Kernanwendung (Binary) | Node, Desktop, Init |
-| `container_app` | `ContainerApp` | Container-Service (Podman Compose + Config) | Kanidm, Forgejo, Outline |
-| `bundle` | `Bundle` | Meta-Ressource, fasst beliebige Ressourcen zusammen | server-minimal, desktop-full |
-| `language` | `Language` | Sprach-Snippets (12 TOML-Dateien) | Deutsch, Französisch, Japanisch |
-| `widget` | `Widget` | Desktop-Widget | Uhr, System-Info |
-| `bot` | `Bot` | Bot-Definition | Broadcast, Gatekeeper |
-| `bridge` | `Bridge` | Service-zu-Service-Adapter | Forgejo→Matrix |
-| `task` | `Task` | Automatisierungs-Template | "Docs ins Wiki" |
+| Kategorie | Typ | Rust-Variant | Inhalt | Beispiele |
+|---|---|---|---|---|
+| `server` | `container_app` | `ContainerApp` | Container-Service (Podman + Config) | Kanidm, Forgejo, Outline |
+| `server` | `bridge` | `Bridge` | Service-zu-Service-Adapter | Forgejo→Matrix |
+| `app` | `app` | `App` | FreeSynergy-Binary (Cross-Platform) | Desktop, Init |
+| `desktop` | `widget` | `Widget` | Desktop-Widget | Uhr, System-Info |
+| `desktop` | `language` | `Language` | Sprach-Snippets (Mozilla Fluent) | Deutsch, Japanisch |
+| `desktop` | `bot` | `Bot` | Bot-Definition | Broadcast, Gatekeeper |
+| `desktop` | `task` | `Task` | Automatisierungs-Template | "Docs ins Wiki" |
+| — | `bundle` | `Bundle` | Meta-Ressource, fasst beliebige Ressourcen zusammen | server-minimal, desktop-full |
+
+**Bundles** können Pakete aus mehreren Kategorien zusammenfassen (z.B. `server-minimal` enthält Server-Pakete + das Node-Binary).
+
+**Theme-Ressourcen** gehören zur Kategorie `desktop` und sind selbst Bundles aus bis zu 8 Theme-Teilpaketen:
 
 ### Theme-Ressourcen (einzeln ladbar)
 
@@ -73,7 +94,8 @@ Jedes Paket MUSS haben:
 - `id` (einzigartiger Name, KEIN Typ-Prefix)
 - `name` (Anzeigename)
 - `version` (SemVer, aus Git-Tag)
-- `type` (app, container, bundle, language, theme, widget, bot, bridge, task)
+- `category` (server, app, desktop) — Ober-Kategorie für Store-UI-Tabs
+- `type` (container_app, app, widget, language, bot, bridge, task, bundle) — spezifischer Typ
 - `description` (Kurzbeschreibung)
 - `tags` (für Suche — muss aussagekräftig sein)
 - `icon` (SVG oder Icon-Name; PFLICHT, wenn fehlt → generisches Icon)

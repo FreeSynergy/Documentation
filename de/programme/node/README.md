@@ -6,25 +6,33 @@
 
 ## Was Node macht
 
-Node ist das zentrale Verwaltungsprogramm. Es verwaltet:
+Node ist nicht nur ein Verwaltungsprogramm — Node ist der **Knoten im Netz**. Der Punkt über den alles läuft: Infrastruktur, Identitäten, Verbindungen, Zugriffsrechte.
+
+Node verwaltet:
 
 - **Hosts** — Server die zum Projekt gehören
 - **Services** — Installation und Verwaltung über den [Container App Manager](../container_app/README.md)
 - **S3-Storage** — Eingebauter S3-Server ([Storage-Layer](../../technik/storage.md))
 - **Projekte** — Ein Projekt = eine Gruppe von Hosts + Services + Konfiguration
 - **Einladungen** — Join-Tokens für neue Hosts und Desktop-Clients
+- **VPN** — WireGuard-Verbindungen für mobile Geräte und Remote-Zugriff ([VPN & Netzwerk](../../konzepte/vpn.md))
 - **Föderation** — Beitritt zu und Verwaltung von [Föderationen](../../konzepte/foederation.md)
-- **Netzwerk** — Später: VPN-Verbindungen, öffentlich/privat Topologie
+- **Netzwerk-Topologie** — Wer darf mit wem reden, Routing, Firewall-Regeln
 
 ## Plattformen
 
-| OS | Status |
-|---|---|
-| Linux | ✅ Voll unterstützt (Podman, systemd, Quadlet) |
-| macOS | ⚠️ Später entscheiden (kein systemd) |
-| Windows | ⚠️ Später entscheiden (kein systemd) |
+**Node läuft ausschließlich auf Linux.** Das ist eine bewusste Entscheidung, keine Einschränkung.
 
-Erstmal: Linux only für Node/Container App Manager.
+| OS | Als Node | Als Desktop-Client |
+|---|---|---|
+| Linux | ✅ Voll unterstützt | ✅ |
+| macOS | ❌ (kein systemd) | ✅ |
+| Windows | ❌ (kein systemd) | ✅ |
+| iOS / Android | ❌ | ✅ (später) |
+
+**Warum Linux-only?** Container App Manager braucht Podman + Quadlet + systemd. Nur Linux hat das. Wenn wir irgendwann andere Plattformen unterstützen wollen, ist Node die **einzige Stelle die geändert werden muss** — alle anderen Programme bleiben unberührt.
+
+Für Heimnutzer ohne Linux-Server: [Plattform-Szenarien](../../konzepte/node-plattformen.md)
 
 ## S3-Server (eingebaut)
 
