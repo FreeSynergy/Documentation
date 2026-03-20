@@ -310,20 +310,20 @@ N8. [x] Calendar-Modul (bot-calendar Paket im Store)
     - required_roles = [{ roles = ["tasks"], mode = "ANY" }]
     - Standalone-fähig
 
-N9. [ ] Gruppen-Verwaltung + Filter (im Bot-Programm und BotManager)
+N9. [x] Gruppen-Verwaltung + Filter (im Bot-Programm und BotManager)
     - Gruppen-Import beim Verbinden eines Messenger-Accounts (bis 500 Gruppen)
     - Filter: Größe / Aktivität / Name / Messenger / aktive Module / Bot-Status
     - Manuelle Collections (keine Automatik)
     - Eine Gruppe kann in mehreren Collections sein
     - Bulk-Aktionen auf gefilterte Gruppen oder Collections
 
-N10. [ ] Room-Sync-Modul (bot-room-sync Paket im Store)
+N10. [x] Room-Sync-Modul (bot-room-sync Paket im Store)
     - Räume/Gruppen synchronisieren (gleicher Messenger: vollständig)
     - Nachrichten-Sync cross-Messenger (via fsn-channel)
     - Mitglieder-Sync cross-Messenger nur wenn User in IAM mit allen Konten
     - Standalone-fähig
 
-N11. [ ] BotManager-Programm (FreeSynergy.Managers, bots/)
+N11. [x] BotManager-Programm (FreeSynergy.Managers, bots/)
     - Dashboard: alle Bot-Instanzen mit Status
     - Bot-Instanzen erstellen (Meta → Bot-Typ → Messenger → Steuerung)
     - Fertige Instanz erscheint als eigenes Programm im Desktop (Icon, Name, Widget)
@@ -332,20 +332,20 @@ N11. [ ] BotManager-Programm (FreeSynergy.Managers, bots/)
     - CLI: fsn bot status / broadcast / gatekeeper list / gatekeeper approve <id>
     - Bus-Client: publiziert bot.*, empfängt chat.join_request + bot.status.response
 
-N12. [ ] Desktop-Integration
+N12. [x] Desktop-Integration
     - BotManager als eingebettete App im Desktop (app-botmanager)
     - Jede Bot-Instanz als eigenes Icon im Launcher (app-bot-<name>)
     - Optionales Widget je Instanz (Status, letzte Aktivität, Schnellaktionen)
     - Sidebar-Tab 🤖 Bots → öffnet BotManager
 
-N13. [ ] Store-Integration (bot- und adapter-Pakete)
+N13. [x] Store-Integration (bot- und adapter-Pakete)
     - BotResource + MessengerAdapterResource in fsn-types
     - Store-Verzeichnis: shared/bots/ + shared/messenger-adapters/
     - Store-UI: Bot-Pakete + Adapter-Pakete browsebar (type-Filter)
     - required_roles → Modul inaktiv wenn Rolle fehlt, auto-aktiv wenn Rolle verfügbar
     - bundle-bots-all: installiert alle bot-* Pakete
 
-N14. [ ] Updates (manuell, Automatismus folgt später)
+N14. [x] Updates (manuell, Automatismus folgt später)
     - Updates über Store manuell einspielen (wie alle anderen Pakete)
     - TODO (spätere Phase): Update-Benachrichtigung, One-Click-Update, Rollback,
       Versions-Kompatibilitäts-Check für laufende Instanzen
@@ -501,9 +501,10 @@ Q8. [ ] Alle Stubs/toten Code entfernen
 ✅ Erledigt: L    (Lenses)
 ✅ Erledigt: N1   (fsn-channel Crate — Channel-Trait + 21 Adapter)
 ✅ Erledigt: N2   (MessengerAdapterResource — Store-Paket-Typ)
+✅ Erledigt: N9–N14 (Gruppen-Verwaltung, Room-Sync, BotManager-CLI, Desktop/Store-Integration, Updates)
 
 Prio 1:  M1-M4      Search
-Prio 2:  N3-N14     Bots (BotCommand-Trait, Bot-Kern, Module, BotManager, …)
+Prio 2:  —          Bots vollständig erledigt (N1–N14)
 Prio 3:  O1-O3      Tasks
 Prio 4:  P1-P4      Node (Invite + Federation)
 Prio 5:  R1-R5      Mail (Stalwart-Fork, Multi-Tenant)
