@@ -207,35 +207,38 @@ L3. [x] Lens als Desktop-Icon
     - app_id_to_label: "lenses" → "Lenses"
 ```
 
-## Phase SysInfo: System-Information
+## Phase SysInfo: System-Information ✅
 
 ```
-SysInfo1. [ ] fsn-sysinfo Crate (FreeSynergy.Lib)
+SysInfo1. [x] fsn-sysinfo Crate (FreeSynergy.Lib)
     - OsInfo: OS-Typ (Linux/macOS/Windows), Version, Architektur
-    - FeatureDetect: systemd, PAM, launchd, WindowsServices, Podman, Git, SSH
+    - FeatureDetect: systemd, PAM, launchd, WindowsServices, Podman, Docker, Git, SSH, Smartctl
     - DiskInfo: Partitionen, belegt/frei (on demand)
     - MemInfo: RAM belegt/frei (on demand)
     - ThermalInfo: CPU-Temperatur via ACPI/hwmon (Linux), SMC (macOS) (on demand)
-    - SmartInfo: SMART-Status pro Laufwerk via smartctl (on demand, optional)
+    - SmartInfo: SMART-Status pro Laufwerk via smartctl (on demand, feature="smart")
     - Cache in ~/.config/fsn/sysinfo.toml (statische Daten, 24h Invalidierung)
 
-SysInfo2. [ ] Alerting
+SysInfo2. [x] Alerting
     - SysInfoAlert Enum: DiskFull, CpuHot, SmartError, MemoryFull
-    - Konfigurierbarer Check-Loop (Standard: alle 5 Minuten)
-    - Veröffentlicht auf Bus: sysinfo.alert.disk, sysinfo.alert.cpu, etc.
-    - Thresholds konfigurierbar in Settings
+    - AlertChecker::check_once() → Vec<SysInfoAlert>
+    - Konfigurierbarer Check-Loop via fsn sysinfo --monitor (Standard: 300s)
+    - Veröffentlicht auf Bus: sysinfo.alert.disk, sysinfo.alert.cpu, sysinfo.alert.memory, sysinfo.alert.smart
+    - Thresholds konfigurierbar per CLI-Flags (--disk-threshold, --mem-threshold, --cpu-threshold)
 
-SysInfo3. [ ] Store-Integration (Platform-Feature-Tags)
-    - Store wertet requires:* und platform:* Tags aus
-    - Kombination mit SysInfo::features() bei Installation
-    - Feature ausgegraut/blockiert wenn Voraussetzung fehlt
-    - UI-Anzeige: Badge "Nur auf Linux" / "PAM nicht verfügbar"
+SysInfo3. [x] Store-Integration (Platform-Feature-Tags)
+    - PlatformFilter + OsFamily + RequiredFeature in fsn-types/resources/platform.rs
+    - ResourceMeta.platform: Option<PlatformFilter> (serde default = None)
+    - platform_filter_from_tags() parst platform:linux, requires:systemd, etc.
+    - fsn install: blockiert wenn Voraussetzungen nicht erfüllt (Fehlermeldung mit Liste)
+    - UI-Anzeige: OsFamily::badge() liefert "Linux only" / "macOS only" etc.
 
-SysInfo4. [ ] CLI
-    - fsn sysinfo          → statische Daten
-    - fsn sysinfo --live   → dynamische Daten
-    - fsn sysinfo --refresh → Cache leeren
-    - fsn sysinfo --check <feature> → einzelnes Feature prüfen
+SysInfo4. [x] CLI
+    - fsn sysinfo              → statische Daten (OS, Features) aus Cache
+    - fsn sysinfo --live       → dynamische Daten (Disk, Memory, Temperature)
+    - fsn sysinfo --refresh    → Cache leeren + sofort neu erkennen
+    - fsn sysinfo --check <f>  → einzelnes Feature prüfen
+    - fsn sysinfo --monitor    → kontinuierlicher Alert-Loop mit Bus-Publish
 ```
 
 ## Phase M: Search
@@ -530,6 +533,7 @@ Q8. [ ] Alle Stubs/toten Code entfernen
 ✅ Erledigt: J    (Message Bus)
 ✅ Erledigt: K    (Browser)
 ✅ Erledigt: L    (Lenses)
+✅ Erledigt: SysInfo (System-Information: Crate, Alerting, Store-Integration, CLI)
 ✅ Erledigt: N1   (fsn-channel Crate — Channel-Trait + 21 Adapter)
 ✅ Erledigt: N2   (MessengerAdapterResource — Store-Paket-Typ)
 ✅ Erledigt: N9–N14 (Gruppen-Verwaltung, Room-Sync, BotManager-CLI, Desktop/Store-Integration, Updates)
