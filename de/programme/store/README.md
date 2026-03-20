@@ -319,15 +319,16 @@ fsn store sync --offline
 
 ## GUI — Store-Oberfläche im Desktop
 
-### Drei Haupt-Tabs
+### Drei Haupt-Tabs (Sections)
 
-Die Store-Oberfläche ist in drei Tabs gegliedert — immer sichtbar, unabhängig von der Plattform:
+Die Store-Oberfläche ist in drei Sections gegliedert — immer sichtbar, unabhängig von der Plattform.
+Beim Wechsel zwischen den Sections gleitet der Inhalt animiert rein (Slide + Blur-Effekt, wie bei iOS/Android).
 
-| Tab | Zeigt | Verfügbar wenn |
+| Section | Sidebar-Menü | Zeigt |
 |---|---|---|
-| **Server** | Container-Apps, Bridges — alles was auf dem Node läuft | Immer sichtbar |
-| **Apps** | FreeSynergy-Binaries (Desktop, Browser, ...) | Immer sichtbar |
-| **Desktop** | Widgets, Themes, Sprachen, Bots, Tasks | Immer sichtbar |
+| **Server** | Bundles, Server, Bridges | Container-Apps, Bridges — alles was auf dem Node läuft |
+| **Apps** | Bundles, Apps, Bots, Installiert, Updates | FreeSynergy-Binaries, Bots, Messenger-Adapter |
+| **Desktop** | Bundles, Themes, Widgets, Mauszeiger, Icons, Sprachen, Installiert, Updates | Desktop-Anpassungen |
 
 **Warum immer sichtbar?** Der Store ist ein Katalog — er zeigt was möglich ist, nicht was gerade installiert werden kann. Ein Windows-Nutzer ohne Node soll trotzdem sehen welche Server-Pakete es gibt und was er mit einem Node bekäme.
 
@@ -341,10 +342,13 @@ Die Store-Oberfläche ist in drei Tabs gegliedert — immer sichtbar, unabhängi
 └──────────────────────────────────────────────────────┘
 ```
 
-### Sideboard (Pinned)
+### Sidebar (Menü)
 
-Der unterste Punkt im Sideboard ist **immer** ⚙️ **Einstellungen** (angepinnt). Dieser führt zur Repository-Verwaltung:
+Jede Section hat eine eigene Sidebar. Die Sidebar hat:
+- **Variable Menüpunkte** je nach aktiver Section (z.B. Themes, Widgets, Icons unter Desktop)
+- **Angepinnter Eintrag** ⚙️ **Einstellungen** — immer sichtbar, unabhängig von der Section
 
+Der angepinnte Einstellungen-Eintrag führt zur Repository-Verwaltung:
 - Alle konfigurierten Repositories werden aufgelistet
 - Jedes Repository kann **aktiviert** oder **deaktiviert** werden
 - Repositories können **hinzugefügt** oder **entfernt** werden

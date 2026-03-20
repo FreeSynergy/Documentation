@@ -46,7 +46,7 @@ Pakete definieren selbst, **wo** sie im Sideboard erscheinen (oberer Bereich, Pi
 | 🤖 Bots | Oben | [BotManager](../botmanager/README.md) — Broadcasts senden, Gatekeeper verwalten, Status |
 | 🔍 Lenses | Oben | Informations-Betrachter |
 | 🌐 Browser | Oben | Eingebetteter Web-Browser für Service-UIs |
-| 📦 Store | Oben | Pakete installieren |
+| 📦 Store | Oben | Pakete installieren — 3 Sections: Server, Apps, Desktop |
 | 🔎 Search | Oben | Suche über alle Services |
 | 🔨 Builder | Oben | Resource Builder (Pakete bauen) |
 | ⚙️ Settings | **Pinned** | Themes, Shortcuts, Profil, Layout |

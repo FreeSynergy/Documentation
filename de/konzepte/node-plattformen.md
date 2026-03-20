@@ -141,4 +141,41 @@ Das ist die eigentliche Grenze — nicht das Betriebssystem.
 
 ---
 
+## SystemInfo / SystemContext
+
+**SystemInfo** ist ein schreibgeschütztes Datenobjekt das zur Laufzeit beschreibt, auf welcher Plattform und in welchem Kontext FreeSynergy läuft. Es wird beim Start einmalig erfasst und danach nicht mehr verändert.
+
+```rust
+pub struct SystemInfo {
+    pub os: OsFamily,              // Linux, macOS, Windows
+    pub arch: Arch,                // x86_64, aarch64
+    pub node_available: bool,      // Ist ein lokaler oder remote Node erreichbar?
+    pub node_local: bool,          // Läuft Node auf demselben Gerät?
+    pub platform_variant: PlatformVariant, // Native, Wsl2, PodmanMachine, ...
+}
+
+pub enum OsFamily { Linux, MacOs, Windows }
+pub enum Arch    { X86_64, Aarch64, Other(String) }
+
+pub enum PlatformVariant {
+    Native,        // Echter Linux-Server oder Desktop
+    Wsl2,          // Node in WSL2-VM
+    PodmanMachine, // Node in QEMU-VM auf macOS
+    Container,     // Node läuft selbst in einem Container
+}
+```
+
+**Wofür wird SystemInfo genutzt?**
+
+| Konsument | Nutzen |
+|---|---|
+| Store-GUI | Server-Tab zeigt Hinweis wenn kein Node verfügbar |
+| Desktop | Entscheidet ob Node-spezifische Features angezeigt werden |
+| Container App Manager | Warnt bei eingeschränkten Plattformen (WSL2, PodmanMachine) |
+| Init | Wählt den richtigen Installationspfad |
+
+SystemInfo wird **nicht persistiert** — es wird bei jedem Start neu ermittelt. Programme die plattformspezifisches Verhalten brauchen, lesen SystemInfo einmalig beim Start und handeln entsprechend.
+
+---
+
 Weiter: [VPN & Netzwerk](vpn.md) | [Node](../programme/node/README.md) | [Architektur](../architektur/uebersicht.md)
