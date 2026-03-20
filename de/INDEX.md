@@ -24,6 +24,7 @@ FreeSynergy dreht das um: **Die Information steht im Vordergrund, nicht das Werk
 - [Node](programme/node/README.md) — Der Projektverwalter + S3-Server
 - [Container Manager](programme/container_app/README.md) — Container-Apps verwalten + Build & Publish (Builder ist hier integriert)
 - [Builder](programme/builder/README.md) — **ARCHIVIERT** — Funktionalität jetzt im Container Manager
+- [Language Manager](programme/language/README.md) — Sprache wechseln, Formate, Translation Editor, LLM-Assist
 - [Theme Manager](programme/theme/README.md) — Themes, Farben, Mauszeiger, Fenster-Stil
 - [Icon Manager](programme/icons/README.md) — Icon-Sets verwalten, Repository-Verwaltung, Icon-Picker für alle Programme
 - [Cursor Manager](programme/icons/cursor-manager.md) — Mauszeiger-Sets verwalten, erstellen (manuell + Synthesizer), animierte Cursor
