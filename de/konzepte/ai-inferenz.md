@@ -48,7 +48,7 @@ Beim ersten Start lädt mistral.rs das Modell herunter (~4 GB) und cached es lok
 ### GGUF-Modus (alternativ)
 
 Wer ein bereits heruntergeladenes `.gguf`-File hat:
-- `mistral_model_id` = absoluter Pfad zur Datei (z.B. `/srv/fsn/data/mistral/models/qwen.gguf`)
+- `mistral_model_id` = absoluter Pfad zur Datei (z.B. `~/.local/share/fsn/data/mistral/models/qwen.gguf`)
 - `mistral_isq` = leer lassen
 
 ---
