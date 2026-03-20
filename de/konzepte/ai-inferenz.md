@@ -1,64 +1,67 @@
 # AI-Inferenz (lokale LLMs)
 
-FreeSynergy integriert lokale LLM-Inferenz über **Mistral.rs** — einen nativen Rust-Binary-Service mit OpenAI-kompatibler API. Er läuft direkt auf der Hardware, ohne Container-Overhead.
+FreeSynergy integriert lokale LLM-Inferenz über **Mistral.rs** — einen nativen Rust-Binary mit OpenAI-kompatibler API. Es läuft direkt auf der Hardware, ohne Container-Overhead.
+
+**Wichtig:** Mistral.rs ist eine **App** — installierbar auf jedem System, nicht nur auf FSN-Node-Servern. Dasselbe gilt für alle AI/LLM-Tools: Sie sind eigenständige Programme, die überall laufen können.
 
 ---
 
-## Paket
-
-| Eigenschaft   | Wert                                  |
-|---|---|
-| Store-ID      | `ai/mistral`                          |
-| Typ           | `binary` (kein Container)             |
-| Port          | `1234`                                |
-| API           | OpenAI-kompatibel (`/v1/chat/completions` etc.) |
-| Quelle        | `FreeSynergy/mistral.rs` (Fork von `EricLBuehler/mistral.rs`) |
+## Installation
 
 ```bash
+# Als eigenständige App (überall installierbar)
+fsn store install mistral
+
+# Oder als Hintergrunddienst via FSN Node (empfohlen für Server)
 fsn store install ai/mistral
 ```
 
+| Eigenschaft   | Wert                                  |
+|---|---|
+| Store-ID (App)    | `mistral`                         |
+| Store-ID (Dienst) | `ai/mistral` (Node-Modul)         |
+| Port              | `1234`                            |
+| API               | OpenAI-kompatibel (`/v1/chat/completions` etc.) |
+| Quelle            | `FreeSynergy/mistral.rs` (Fork)   |
+
 ---
 
-## Empfohlene Modelle (CPU, 16 GB RAM)
+## Modell-Empfehlung (CPU, 16 GB RAM)
 
-| Modell                                  | Größe  | Wofür                            |
-|---|---|---|
-| `Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf` | ~4.5 GB | Code schreiben, reviewen, erklären |
-| `Qwen2.5-7B-Instruct-Q4_K_M.gguf`       | ~4.5 GB | Allgemeine Fragen, Dokus, Planung  |
-| `Qwen2.5-Coder-1.5B-Instruct-Q8_0.gguf` | ~1.6 GB | Schnelle Code-Completions          |
+### ISQ-Modus (empfohlen)
 
-Herunterladen von HuggingFace:
-```bash
-# Beispiel: Qwen2.5-Coder-7B herunterladen
-huggingface-cli download bartowski/Qwen2.5-Coder-7B-Instruct-GGUF \
-  Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf \
-  --local-dir /srv/fsn/data/mistral/models/
+mistral.rs lädt das Modell direkt von HuggingFace und quantisiert es **in-memory** (In-Situ Quantization). Kein manueller Download einer `.gguf`-Datei nötig.
+
+| Modell            | ISQ-Typ | RAM     | Geschwindigkeit | Wofür                       |
+|---|---|---|---|---|
+| `Qwen/Qwen3-4B`   | `q4k`   | ~3–4 GB | schnell         | Code, Chat, Übersetzungen   |
+| `Qwen/Qwen3-8B`   | `q4k`   | ~6 GB   | mittel          | Komplexere Aufgaben         |
+
+**Standard-Konfiguration:**
+```
+Model ID: Qwen/Qwen3-4B
+ISQ:      q4k
 ```
 
-Das Modell wird einmalig heruntergeladen und bleibt lokal gespeichert.
+Beim ersten Start lädt mistral.rs das Modell herunter (~4 GB) und cached es lokal. Jeder weitere Start ist sofort.
 
----
+### GGUF-Modus (alternativ)
 
-## Konfiguration
-
-Nach der Installation (`fsn store install ai/mistral`) fragt der Setup-Wizard nach:
-
-- **Model File Path** — Absoluter Pfad zur `.gguf`-Datei
-- **Max Concurrent Sequences** — Standard: `4` (empfohlen für 16 GB RAM)
-- **Domain** — Optional, für Proxy-Zugriff
+Wer ein bereits heruntergeladenes `.gguf`-File hat:
+- `mistral_model_id` = absoluter Pfad zur Datei (z.B. `/srv/fsn/data/mistral/models/qwen.gguf`)
+- `mistral_isq` = leer lassen
 
 ---
 
 ## Start / Stop
 
 ```bash
-fsn start ai/mistral     # starten
+fsn start ai/mistral     # starten (lädt Modell in RAM)
 fsn stop ai/mistral      # stoppen (gibt RAM frei)
 fsn status ai/mistral    # Status anzeigen
 ```
 
-Mistral.rs kann jederzeit gestoppt werden, um RAM freizugeben — z.B. für andere speicherintensive Tasks. Beim nächsten Start lädt es das Modell wieder in den RAM (dauert ~5–15 Sekunden).
+Mistral.rs kann jederzeit gestoppt werden, um RAM freizugeben — z.B. für andere speicherintensive Tasks. Beim nächsten Start dauert das Laden des Modells ~5–20 Sekunden.
 
 ---
 
@@ -69,16 +72,18 @@ Entwickler
    │
    ├── Claude Code (Anthropic API)
    │     └── Wofür: Architektur, komplexe Bugs, neue Features,
-   │                Cross-Repo-Arbeit, unbekannte Probleme
+   │                Cross-Repo-Arbeit, unbekannte Probleme,
+   │                Planung + Konzepte
    │
    └── Mistral.rs (lokal, localhost:1234)
-         └── Wofür: Code-Completions im Editor, kleine Fragen,
-                    Boilerplate, Datei-Erklärungen, Docs-Drafts
+         └── Wofür: Code-Completions im Editor,
+                    Kleine Fragen + Erklärungen,
+                    Boilerplate generieren,
+                    Docs-Drafts, Übersetzungen,
+                    SVGs, Templates
 ```
 
-**Token-Sparregel:**
-- Mistral zuerst für: Dateien lesen/erklären, kleine Fixes, Templates
-- Claude für: Architektur-Entscheidungen, schwierige Bugs, neue Konzepte
+**Prinzip:** Mistral zuerst für alles Kleine → spart Claude-Tokens für das Wesentliche.
 
 ---
 
@@ -90,9 +95,9 @@ Continue.dev in VSCode auf den lokalen Endpunkt zeigen:
 {
   "models": [
     {
-      "title": "Mistral.rs (lokal)",
+      "title": "Qwen3 (lokal)",
       "provider": "openai",
-      "model": "qwen2.5-coder-7b",
+      "model": "qwen3-4b",
       "apiBase": "http://localhost:1234/v1",
       "apiKey": "none"
     }
@@ -104,9 +109,13 @@ Continue.dev in VSCode auf den lokalen Endpunkt zeigen:
 
 ## Build (FSN Fork)
 
-Mistral.rs wird aus unserem eigenen Fork (`FreeSynergy/mistral.rs`) gebaut:
+Mistral.rs wird aus `FreeSynergy/mistral.rs` gebaut:
 
 - CI: `.github/workflows/fsn-build.yml`
-- Targets: Linux x86\_64, Linux aarch64, macOS x86\_64 (Accelerate), macOS aarch64 (Metal), Windows x86\_64
-- Features: CPU-only (`--no-default-features`) + plattformspezifische Hardware-Beschleunigung
-- Release-Tag: `v{version}-cpu` (CPU-Build, CUDA-Builds folgen separat)
+- Targets: Linux x86\_64/aarch64, macOS x86\_64 (Accelerate), macOS aarch64 (Metal), Windows x86\_64
+- Release-Tag: `v{version}-cpu`
+
+```bash
+# Build auslösen:
+git tag v0.7.1 && git push origin v0.7.1
+```
