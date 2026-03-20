@@ -97,7 +97,7 @@ Continue.dev in VSCode auf den lokalen Endpunkt zeigen:
     {
       "title": "Qwen3 (lokal)",
       "provider": "openai",
-      "model": "qwen3-4b",
+      "model": "default",
       "apiBase": "http://localhost:1234/v1",
       "apiKey": "none"
     }
