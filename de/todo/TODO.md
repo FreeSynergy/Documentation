@@ -351,6 +351,15 @@ N14. [ ] Updates (manuell, Automatismus folgt später)
       Versions-Kompatibilitäts-Check für laufende Instanzen
 ```
 
+## Hinweis: Kanidm + Tuwunel als native Apps
+
+Kanidm (IAM) und Tuwunel (Matrix-Server) sind Rust-Projekte und werden **nicht** als Container-Apps
+installiert, sondern als native **FSN-Apps** (fork → kompilieren → als App-Paket verteilen).
+Für beide existieren bereits Upstream-Repos — wir forken, bauen eigene FSN-App-Pakete, und halten
+die Forks per GitHub Actions automatisch mit Upstream synchron.
+
+---
+
 ## Phase O: Tasks
 
 ```
@@ -366,6 +375,108 @@ P1. [ ] Invite-System (Token, verschlüsselte TOML, Port pro Einladung)
 P2. [ ] Federation-Grundstruktur (Domain-Pflicht, Auth-Broker)
 P3. [ ] Rechte-Kaskade (read/write/execute/search, Audit-Log)
 P4. [ ] Föderaler Bus (Bridge-Konfiguration)
+```
+
+## Phase R: Mail-Server (Stalwart-Fork, Multi-Tenant)
+
+```
+Lizenz-Entscheidung:
+  Stalwart ist AGPL-3.0 (open source). Fork ist erlaubt.
+  Enterprise-Features (Multi-Tenancy) sind proprietär/BSL → NICHT kopieren.
+  Wir forken die AGPL-Basis und implementieren Multi-Tenancy selbst.
+  FreeSynergy ist selbst open source → AGPL-Pflicht (Änderungen veröffentlichen) ist kein Problem.
+
+R1. [ ] Stalwart forken (AGPL-Basis, Enterprise-Code entfernen)
+    - Nur AGPL-lizenzierte Dateien behalten
+    - Enterprise-Module entfernen (kein BSL/proprietärer Code)
+    - Als FSN-App-Paket strukturieren
+
+R2. [ ] Multi-Tenancy implementieren
+    - Tenant-Konzept: eine Instanz, mehrere Orgs/Communities
+    - Jeder Tenant hat eigene Domain, eigene Nutzer, gemeinsame Infrastruktur
+    - Tenant-Isolation: Mailboxen, Aliase, Regeln per Tenant getrennt
+    - Admin-Ebenen: Node-Admin (alle Tenants) + Tenant-Admin (eigener Tenant)
+
+R3. [ ] IAM-Integration (Kanidm-Bridge)
+    - Nutzer aus Kanidm automatisch als Mailbox-Nutzer
+    - SSO: Login via Kanidm-Session, kein separates Mail-Passwort
+
+R4. [ ] FSN-App-Paket
+    - AppResource für Stalwart-Fork
+    - Rollen: smtp, imap, jmap
+    - Bridge: smtp_bridge(), imap_bridge() in fsn-bridge/catalog.rs
+
+R5. [ ] GitHub Actions: Auto-Sync mit Stalwart-Upstream
+    - Täglicher Sync-Workflow (nur AGPL-Teile, kein Enterprise)
+    - Bei Konflikten: PR statt direktes Merge
+```
+
+## Phase S: Kontakte & Kalender
+
+```
+Entscheidung: Rustical als Basis (CalDAV + CardDAV in Rust, open source)
+Alternativ: eigene Implementierung auf Basis von `icalendar` + `vcard4` Crates
+
+S1. [ ] Rustical evaluieren (CalDAV + CardDAV)
+    - Lizenz prüfen
+    - Multi-Tenancy-Potential bewerten
+    - Entscheidung: Fork oder eigene Implementierung
+
+S2. [ ] Kontakte-Backend
+    - vCard 4.0 Speicherung (SQLite + S3 für Avatare)
+    - CardDAV-Protokoll (sync mit Clients: DAVx⁵, Thunderbird, etc.)
+    - Gruppen/Org-weite Kontaktbücher
+
+S3. [ ] Kalender-Backend
+    - iCal/CalDAV (sync mit Clients)
+    - `icalendar` Crate für Parsing
+    - Wiederkehrende Termine, Einladungen (iTIP/iMIP)
+    - Bus-Integration: calendar.event.upcoming → Bot-Module (N8)
+
+S4. [ ] IAM-Integration
+    - Nutzer aus Kanidm → automatisch Kalender + Adressbuch
+    - Org-weite geteilte Kalender/Kontaktbücher pro Tenant
+
+S5. [ ] FSN-App-Pakete
+    - contacts-server AppResource (Rolle: contacts)
+    - calendar-server AppResource (Rolle: calendar)
+    - Bridges: contacts_bridge(), calendar_bridge() in fsn-bridge/catalog.rs
+```
+
+## Phase T: Infrastruktur-Apps
+
+```
+T1. [ ] Vaultwarden (Passwort-Manager)
+    - Bitwarden-kompatibler Server in Rust (AGPL)
+    - Als FSN-App-Paket
+    - Rolle: secrets
+    - SSO via Kanidm (OIDC)
+    - Multi-Tenant: Org-Vaults getrennt
+
+T2. [ ] UnifiedPush / Ntfy (Push-Benachrichtigungen)
+    - Ntfy: push notification relay in Go (Apache 2.0)
+    - Alternativ: eigener UnifiedPush-Distributor in Rust
+    - Für Mobile-Apps: Benachrichtigungen ohne Google/Apple
+    - Matrix/Tuwunel-Integration (Mobile-Clients)
+    - Rolle: push
+
+T3. [ ] Element Call / TURN-Server (Video-Calls)
+    - Element Call läuft auf Tuwunel-Matrix-Server
+    - coturn als TURN-Server (für NAT-Traversal)
+    - Beide als FSN-App-Pakete
+    - Keine separate Infrastruktur wenn Tuwunel läuft
+
+T4. [ ] WireGuard (Node-zu-Node VPN)
+    - Nur relevant wenn Nodes über fremde Netzwerke kommunizieren
+    - `wireguard-control` Crate
+    - Automatische Peer-Discovery via Node-Registry
+    - Optional — erst wenn Federation (Phase P) implementiert
+
+T5. [ ] Hickory DNS (Internes DNS / Service Discovery)
+    - Erst nach Federation relevant
+    - Interne Service-Discovery für Node-Netzwerk
+    - Autoritativer DNS für *.node.local-Domains
+    - Öffentliches DNS: weiterhin extern (zu risikoreich selbst zu hosten)
 ```
 
 ## Phase Q: Shortcuts, Menü, Profil, Polish
@@ -400,5 +511,8 @@ Prio 1:  M1-M4      Search
 Prio 2:  N3-N14     Bots (BotCommand-Trait, Bot-Kern, Module, BotManager, …)
 Prio 3:  O1-O3      Tasks
 Prio 4:  P1-P4      Node (Invite + Federation)
-Prio 5:  Q1-Q8      Polish
+Prio 5:  R1-R5      Mail (Stalwart-Fork, Multi-Tenant)
+Prio 6:  S1-S5      Kontakte & Kalender
+Prio 7:  T1-T5      Infrastruktur-Apps (Vault, Push, Video, VPN, DNS)
+Prio 8:  Q1-Q8      Polish
 ```
