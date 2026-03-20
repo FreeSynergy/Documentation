@@ -279,14 +279,14 @@ N4. [x] Bot-Kern (FreeSynergy.Bot)
     - Audit-Log: jede Aktion (User/System, Aktion, Ziel, Ergebnis, UTC-Timestamp)
     - Mitglieder-Interaktion: Menüs / Inline-Tastaturen / DMs je nach Messenger
 
-N5. [ ] Control Bot (bot-control Paket im Store)
+N5. [x] Control Bot (bot-control Paket im Store)
     - Kann andere Bot-Instanzen erstellen
     - Vererbung: gibt Messenger-Accounts + Gruppen + Einstellungen an Kind-Bots weiter
     - Kind-Bots haben keine eigenen Tokens — kommunizieren über Control Bot
     - Kind-Bots arbeiten autonom weiter wenn Control Bot offline (Bus-Events puffern)
     - Control Bot kann auf Logs aller Kind-Bots zugreifen
 
-N6. [ ] Broadcast-Modul (bot-broadcast Paket im Store)
+N6. [x] Broadcast-Modul (bot-broadcast Paket im Store)
     - /subscribe <topic> Command → Subscription in Bus registrieren
     - /unsubscribe <topic> Command
     - /subscriptions Command → Liste aktiver Subscriptions
@@ -294,7 +294,7 @@ N6. [ ] Broadcast-Modul (bot-broadcast Paket im Store)
     - Subscription-Storage: SQLite (group_id, topic, messenger)
     - Standalone-fähig (kein Control Bot nötig)
 
-N7. [ ] Gatekeeper-Modul (bot-gatekeeper Paket im Store)
+N7. [x] Gatekeeper-Modul (bot-gatekeeper Paket im Store)
     - Trigger: chat.join_request → publiziert Event an BotManager
     - /verify <user_id> Command → IAM-Check via Bus (Rolle: iam)
     - /approve <request_id> + /deny <request_id> Commands
@@ -303,7 +303,7 @@ N7. [ ] Gatekeeper-Modul (bot-gatekeeper Paket im Store)
     - required_roles = [{ roles = ["iam"], mode = "ANY" }]
     - Standalone-fähig
 
-N8. [ ] Calendar-Modul (bot-calendar Paket im Store)
+N8. [x] Calendar-Modul (bot-calendar Paket im Store)
     - Bus-Listener: calendar.event.upcoming → postet Erinnerung in Gruppe
     - /termine Command → zeigt kommende Termine aus Desktop-Calendar
     - DM-Erinnerungen an Teilnehmer (wenn Rechte vorhanden)
