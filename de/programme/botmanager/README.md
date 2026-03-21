@@ -1,6 +1,6 @@
 # BotManager — Zentrale Bot-Übersicht
 
-> Lebt in **FreeSynergy.Managers** (`bots/`), Crate: `fsn-manager-bot`.
+> Lebt in **fs-bots** (`bots/`), Crate: `fs-bots`.
 
 [← Zurück zum Index](../../INDEX.md) | [Bots Konzept](../../konzepte/bots.md) | [Manager](../../konzepte/manager.md) | [Desktop](../desktop/README.md)
 
@@ -23,7 +23,7 @@ Eine fertige Instanz erscheint dann als eigenes Programm im Desktop (eigenes Ico
 ```
 Store ←→ BotManager ←→ Desktop (eigene Icons je Instanz)
               ↕
-           Bus → Bots → fsn-channel → Messenger
+           Bus → Bots → fs-channel → Messenger
 ```
 
 ---
@@ -270,9 +270,9 @@ Der BotManager redet **nie direkt** mit Messengern — immer über den Bus:
 | Crate | Zweck |
 |---|---|
 | `dioxus` 0.7.x | UI-Komponenten |
-| `fsn-bus` | Bus-Client |
-| `fsn-inventory` | Welche Bots/Module sind installiert? |
-| `fsn-db` | SQLite (`fsn-botmanager.db`) |
+| `fs-bus` | Bus-Client |
+| `fs-inventory` | Welche Bots/Module sind installiert? |
+| `bot-db` | BotDb Objekt — SeaORM via fs-db |
 
 Messenger-Crates (`grammers`, `matrix-sdk`, `serenity`, ...) gehören zu den jeweiligen Bot-Instanzen,
 nicht zum BotManager.
@@ -281,7 +281,7 @@ nicht zum BotManager.
 
 ## Repo
 
-https://github.com/FreeSynergy/Managers — Unterordner `bots/`
+https://github.com/FreeSynergy/fs-bots — Unterordner `bots/`
 
 ---
 

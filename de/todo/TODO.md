@@ -287,22 +287,35 @@ N2. [x] Messenger-Adapter als Store-Pakete (type = "messenger-adapter")
     - Inventory: services_with_role("chat") liefert aktive Adapter
     - Store-Verzeichnis: shared/messenger-adapters/
 
-N3. [x] BotCommand-Trait (FreeSynergy.Lib)
+N3. [x] BotCommand-Trait (fs-bot Crate in fs-libs)
     - Einheitliche Schnittstelle für alle Bot-Module und Bot-Typen:
         fn name() → &str
         fn description() → &str
         fn required_right() → Right
         fn execute(ctx: CommandContext) → BotResponse
-    - Bot sammelt Befehle aus allen aktiven Modulen automatisch
+    - CommandContext: platform: String, room_id, sender, caller_right: Right, args
+    - BotResponse: Text(String) | Error(String) | Silent
+    - Right: None < Member < Operator < Admin
+    - TriggerHandler-Trait: topics() + async on_event(TriggerEvent) → Vec<TriggerAction>
+    - CommandRegistry::dispatch() prüft caller_right vs required_right automatisch
     - /help generiert sich selbst aus registrierten Befehlen
 
-N4. [x] Bot-Kern (FreeSynergy.Bot)
+N3b. [x] bot-db Crate (fs-bots Workspace)
+    - Gemeinsame Datenbank-Schicht für alle Bot-Sub-Crates
+    - BotDb Objekt (SeaORM + fs-db) mit Repository-Methoden für alle Bot-Domänen
+    - Kein sqlx in Sub-Crates — nur Arc<BotDb> Abhängigkeit
+    - Datenbankwechsel (SQLite→Postgres etc.) = nur fs-db ändern, nie Sub-Crates
+    - Tabellen: audit_log, bot_meta, child_bot, join_request, known_room,
+      poll_state, room_collection, room_collection_member, subscription,
+      sync_rule, sync_message
+
+N4. [x] Bot-Kern (fs-bots Workspace — bots/ Crate)
     - Jede Bot-Instanz läuft als eigener Prozess (eigenes Binary)
     - Runtime: startet, hält Verbindungen zu allen konfigurierten Messengern
     - Module-Loader: lädt bot-Pakete aus Inventory, initialisiert Module
     - Command-Dispatcher: /command → passendes Modul, Rechte-Check (FSN, nicht Messenger)
     - Trigger-Engine: Bus-Events → Modul-Handler aufrufen
-    - Bot-Registry in fsn-botmanager.db
+    - Bot-Registry in BotDb (SQLite via fs-db/SeaORM)
     - Bus-Client: publiziert Events, empfängt Events (bot.*, chat.*, calendar.*)
     - Secrets: Token-Referenzen aus Secrets-Store, nie Klartext
     - Steuerung drei Ebenen:
