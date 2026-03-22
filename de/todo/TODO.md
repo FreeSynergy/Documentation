@@ -241,6 +241,49 @@ SysInfo4. [x] CLI
     - fsn sysinfo --monitor    → kontinuierlicher Alert-Loop mit Bus-Publish
 ```
 
+## Phase OOP: Objekt-System & Manager-Standards ✅
+
+```
+OOP1. [x] Locale-Objekt (fs-i18n/locale.rs)
+    - Zahlen, Floats, Dates, Times, Bytes, Prozent nach aktiver Sprache formatieren
+    - Regeln: Germanisch (. Tausender / , Dezimal), Romanisch, CJK, Koreanisch,
+      Englisch/ISO
+    - I18n::locale() → Locale für die aktive Sprache
+    - Globale fs_i18n::locale() Funktion
+
+OOP2. [x] Manageable-Trait (fs-pkg/manageable.rs)
+    - Pakete beschreiben sich selbst: meta(), run_status(), config_fields(),
+      check_health(), instances(), build_fields(), can_start/stop/persist()
+    - ConfigField mit Typ (Text/Password/Number/Bool/Select/Port/Path/Textarea),
+      Wert, Hilfe-Text (Pflicht), Restart-Flag
+    - RunStatus (Running/Stopped/Starting/Stopping/Error/NotInstalled)
+    - PackageHealth mit einzelnen HealthChecks (pass/fail)
+    - InstanceRef für Sub-Instanzen (Bot/Container)
+
+OOP3. [x] Package-Objekt (fs-pkg/package.rs)
+    - Manifest + InstalledRecord + config_overrides → single source of truth
+    - Manageable-Impl: check_health() prüft config + Datenverzeichnis
+    - set_installed() / set_uninstalled() / set_status()
+
+OOP4. [x] WindowLayout (fs-desktop/crates/fs-shell/window.rs)
+    - SidebarSlot: Left / Right / Hidden
+    - WindowLayout: main_sidebar, help_panel, show_tabbar, show_bottom
+    - Presets: standard() / mirrored() / minimal()
+    - FsWindow::default_layout() + Window::with_layout()
+
+OOP5. [x] ManagerView (fs-desktop/crates/fs-managers/)
+    - Standardisierter Manager für alle Pakete: Info / Config / Builder Tabs
+    - Linke Sidebar: Paketliste mit Drill-down für Sub-Instanzen (Bot/Container)
+    - PackageViewModel::from_manageable() — view model pattern für Dioxus-Props
+    - Config/Builder: alle Felder aus Manageable, mit Hilfe-Text + Restart-Warnung
+
+OOP6. [x] Settings Manager (fs-desktop/crates/fs-settings/)
+    - PackageSettingsView: alle installierten Pakete an einer Stelle konfigurieren
+    - PackageSettingsEntry::from_manageable() — Extraktion aus Trait-Objekt
+    - Suchfilter, Hilfe-Text zu jedem Feld, Warnung bei fehlendem Hilfe-Text
+    - SettingsApp bekommt optionale packages + on_package_save Props
+```
+
 ## Phase M: Search
 
 ```
