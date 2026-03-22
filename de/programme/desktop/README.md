@@ -82,20 +82,42 @@ Desktop läuft auch offline. Für Live-Daten braucht es eine Verbindung zu einem
 
 ## Repo
 
-https://github.com/FreeSynergy/Desktop
+https://github.com/FreeSynergy/fs-desktop
 
-## Bibliotheken
+## Desktop-Crates (fs-desktop/crates/)
 
 | Crate | Zweck |
 |---|---|
-| `dioxus` 0.7.x | UI-Framework (inkl. WebView für Browser) |
-| `fsn-ui` | Komponenten-Bibliothek |
-| `fsn-theme` | Theme-System |
-| `fsn-i18n` | Sprach-Snippets |
-| `fsn-db` | SQLite (fsn-desktop.db) |
-| `fsn-store` | Store-Client |
+| `fs-shell` | Desktop-Shell: Taskbar, Fenstermanager, Sidebar, WindowFrame |
+| `fs-settings` | Einstellungen: Appearance, Language, Rollen, Desktop, Pakete |
+| `fs-managers` | Standardisierter Manager-View (Info/Config/Builder-Tabs) |
+| `fs-store` | Paket-Browser (Store-UI) |
+| `fs-container-app` | Container/Service-Verwaltung |
+| `fs-profile` | Benutzerprofil |
+| `fs-studio` | Plugin/Modul/i18n-Creator |
+| `fs-app` | Haupt-Launcher-Binary |
+
+## Bibliotheken (fs-libs)
+
+| Crate | Zweck |
+|---|---|
+| `dioxus` 0.6.x | UI-Framework (WebView Desktop + WASM) |
+| `fs-components` | Wiederverwendbare UI-Komponenten |
+| `fs-theme` | Theme-System |
+| `fs-i18n` | Sprach-Snippets (Mozilla Fluent) + Locale-Formatierung |
+| `fs-db` | SQLite (fs-desktop.db) |
+| `fs-pkg` | Paket-Typen: Manageable-Trait, Package-Objekt, ConfigField |
+| `fs-store` | Store-Client |
 | `reqwest` | Node-API aufrufen |
+
+## OOP-Prinzipien
+
+- **`Manageable`-Trait:** Jedes Paket beschreibt sich selbst — Status, Felder, Health (→ [Pakete](../../konzepte/pakete.md#manageable-trait))
+- **`FsWindow`-Trait:** Jedes Fenster implementiert FsWindow — einheitliche Titelleiste, konfigurierbare Panels
+- **`WindowLayout`:** Sidebar/Hilfe-Panel Position per Nutzer konfigurierbar
+- **`ManagerView`:** Eine Komponente für alle Pakete — das Paket liefert das WAS, der Manager das WIE
+- **`PackageSettingsView`:** Alle Paket-Einstellungen aggregiert an einem Ort
 
 ---
 
-Weiter: [Browser](../browser/README.md) | [Lenses](../lenses/README.md) | [BotManager](../botmanager/README.md) | [UI-Objekte](../../technik/ui-objekte.md)
+Weiter: [Browser](../browser/README.md) | [Lenses](../lenses/README.md) | [BotManager](../botmanager/README.md) | [Manager](../../konzepte/manager.md) | [UI-Standards](../../konzepte/ui-standards.md)

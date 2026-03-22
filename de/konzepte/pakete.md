@@ -59,6 +59,55 @@ Ein vollständiges Theme = Bundle das je eine dieser Ressourcen referenziert.
 
 **Libraries** (`fsn-*` Crates) sind KEINE eigenständigen Ressourcen. Sie sind Abhängigkeiten die mit den Anwendungen mitkommen. Sie leben in einem shared-Ordner, Git handled das.
 
+## Manageable-Trait — Pakete als selbstbeschreibende Objekte {#manageable-trait}
+
+Jedes installierte Paket implementiert den `Manageable`-Trait (in `fs-pkg/src/manageable.rs`). Das Paket ist selbst verantwortlich für:
+
+| Methode | Was sie liefert |
+|---|---|
+| `meta()` | Name, Version, Beschreibung, Icon, Kategorie, Autor |
+| `package_type()` | App / Container / Bot / Bridge / … |
+| `is_installed()` | Ob das Paket installiert ist |
+| `run_status()` | Running / Stopped / Starting / Stopping / Error / NotInstalled |
+| `config_fields()` | Alle Konfigurationsfelder mit Typ, Wert, Hilfe-Text |
+| `check_health()` | Health-Checks: Konfigurationsdatei vorhanden? Datenverzeichnis existiert? |
+| `apply_config()` | Konfiguration übernehmen (Key-Value-Map) |
+| `instances()` | Sub-Instanzen (für Bot/Container — z.B. mehrere SMTP-Instanzen) |
+| `build_fields()` | Build-Zeit-Felder (für den Builder-Tab) |
+| `can_start()` / `can_stop()` / `can_persist()` | Welche Aktionen gerade möglich sind |
+
+### Package-Objekt
+
+Das `Package`-Struct (in `fs-pkg/src/package.rs`) vereint:
+- `ApiManifest` — Metadaten aus dem Store
+- `InstalledRecord` — Installations-Zustand (Version, Pfad, Status)
+- `config_overrides` — aktive Konfiguration im RAM
+
+Es ist die **einzige Quelle der Wahrheit** für ein Paket. Wer wissen will ob kanidm läuft, fragt `package.run_status()` — nie die Datenbank direkt.
+
+### ConfigField — Felder beschreiben sich selbst
+
+Jedes Konfigurationsfeld gibt an:
+- `key` / `label` — Schlüssel und Anzeigename
+- `help` — **Pflicht-Hilfetext** (fehlt er, wird das im Manager mit Warnung markiert)
+- `kind` — Text / Password / Number / Bool / Select / Port / Path / Textarea
+- `value` — aktueller Wert
+- `required` — Pflichtfeld?
+- `needs_restart` — Neustart nötig nach Änderung?
+
+Der Manager (`ManagerView`) und der Settings Manager (`PackageSettingsView`) lesen diese Felder und rendern daraus eine fertige Oberfläche — ohne paketspezifischen UI-Code.
+
+### HealthCheck
+
+```rust
+// Beispiel: Package::check_health() prüft automatisch:
+// 1. Konfigurationsdatei vorhanden
+// 2. Datenverzeichnis existiert
+// 3. Paket-spezifische Prüfungen (override möglich)
+```
+
+Alle Health-Checks laufen im Info-Tab des Managers auf — grün wenn ok, rot mit Meldung wenn nicht.
+
 ## Paket-Lifecycle
 
 ```

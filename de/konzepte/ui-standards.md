@@ -233,9 +233,20 @@ Wer ein UI-Icon an einer anderen Stelle braucht: erst prüfen ob der Name schon 
 
 ---
 
-## Fenster-Standard (Titelleiste)
+## Fenster-Standard
 
 **Jedes Fenster in FreeSynergy hat dieselbe Titelleiste** — keine Ausnahmen, auch der Desktop selbst nicht.
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ [Icon]          Fenstername (zentriert)   [─] [□] [×]   │
+├─────────┬────────────────────────────────────────────────┤
+│ Sidebar │  [ Tab1 ] [ Tab2 ] [ Tab3 ]                    │
+│ (links) │─────────────────────────────────────────────── │
+│         │  Inhalt                              [?]       │
+│         │                                                │
+└─────────┴────────────────────────────────────────────────┘
+```
 
 | Position | Element |
 |---|---|
@@ -245,20 +256,38 @@ Wer ein UI-Icon an einer anderen Stelle braucht: erst prüfen ob der Name schon 
 
 **Doppelklick auf die Titelleiste:** Maximiert das Fenster, oder stellt die vorherige Größe wieder her.
 
+### WindowLayout — konfigurierbare Panels
+
+Jedes Fenster hat ein `WindowLayout` das bestimmt wo die Panels erscheinen:
+
+| Feld | Bedeutung | Default |
+|---|---|---|
+| `main_sidebar` | Haupt-Sidebar: `Left` / `Right` / `Hidden` | `Left` |
+| `help_panel` | Hilfe-Panel: `Left` / `Right` / `Hidden` | `Right` |
+| `show_tabbar` | Tab-Leiste oben anzeigen | `true` |
+| `show_bottom` | Untere Leiste anzeigen | `false` |
+
+**Vordefinierte Layouts:**
+- `WindowLayout::standard()` — Sidebar links, Hilfe rechts (Standard)
+- `WindowLayout::mirrored()` — Sidebar rechts, Hilfe links (für LTR-User die es umdrehen wollen)
+- `WindowLayout::minimal()` — nur Inhalt, keine Panels
+
+In **Settings → Desktop** kann der Nutzer einstellen, wo Sidebar und Hilfe-Panel erscheinen. Das `FsWindow`-Trait hat eine `default_layout()`-Methode die jedes Programm überschreiben kann.
+
 ---
 
-## Hilfe-Panel (rechts)
+## Hilfe-Panel
 
-**Jedes Fenster hat rechts ein Fragezeichen-Icon.** Wenn der Nutzer mit der Maus auf die rechte Seite fährt (oder auf das Icon klickt), scrollt ein Hilfe-Panel von rechts ins Bild — analog zur Sidebar links.
+**Jedes Fenster hat ein Hilfe-Panel** (standardmäßig rechts). Es zeigt Kontext-sensitive Hilfe-Texte zum aktuellen Tab.
 
-- **Eingeklappt:** Nur das `?`-Icon sichtbar (gleiche Breite wie die eingeklappte Sidebar)
-- **Ausgeklappt:** Scrollbarer Hilfe-Text zum aktuellen Kontext (300ms Animation, identisch zur Sidebar)
-- Der Text kommt aus den Hilfe-Dateien des jeweiligen Programms
+- **Eingeklappt:** Nur das `?`-Icon sichtbar
+- **Ausgeklappt:** Scrollbarer Hilfe-Text (300ms Animation)
+- Der Text kommt aus den Hilfe-Dateien des jeweiligen Programms (`.ftl`-Dateien, Kategorie `help`)
 
 **Jedes Programm ist selbst verantwortlich** für:
-1. Die Hilfe-Inhalte (`.ftl`-Dateien, Kategorie `help`)
-2. Die Übersetzungen dieser Hilfe-Texte
-3. Kontext-sensitive Zuordnung (welcher Panel zeigt welchen Hilfe-Text)
+1. Die Hilfe-Inhalte
+2. Die Übersetzungen
+3. Kontext-sensitive Zuordnung (welcher Tab zeigt welchen Hilfe-Text)
 
 Das `?`-Icon kommt aus dem Standard-Icon-Set: `help.svg`
 
