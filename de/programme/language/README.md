@@ -6,26 +6,45 @@
 
 ## Was der Language Manager tut
 
-Der Language Manager ist das zentrale Stück zwischen gespeicherter Sprachpräferenz, den geladenen Übersetzungsdateien und der laufenden UI.
+Der Language Manager verbindet Sprachpräferenzen, heruntergeladene Übersetzungsdateien und die laufende UI.
 
 Er ist in zwei Teile aufgeteilt:
 
 | Teil | Repo | Zuständigkeit |
 |---|---|---|
-| `fsn-manager-language` | FreeSynergy.Managers | Lesen/Schreiben der Präferenzen, Format-Utilities |
-| `fsd-settings` (LanguageSettings) | FreeSynergy.Desktop | UI: Tab-Struktur, Sprache wechseln, Packs installieren, Übersetzen |
+| `fs-manager-language` | `fs-managers` | Domain-Logik: Präferenzen, Packs, Format-Utilities |
+| `language_panel.rs` | `fs-desktop/crates/fs-managers` | UI: LayoutB (Sidebar + Detail), drei Tabs |
+
+---
+
+## Drei-Schichten-Modell
+
+```
+1. Built-in (Compile-Time)
+   fs-i18n enthält Snippets für "en" und "de" — immer verfügbar, kein Download nötig.
+   Jedes Crate kann via SnippetPlugin eigene Keys hinzufügen.
+
+2. Store Language Packs
+   Pro installiertem Package werden .toml-Dateien für jede abonnierte Sprache gespeichert.
+   Pfad: ~/.local/share/fs/i18n/{package_id}/{lang_code}.toml
+   Registry: ~/.local/share/fs/i18n/registry.toml
+
+3. Abonnements (subscribed_languages)
+   Der User abonniert Sprachen (Standard: ["en", "de"]).
+   Bei jeder Package-Installation werden automatisch Packs für alle abonnierten Sprachen geladen.
+```
 
 ---
 
 ## Datenspeicherung
 
-Alle Sprachpräferenzen landen in einer einzigen Datei:
+### Benutzereinstellungen
 
 ```
-~/.config/fsn/locale_settings.toml
+~/.config/fs/locale_settings.toml
 ```
 
-Beispiel:
+Zwei-Schichten-Merge: Store-Default + Inventory-Override (Union bei `subscribed_languages`).
 
 ```toml
 language = "de"
@@ -34,96 +53,163 @@ date_format = "d_m_y"
 time_format = "h24"
 number_format = "europe_dot"
 auto_update_packs = true
+subscribed_languages = ["de", "en", "fr"]
 ```
 
-- **Schreiben:** `LanguageManager::set_active()` / `LanguageManager::save_settings()`
-- **Lesen:** `LanguageManager::effective_settings()` — Store-Defaults + Inventory-Overrides gemergt
-- **Startup:** `load_active_language()` in fsd-settings liest über `LanguageManager`
+### Pack-Registry
+
+```
+~/.local/share/fs/i18n/registry.toml
+```
+
+Verfolgt alle installierten Language Packs (Sprache, Package-ID, Version, Dateipfad).
+Getrennt von den Benutzereinstellungen, da sie installierte Metadaten enthält.
 
 ---
 
-## API (`fsn-manager-language`)
+## Domain-Typen (`fs-manager-language`)
+
+### `Language`
 
 ```rust
-use fsn_manager_language::{LanguageManager, language_from_code};
+use fs_manager_language::{Language, HasFlag};
+
+let lang = Language::from_code("fr");
+// Verwendet fs_i18n::language_meta() — 50 Sprachen aus LanguageMeta-Registry
+// → Language { id: "fr", display_name: "Français", locale: "fr-FR" }
+
+lang.flag_svg()           // SVG-Markup der Landesflagge (via HasFlag-Trait)
+lang.meta()               // Option<&LanguageMeta> mit Name, Schrift, Familie, Kontinent
+lang.direction_label()    // "Left-to-right" / "Right-to-left"
+```
+
+**`HasFlag`-Trait** (OOP statt freier Funktion):
+```rust
+pub trait HasFlag {
+    fn flag_svg(&self) -> &'static str;
+}
+impl HasFlag for Language { ... }
+```
+
+### `InstalledLanguagePack` + `LanguagePackRegistry`
+
+```rust
+let registry = mgr.registry();
+
+registry.packs_for_lang("de")          // alle Packs für Deutsch
+registry.packs_for_package("fs-store") // alle Packs dieses Packages
+registry.is_installed("fr", "fs-ui")   // bool
+registry.installed_lang_codes()        // Vec<String>
+```
+
+---
+
+## API (`fs-manager-language`)
+
+```rust
+use fs_manager_language::LanguageManager;
 
 let mgr = LanguageManager::new();
 
-// Aktive Sprache lesen
-let lang = mgr.active();          // Language { id: "de", display_name: "Deutsch", locale: "de-DE" }
-
-// Sprache wechseln (schreibt locale_settings.toml)
+// Aktive Sprache
+let lang = mgr.active();
 mgr.set_active("de")?;
 
-// Locale-Settings (nach Merge: Store-Default + User-Override)
+// Abonnements verwalten
+let subs = mgr.subscribed_languages();   // ["en", "de", "fr"]
+mgr.subscribe("fr")?;
+mgr.unsubscribe("fr")?;
+
+// Pack-Verwaltung
+let packs = mgr.installed_packs();
+mgr.is_installed("de", "fs-ui");
+mgr.download_for_package("fs-store")?;  // lädt Packs für alle abonnierten Sprachen
+mgr.download_for_language("fr")?;       // lädt Packs aller installierten Packages für "fr"
+mgr.load_into_i18n("fs-store", &mut i18n); // lädt aktiven Pack in I18n-Instanz
+
+// Verfügbare Sprachen (aktiv + abonniert + installiert + "en")
+let available = mgr.available();
+
+// Locale-Formate
 let s = mgr.effective_settings();
-s.format_date(2026, 3, 20)        // "20.03.2026" / "03/20/2026" / "2026-03-20"
-s.format_time(14, 5)              // "14:05" / "02:05 PM"
-s.format_integer(1_234_567)       // "1.234.567" / "1,234,567" / "1 234 567"
-s.format_decimal(1234.56, 2)      // "1.234,56" / "1,234.56" / "1 234,56"
-
-// Language-Objekt aus Code bauen
-let lang = language_from_code("fr");
-// → Language { id: "fr", display_name: "Français", locale: "fr-FR" }
+s.format_date(2026, 3, 20)      // "20.03.2026" / "03/20/2026"
+s.format_time(14, 5)            // "14:05" / "02:05 PM"
+s.format_integer(1_234_567)     // "1.234.567" / "1,234,567"
+s.format_decimal(1234.56, 2)    // "1.234,56" / "1,234.56"
 ```
-
-Bekannte Sprachen in `language_from_code()`: en, de, fr, es, it, pt, nl, pl, ru, ja, zh, ko, ar.
-Unbekannte Codes werden durchgereicht (id = display_name = locale).
 
 ---
 
-## UI: Drei-Tab-Struktur (`fsd-settings`)
+## UI: LayoutB (Sidebar + Detail)
 
-### Tab 1 — Active Language
+```
+┌──────────────────────────────────────────────────────────┐
+│  [AKTIV]  Deutsch (de)     ×  Abbestellen   Einstellungen│
+│  ──────────────────────────                              │
+│  Abonniert                 │  Info │ Konfiguration │ Übersetzen │
+│  > Deutsch (de)  [AKTIV]   │                              │
+│    English (en)  [Eingebaut│  Name:    Deutsch            │
+│    Français (fr)           │  Eigenname: Deutsch          │
+│  ──────────────────────────│  Schrift: Lateinisch         │
+│  + Abonnieren              │  Familie: Germanisch         │
+│  ──────────────────────────│  Kontinent: Europa           │
+│  ⚙ Datumsformate           │                              │
+│                            │  Pakete: 3 installiert       │
+│                            │  [Fehlende herunterladen]    │
+└──────────────────────────────────────────────────────────┘
+```
 
-- Liste aller installierten Sprachpakete (built-in "en" + PackageRegistry `kind = "language"`)
-- Auswahl + Apply-Button
-- Apply: lädt den Pack aus `~/.local/share/fsn/i18n/{lang}/ui.toml`, schreibt `locale_settings.toml`,
-  schaltet `fsn_i18n` um, schreibt `LangContext`-Signal → Desktop re-rendert
+### Sidebar
 
-**Locale-Formate** (direkt im selben Tab):
+- **AKTIV-Chip** oben — zeigt aktive Sprache mit Flagge
+- **Abonniert-Liste** — alle abonnierten Sprachen, klickbar für Detail
+- **+ Abonnieren** — öffnet `SubscribeView` (50-Sprachen-Suche aus `fs_i18n::all_languages()`)
+- **⚙ Datumsformate** — öffnet `FormatsView` (Datum/Zeit/Zahlenformat global)
+
+### Tab: Info
+
+- Metadaten der ausgewählten Sprache (Name, Eigenname, Schrift, Familie, Kontinent, Schreibrichtung)
+- Liste installierter Packs + "Fehlende herunterladen"-Button
+- "Aktivieren"- / "Abbestellen"-Aktionen
+
+### Tab: Konfiguration
+
+- Datum-, Zeit-, Zahlenformat (Button-Gruppe + Live-Vorschau)
 - Fallback-Sprache (Dropdown)
-- Datum-, Zeit-, Zahlenformat (Button-Gruppe mit Vorschau-Beispiel)
 - Auto-Update-Packs (Checkbox)
+- Speichert sofort via `LanguageManager`
 
-Alle Formate speichern sofort (kein Apply-Button nötig).
+### Tab: Übersetzen (Builder)
 
-### Tab 2 — Install
-
-Direkte Store-Ansicht gefiltert auf `resource_type = "language"`:
-- Download + Registrierung im PackageRegistry
-- Nach Installation sofort in Tab 1 sichtbar
-
-### Tab 3 — Edit / Create
-
-Für Übersetzer und Mitwirkende:
-
-- **GitHub-SSH-Status-Badge** (oben rechts im TranslationEditor):
-  - `✓ GitHub: @username` — SSH-Authentifizierung OK, "Commit & Push" sichtbar
-  - `✕ No SSH key` — nur "Export .toml" verfügbar
+- **GitHub-SSH-Status-Badge** (via `GitContributorCheck::cached()`):
+  - `✓ GitHub: @username` — SSH-Auth OK, "Commit & Push" verfügbar
+  - `✕ No SSH key` — nur Export
   - `… Checking` — läuft im Hintergrund, gecacht 7 Tage
+- Übersetzungseditor-Platzhalter (wird in Phase G vollständig implementiert)
 
-- **TranslationEditor** öffnet als Vollbild-Overlay:
-  - Side-by-Side: EN (readonly) | Zielsprache (editierbar)
-  - Fortschrittsbalken: X / Y Schlüssel übersetzt
-  - Filter: nur fehlende Schlüssel, Schlüssel-Suche
-  - **Export .toml** → `~/Downloads/fsn-{lang}.toml` + lokale Installation
-  - **Commit & Push** (nur mit SSH) → in `~/FreeSynergy.Node` committen und pushen
-    (Pfad überschreibbar mit `FSN_NODE_REPO_PATH`)
+---
 
-#### LLM-Assist
+## LangSwitcher (Taskbar)
 
-Erscheint nur, wenn in den **Service Roles** ein Eintrag mit dem Schlüssel `"llm"` konfiguriert ist
-(`load_role_assignments().get("llm")`).
+Ein `LangSwitcher`-Badge in der System-Tray-Zone der Taskbar:
 
-Bei Klick auf "🤖 AI Translate":
-- Aufklapp-Panel mit Prompt (bis zu 50 fehlende Keys + EN-Referenz, automatisch vorausgefüllt)
-- User kann den Prompt ergänzen (z. B. "Halte technische Begriffe auf Englisch")
-- Sendet an: `http://localhost:1234/v1/chat/completions` (OpenAI-kompatibler Endpunkt via mistral.rs)
-  - Modell wird aus der `llm`-Rollen-Konfiguration gelesen
-- Antwort wird als TOML geparst → Vorschlagsliste
-- Einzelne Vorschläge mit ✓ akzeptieren oder "Accept All"
-- Nichts wird automatisch gespeichert
+```
+[DE]  ← zeigt aktiven Sprachcode, klickbar
+```
+
+Öffnet ein Upward-Dropdown mit allen abonnierten Sprachen.
+Klick auf einen Eintrag ruft `on_switch_lang` auf → `LanguageManager::set_active()`.
+
+```rust
+// In Taskbar einbinden:
+Taskbar {
+    apps: apps,
+    on_launch: handler,
+    active_lang: Some("de".into()),
+    subscribed_langs: vec!["de".into(), "en".into(), "fr".into()],
+    on_switch_lang: Some(switch_handler),
+}
+```
 
 ---
 
@@ -131,20 +217,20 @@ Bei Klick auf "🤖 AI Translate":
 
 Das `LangContext`-Signal (`Signal<String>`) ist der Reaktivitäts-Anker:
 
-1. Apply → `fsn_i18n::set_active_lang()` + `LangContext.write(active_lang)`
-2. `Desktop` liest `LangContext` → subscribed → re-rendert bei Änderung
-3. `data-lang`-Attribut auf `#fsd-desktop` ändert sich → Dioxus-Diff aktualisiert alle inline RSX-Kinder (Header, Sidebar, Taskbar)
-4. App-Fenster, die selbst `use_context::<LangContext>()` lesen, rendern ebenfalls neu
+1. Sprachwechsel → `fs_i18n::set_active_lang()` + `LangContext.write(active_lang)`
+2. `Desktop` liest `LangContext` → re-rendert bei Änderung
+3. `data-lang`-Attribut auf `#fs-desktop` ändert sich → Dioxus-Diff aktualisiert alle Kinder
+4. App-Fenster mit `use_context::<LangContext>()` rendern ebenfalls neu
 
 ---
 
 ## GitContributorCheck
 
-`fsn-manager-language::git_contributor::GitContributorCheck`:
+`fs_manager_language::git_contributor::GitContributorCheck`:
 
 1. Prüft ob `~/.ssh/id_ed25519` (oder ähnliche) existiert
 2. Führt `ssh -T git@github.com` aus → erwartet `"Hi <username>!"`
-3. Cached 7 Tage in `~/.config/fsn/git_contributor.toml`
+3. Cached 7 Tage in `~/.config/fs/git_contributor.toml`
 
 ---
 
