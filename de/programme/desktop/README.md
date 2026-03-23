@@ -80,22 +80,36 @@ Desktop läuft auch offline. Für Live-Daten braucht es eine Verbindung zu einem
 | Windows | ✅ (WebView2) |
 | Android/iOS | ✅ Reiner Client (per Invite verbinden) |
 
-## Repo
+## Repos
 
-https://github.com/FreeSynergy/fs-desktop
+- **Shell:** https://github.com/FreeSynergy/fs-desktop
+- **Apps:** https://github.com/FreeSynergy/fs-apps
 
-## Desktop-Crates (fs-desktop/crates/)
+## Desktop-Crates (fs-desktop/crates/) — Shell & Infrastruktur
 
 | Crate | Zweck |
 |---|---|
 | `fs-shell` | Desktop-Shell: Taskbar, Fenstermanager, Sidebar, WindowFrame |
 | `fs-settings` | Einstellungen: Appearance, Language, Rollen, Desktop, Pakete |
-| `fs-managers` | Standardisierter Manager-View (Info/Config/Builder-Tabs) |
-| `fs-store` | Paket-Browser (Store-UI) |
-| `fs-container-app` | Container/Service-Verwaltung |
 | `fs-profile` | Benutzerprofil |
-| `fs-studio` | Plugin/Modul/i18n-Creator |
+| `fs-db-desktop` | SQLite-Schemas für Desktop + Apps |
 | `fs-app` | Haupt-Launcher-Binary |
+| `fs-showcase` | Komponenten-Galerie (nur Debug-Builds) |
+
+## App-Crates (fs-apps/crates/) — Eigenständige Apps
+
+| Crate | Zweck |
+|---|---|
+| `fs-store-app` | Paket-Browser (Store-UI) |
+| `fs-browser` | Eingebetteter Web-Browser |
+| `fs-lenses` | Aggregierte Cross-Service-Ansichten |
+| `fs-theme-app` | Theme-Manager (Farben, Cursor, Chrome) |
+| `fs-builder` | Container-Builder, Bridge-Builder, i18n-Editor |
+| `fs-tasks` | Task-Manager und Pipeline-Editor |
+| `fs-bots` | Bot-Management-UI |
+| `fs-ai` | KI-Assistent |
+| `fs-container-app` | Container/Service-Verwaltung |
+| `fs-managers` | Vereintes Manager-Panel (Language, Icons, Cursor, Theme, Container) |
 
 ## Bibliotheken (fs-libs)
 
