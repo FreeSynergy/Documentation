@@ -27,23 +27,33 @@ Siehe [Init](../init/README.md).
 
 ---
 
-## Paket-Kategorien und Typen
+## Paket-Typen
 
-Pakete haben eine **Kategorie** (Store-Tab) und einen spezifischen **Typ**:
+Es gibt keine Kategorien (Server/App/Desktop) — nur **Typen**. Jedes Paket hat genau einen Typ. Tags + SysInfo regeln was auf dem aktuellen System installierbar ist.
 
-| Kategorie | Typ | Inhalt | Beispiele |
-|---|---|---|---|
-| `server` | `container` | Container-Service (Podman + Config) | Kanidm, Forgejo, Outline |
-| `server` | `bridge` | Service-zu-Service-Adapter | Forgejo→Matrix |
-| `app` | `app` | FreeSynergy-Binary (Cross-Platform) | Desktop, Init |
-| `desktop` | `widget` | Desktop-Widget | Uhr, System-Info, Nachrichten |
-| `desktop` | `language` | Sprach-Snippets (Mozilla Fluent) | Deutsch, Arabisch |
-| `desktop` | `theme` | Visuelles Theme | Midnight Blue, Nordic |
-| `desktop` | `bot` | Bot-Definition | Broadcast, Gatekeeper |
-| `desktop` | `task` | Automatisierungs-Template | "Docs ins Wiki" |
-| — | `bundle` | Meta-Paket aus beliebigen Paketen | server-minimal, desktop-full |
+| Typ | Inhalt | Beispiele |
+|---|---|---|
+| `app` | Native Binary (Cross-Platform, Rust) | Node, Desktop, Kanidm, Zentinel, Stalwart, Mistral |
+| `bridge` | Service-zu-Service-Adapter | Forgejo→Matrix |
+| `widget` | Desktop-Widget | Uhr, System-Info, Nachrichten |
+| `language` | Sprach-Snippets (Mozilla Fluent) für ein Programm | Deutsch, Arabisch |
+| `theme` | Visuelles Theme (Bundle aus bis zu 8 Theme-Ressourcen) | Midnight Blue, Nordic |
+| `bot` | Bot-Definition | Broadcast, Gatekeeper |
+| `task` | Automatisierungs-Template | "Docs ins Wiki" |
+| `bundle` | Meta-Paket aus beliebigen Paketen | server-minimal, desktop-full |
+| `bootstrap` | Sondertyp: Init-Binary zum Download (kein Install) | fs-init |
 
-**Hinweis:** Libraries (`fsn-*` Crates) sind KEINE eigenständigen Pakete. Sie sind Abhängigkeiten die mit den Anwendungen mitkommen und in einem shared-Ordner leben.
+**Kein `container`-Typ mehr.** Container-Apps (Forgejo, Outline, Matrix, …) werden als natürliche Apps mit Podman/Docker als Runtime betrieben — es sind normale `app`-Pakete. Ob ein Paket Podman braucht, steht in den Tags: `requires:podman`.
+
+**Kanidm, Zentinel, Stalwart, Mistral = `type = "app"`.** Das sind native Rust-Binaries. Kein Container nötig.
+
+**Plattform-Einschränkungen** kommen nicht mehr aus Kategorien, sondern aus Tags + SysInfo:
+- `platform:linux` — nur Linux
+- `platform:linux+macos` — Linux und macOS
+- `requires:podman` — Podman muss installiert sein
+- `requires:systemd` — systemd muss laufen (automatisches Hinweisbanner wenn nicht vorhanden)
+
+**Hinweis:** Libraries (`fs-*` Crates) sind KEINE eigenständigen Pakete. Sie sind Abhängigkeiten die mit den Anwendungen mitkommen.
 
 Details zu Typen und Manifest-Felder: [Pakete](../../konzepte/pakete.md)
 
@@ -323,51 +333,55 @@ fsn store cache clear      # Lokalen Cache vollständig leeren
 
 ## GUI — Store-Oberfläche im Desktop
 
-### Drei Haupt-Tabs (Sections)
+### Ein Catalogue, Type-Sidebar, Filter-Leiste
 
-Die Store-Oberfläche ist in drei Sections gegliedert — immer sichtbar, unabhängig von der Plattform.
-Beim Wechsel zwischen den Sections gleitet der Inhalt animiert rein (Slide + Blur-Effekt, wie bei iOS/Android).
+Es gibt keine Server/App/Desktop-Tabs mehr. Der Store ist ein einziger Catalogue mit:
 
-| Section | Sidebar-Menü | Zeigt |
-|---|---|---|
-| **Server** | Bundles, Server, Bridges | Container-Apps, Bridges — alles was auf dem Node läuft |
-| **Apps** | Bundles, Apps, Bots, Installiert, Updates | FreeSynergy-Binaries, Bots, Messenger-Adapter |
-| **Desktop** | Bundles, Themes, Widgets, Mauszeiger, Icons, Sprachen, Installiert, Updates | Desktop-Anpassungen |
-
-**Warum immer sichtbar?** Der Store ist ein Katalog — er zeigt was möglich ist, nicht was gerade installiert werden kann. Ein Windows-Nutzer ohne Node soll trotzdem sehen welche Server-Pakete es gibt und was er mit einem Node bekäme.
-
-**Server-Tab ohne Node-Verbindung:**
 ```
-┌──────────────────────────────────────────────────────┐
-│  Für Server-Apps wird ein Node (Linux) benötigt.     │
-│  Mehr erfahren →  [Node einrichten]                  │
-│                                                      │
-│  [Pakete werden dennoch angezeigt — nur read-only]   │
-└──────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  [Typ-Sidebar]   [Suchefeld]   [Repo ▼] [Status ▼] [Tags ▼]   │
+├──────────┬──────────────────────────────────────────────────────┤
+│  Alle    │                                                      │
+│  App     │   Paketliste                                         │
+│  Bridge  │   (Grid oder Liste, je nach Einstellung)            │
+│  Widget  │                                                      │
+│  Theme   │                                                      │
+│  Sprache │                                                      │
+│  Bot     │                                                      │
+│  Task    │                                                      │
+│  Bundle  │                                                      │
+│  ──────  │                                                      │
+│  Init    │                                                      │
+│  ──────  │                                                      │
+│  Settings│                                                      │
+└──────────┴──────────────────────────────────────────────────────┘
 ```
 
-### Sidebar (Menü)
+**Init** ist ein Sonderfall in der Sidebar — kein installierbares Paket, nur ein Download-Eintrag (siehe [Init-Download-Eintrag](#init-download-eintrag)).
 
-Jede Section hat eine eigene Sidebar. Die Sidebar hat:
-- **Variable Menüpunkte** je nach aktiver Section (z.B. Themes, Widgets, Icons unter Desktop)
-- **Angepinnter Eintrag** ⚙️ **Einstellungen** — immer sichtbar, unabhängig von der Section
+**Beim Wechsel** zwischen Typen gleitet der Inhalt animiert rein (Slide + Blur-Effekt).
 
-Der angepinnte Einstellungen-Eintrag führt zur Repository-Verwaltung:
+### Filter-Leiste
+
+Die Filter-Leiste sitzt oben, immer sichtbar:
+
+| Filter | Optionen |
+|---|---|
+| **Suche** | Freitext — sucht in Name, Beschreibung, Tags |
+| **Repo** | Alle Repositories / nur Repo X / nur Repo Y |
+| **Status** | Alle / Installiert / Nicht installiert / Aktualisierbar |
+| **Tags** | Multi-Select — klickbare Tag-Chips; Kombination möglich |
+| **Platform** | Alle / Linux / macOS / Windows (blendet inkompatible aus) |
+
+Filter kombinieren sich: `Typ=App` + `Status=Installiert` + `Tag=rust` zeigt nur installierte Rust-Apps.
+
+### Repositories (Settings)
+
+Der angepinnte **Settings**-Eintrag in der Sidebar führt zur Repository-Verwaltung:
 - Alle konfigurierten Repositories werden aufgelistet
 - Jedes Repository kann **aktiviert** oder **deaktiviert** werden
 - Repositories können **hinzugefügt** oder **entfernt** werden
 - **Ausnahme:** Das Haupt-Repository (`freesynergy-main`) kann nur deaktiviert, aber **nicht gelöscht** werden
-
-### Status-Filter (innerhalb eines Tabs)
-
-Innerhalb jedes Tabs gibt es vier Status-Filter:
-
-| Filter | Zeigt |
-|---|---|
-| **Alle** | Alle verfügbaren Pakete dieses Typs |
-| **Installiert** | Nur installierte Pakete |
-| **Verfügbar** | Pakete die noch nicht installiert sind |
-| **Aktualisierbar** | Installierte Pakete für die eine neue Version vorliegt |
 
 ### Icons
 
@@ -385,8 +399,8 @@ Ein **Pfeil oben links** (← Zurück) führt von der Detailansicht zurück zur 
 ### Installations-Feedback
 
 Nach einer Installation erscheint ein einfaches **Popup**:
-- ✅ Installation erfolgreich
-- ❌ Installation fehlgeschlagen
+- Installation erfolgreich
+- Installation fehlgeschlagen
 
 Kein Konfigurations-Zwischenschritt, keine weiteren Dialoge. Fertig.
 
@@ -396,7 +410,7 @@ Die Detailansicht zeigt alle relevanten Informationen zu einem Paket — schön 
 
 | Bereich | Inhalt |
 |---|---|
-| **Header** | Icon, Name, Version, Typ-Badge, Kurzebeschreibung |
+| **Header** | Icon, Name, Version, Typ-Badge, Kurzbeschreibung |
 | **Vollständigkeit** | Ist das Paket vollständig? Sind alle Pflichtfelder gesetzt? (Icon, Beschreibung, Tags, Signatur, i18n, …) |
 | **Sprachen** | Welche Sprachdateien (.ftl) sind enthalten? Liste der unterstützten Sprachen |
 | **Icon** | Vorschau des Paket-Icons |
@@ -412,6 +426,92 @@ Für Pakete vom Typ `bundle` zeigt die Detailansicht zusätzlich:
 - Liste aller **enthaltenen Pakete** (inkl. Icons und Kurzbeschreibung)
 - Liste der **optionalen Pakete**
 - Jedes Paket in der Liste ist **anklickbar** → öffnet die Detailansicht des jeweiligen Pakets
+
+---
+
+## Init-Download-Eintrag
+
+Init (`type = "bootstrap"`) ist **kein installierbares Paket**. Es ist der Bootstrap-Einstiegspunkt — das Binary das man braucht bevor der Store existiert. Deshalb wird es im Store als Download-Seite angeboten, nicht als normales Paket.
+
+In der Sidebar erscheint "Init" als eigener Eintrag unterhalb der Typen. Die Ansicht zeigt:
+- Kurzbeschreibung was Init ist
+- Download-Buttons je Plattform + Architektur
+- Alle verfügbaren Versionen (falls ein Repository nicht alle anbietet, wird das angezeigt)
+
+### Manifest `[bootstrap]`-Block
+
+```toml
+[package]
+id = "fs-init"
+name = "FreeSynergy Init"
+version = "0.3.0"
+type = "bootstrap"
+description = "Bootstrap-Binary — installiert den Store auf einem neuen Gerät"
+icon = "freesynergy-init"
+tags = ["bootstrap", "init", "installer"]
+author = "FreeSynergy"
+license = "AGPL-3.0"
+protected = true
+
+[bootstrap]
+# Welche Versionen dieses Repository anbietet
+versions = ["0.3.0", "0.2.1", "0.2.0"]
+
+# Download-URLs je Plattform (Template: {version} wird ersetzt)
+[bootstrap.downloads]
+linux-x86_64   = "https://github.com/FreeSynergy/fs-init/releases/download/v{version}/fs-init-x86_64-linux"
+linux-aarch64  = "https://github.com/FreeSynergy/fs-init/releases/download/v{version}/fs-init-aarch64-linux"
+macos-x86_64   = "https://github.com/FreeSynergy/fs-init/releases/download/v{version}/fs-init-x86_64-macos"
+macos-aarch64  = "https://github.com/FreeSynergy/fs-init/releases/download/v{version}/fs-init-aarch64-macos"
+windows-x86_64 = "https://github.com/FreeSynergy/fs-init/releases/download/v{version}/fs-init-x86_64-windows.exe"
+```
+
+Der Store liest `[bootstrap.versions]` und zeigt einen Download-Button je Plattform. Bietet ein Repository nur bestimmte Versionen an, werden nur diese gelistet.
+
+---
+
+## Geschützte Pakete
+
+Manche Pakete können **nicht deinstalliert** werden — sie dürfen nur aktualisiert werden. Das Flag `protected = true` im Manifest verhindert das Löschen.
+
+| Paket | Warum geschützt |
+|---|---|
+| `fs-store` | Store kann sich nicht selbst löschen |
+| `fs-init` (Bootstrap-Eintrag) | Einstiegspunkt muss immer abrufbar sein |
+
+Versucht der Nutzer ein geschütztes Paket zu deinstallieren, erscheint ein Hinweis: "Dieses Paket ist für den Betrieb von FreeSynergy erforderlich und kann nicht deinstalliert werden."
+
+---
+
+## Sprachdateien pro Paket
+
+Jedes Paket bringt seine eigenen Sprachdateien mit — es gibt keine separaten "Sprachpakete für Node" oder "Sprachpakete für Desktop". Die `.ftl`-Dateien sind Teil des Pakets selbst.
+
+```
+fs-node/
+└── i18n/
+    ├── en/          ← Pflicht (Fallback)
+    │   └── node.ftl
+    ├── de/
+    │   └── node.ftl
+    └── ar/
+        └── node.ftl
+```
+
+**Sprach-Pakete** (`type = "language"`) sind ausschließlich für **Shared Snippets** — allgemeine Strings die von mehreren Programmen genutzt werden: Aktionen (`save`, `cancel`, `delete`), Status (`loading`, `error`, `success`), Bestätigungen, Zeitangaben.
+
+```
+shared-snippets/
+└── i18n/
+    ├── en/
+    │   └── shared.ftl   ← "save = Save", "cancel = Cancel", ...
+    └── de/
+        └── shared.ftl   ← "save = Speichern", "cancel = Abbrechen", ...
+```
+
+Jedes Programm kann auf Shared Snippets zugreifen — ohne sie neu definieren zu müssen.
+
+**Language Manager** (`fs-manager-language`) wird **lazy** installiert — erst wenn das erste Sprachpaket installiert wird. Englisch ist eingebaut (Fallback), braucht keinen Manager.
 
 ---
 

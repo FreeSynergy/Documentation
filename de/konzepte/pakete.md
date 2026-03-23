@@ -4,39 +4,27 @@
 
 ---
 
-## Store-Kategorien
+## Paket-Typen
 
-Der Store trennt Pakete in drei Ober-Kategorien. Diese Trennung ist sichtbar im Store-UI (drei Tabs) und im Manifest (`category`-Feld):
+Es gibt keine Kategorien (Server/App/Desktop). Jedes Paket hat genau einen **Typ**. Rust-Enum: `ResourceType` in `fs-types/src/resources/meta.rs`.
 
-| Kategorie | Läuft auf | Beispiele |
-|---|---|---|
-| **`server`** | Node (Linux, dauerhaft) | Kanidm, Forgejo, Matrix, Outline |
-| **`app`** | Gerät des Menschen (jede Plattform) | FreeSynergy Desktop, Browser |
-| **`desktop`** | Desktop-Oberfläche | Widgets, Themes, Sprachpakete |
+| Typ | Rust-Variant | Inhalt | Beispiele |
+|---|---|---|---|
+| `app` | `App` | Native Binary (Cross-Platform, Rust) | Node, Desktop, Kanidm, Zentinel, Stalwart, Mistral |
+| `bridge` | `Bridge` | Service-zu-Service-Adapter | Forgejo→Matrix |
+| `widget` | `Widget` | Desktop-Widget | Uhr, System-Info |
+| `language` | `Language` | Shared Snippets (Mozilla Fluent) | Deutsch, Japanisch |
+| `theme` | `Theme` | Visuelles Theme | Midnight Blue, Nordic |
+| `bot` | `Bot` | Bot-Definition | Broadcast, Gatekeeper |
+| `task` | `Task` | Automatisierungs-Template | "Docs ins Wiki" |
+| `bundle` | `Bundle` | Meta-Ressource, fasst beliebige Pakete zusammen | server-minimal, desktop-full |
+| `bootstrap` | `Bootstrap` | Sondertyp: Init-Binary zum Download (kein Install) | fs-init |
 
-**Warum drei Kategorien?**
-- `server` braucht einen laufenden Node (Linux) — darf nicht auf Desktop-Geräten installiert werden
-- `app` läuft auf jedem Betriebssystem — Cross-Platform
-- `desktop` sind UI-Komponenten — Widgets haben nichts mit allgemeinen Apps zu tun
+**Kein `container`-Typ.** Pakete die Podman/Docker nutzen sind normale `app`-Pakete mit `requires:podman`-Tag. Ob ein Paket auf dem aktuellen System installierbar ist, entscheiden Tags + SysInfo — nicht die Kategorie.
 
----
+**`language`-Pakete** sind ausschließlich für **Shared Snippets** (allgemeine Strings wie `save`, `cancel`, `error`). Jedes Programm bringt seine eigenen `.ftl`-Dateien mit — keine separaten Sprachpakete pro Programm.
 
-## Ressource-Typen
-
-Innerhalb der Kategorien gibt es spezifische **Typen**. Rust-Enum: `ResourceType` in `fsn-types/src/resources/meta.rs`.
-
-| Kategorie | Typ | Rust-Variant | Inhalt | Beispiele |
-|---|---|---|---|---|
-| `server` | `container` | `Container` | Container-Service (Podman + Config) | Kanidm, Forgejo, Outline |
-| `server` | `bridge` | `Bridge` | Service-zu-Service-Adapter | Forgejo→Matrix |
-| `app` | `app` | `App` | FreeSynergy-Binary (Cross-Platform) | Desktop, Init |
-| `desktop` | `widget` | `Widget` | Desktop-Widget | Uhr, System-Info |
-| `desktop` | `language` | `Language` | Sprach-Snippets (Mozilla Fluent) | Deutsch, Japanisch |
-| `desktop` | `bot` | `Bot` | Bot-Definition | Broadcast, Gatekeeper |
-| `desktop` | `task` | `Task` | Automatisierungs-Template | "Docs ins Wiki" |
-| — | `bundle` | `Bundle` | Meta-Ressource, fasst beliebige Ressourcen zusammen | server-minimal, desktop-full |
-
-**Bundles** können Pakete aus mehreren Kategorien zusammenfassen (z.B. `server-minimal` enthält Server-Pakete + das Node-Binary).
+**Bundles** fassen beliebige Pakete zusammen.
 
 **Theme-Ressourcen** gehören zur Kategorie `desktop` und sind selbst Bundles aus bis zu 8 Theme-Teilpaketen:
 
@@ -143,8 +131,7 @@ Jedes Paket MUSS haben:
 - `id` (einzigartiger Name, KEIN Typ-Prefix)
 - `name` (Anzeigename)
 - `version` (SemVer, aus Git-Tag)
-- `category` (server, app, desktop) — Ober-Kategorie für Store-UI-Tabs
-- `type` (container, app, widget, language, bot, bridge, task, bundle) — spezifischer Typ
+- `type` (app, bridge, widget, language, theme, bot, task, bundle, bootstrap) — Paket-Typ
 - `description` (Kurzbeschreibung)
 - `tags` (für Suche — muss aussagekräftig sein; inkl. `platform:*` und `requires:*` Tags)
 - `icon` (SVG oder Icon-Name; PFLICHT, wenn fehlt → generisches Icon)
@@ -156,20 +143,20 @@ Jedes Paket MUSS haben:
 Der Installationspfad wird **nicht im Manifest angegeben**, sondern vom Store deterministisch abgeleitet:
 
 ```
-{base_dir}/{category}/{type}/{id}/{id}-{version}/
+{base_dir}/{type}/{id}/{id}-{version}/
 ```
 
 Beispiele:
 
-| Paket | Kategorie | Typ | Pfad |
-|---|---|---|---|
-| kanidm 1.5.0 | server | container | `/opt/freesynergy/server/container/kanidm/kanidm-1.5.0/` |
-| desktop 0.8.0 | app | app | `~/.local/share/freesynergy/app/app/desktop/desktop-0.8.0/` |
-| midnight-blue 1.0.0 | desktop | bundle | `~/.local/share/freesynergy/desktop/bundle/midnight-blue/midnight-blue-1.0.0/` |
+| Paket | Typ | Pfad |
+|---|---|---|
+| kanidm 1.5.0 | app | `{base_dir}/app/kanidm/kanidm-1.5.0/` |
+| desktop 0.8.0 | app | `{base_dir}/app/desktop/desktop-0.8.0/` |
+| midnight-blue 1.0.0 | bundle | `{base_dir}/bundle/midnight-blue/midnight-blue-1.0.0/` |
 
-**`base_dir` ist konfigurierbar:**
-- Server-Pakete (category = `server`): Standard `/opt/freesynergy/`
-- User-Pakete (category = `app`, `desktop`): Standard `~/.local/share/freesynergy/`
+**`base_dir` ist ein einziger konfigurierbarer Pfad** (Settings → Install Path). Standard: `/opt/freesynergy/` auf Linux, `~/.local/share/freesynergy/` auf anderen Plattformen.
+
+**Pfad ändern:** Wenn der Nutzer den Install Path ändert, verschiebt der Store alle installierten Pakete automatisch (`mv {old_base}/* {new_base}/`) und aktualisiert die Pfade im Inventory.
 
 Das Inventory (SQLite) kennt den vollen Pfad jedes installierten Pakets. Programme die wissen müssen wo ein anderes Paket installiert ist, fragen das Inventory — nie den Pfad selbst ableiten.
 
