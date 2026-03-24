@@ -17,7 +17,8 @@ Es gibt keine Kategorien (Server/App/Desktop). Jedes Paket hat genau einen **Typ
 | `language` | `Language` | Shared Snippets (Mozilla Fluent) | Deutsch, Japanisch |
 | `bot` | `Bot` | Bot-Definition | Broadcast, Gatekeeper |
 | `task` | `Task` | Automatisierungs-Template | "Docs ins Wiki" |
-| `bundle` | `Bundle` | Meta-Ressource, fasst beliebige Pakete zusammen | server-minimal, desktop-full |
+| `bundle` | `Bundle` | Meta-Ressource, fasst beliebige Pakete zusammen — **Root-Level** (kein Unterverzeichnis von `packages/`) | Zentinel (Proxy + Control Plane) |
+| `theme` | `Theme` | Bundle-Unterart mit fester Design-Struktur — **Root-Level** (`themes/`) | Midnight Blue, Nordic Dark |
 | `bootstrap` | `Bootstrap` | Sondertyp: Init-Binary zum Download (kein Install) | fs-init |
 | `repo` | `Repo` | Store-Repository-Quelle — Installation registriert neue Paketquelle | freesynergy-community |
 | `icon_set` | `IconSet` | SVG-Icon-Sammlung — kann Default-Set überschreiben, shareable | freesynergy-default |
@@ -28,13 +29,23 @@ Es gibt keine Kategorien (Server/App/Desktop). Jedes Paket hat genau einen **Typ
 
 **`language`-Pakete** sind ausschließlich für **Shared Snippets** (allgemeine Strings wie `save`, `cancel`, `error`). Jedes Programm bringt seine eigenen `.ftl`-Dateien mit. Wenn eine Sprache aktiviert wird, koordiniert das Store-Objekt die i18n-Sammlung: Es fragt das Inventory nach allen installierten Paketen und holt deren programm-spezifische Übersetzungen — denn nur Store + Inventory wissen was installiert ist.
 
-**Bundles** fassen beliebige Pakete zusammen.
+**Bundles** und **Themes** sind keine Pakete im normalen Sinn — sie **enthalten keine Binaries**, sondern referenzieren andere Pakete per ID. Deshalb leben sie im Store **nicht unter `packages/`**, sondern im Root-Verzeichnis:
 
-**Theme-Ressourcen** gehören zur Kategorie `desktop` und sind selbst Bundles aus bis zu 8 Theme-Teilpaketen:
+```
+bundles/    ← generische Bundles (type = "bundle")
+themes/     ← Design-Bundles (type = "theme")
+packages/   ← alle anderen Pakete
+```
+
+Das Store-Objekt löst Bundle-Komponenten bei Bedarf auf und zeigt dem Benutzer Links zu den Einzelpaketen. Die Help-Dateien eines Bundles können über FTL-Variablen (`{ $link-paketname }`) auf Einzelpakete verweisen.
+
+`is_bundle()` → gibt `true` für `Bundle` **und** `Theme` (beide sind Root-Level-Bundles).
+
+**Theme-Ressourcen** (einzeln ladbar) — ein Theme-Bundle referenziert diese:
 
 ### Theme-Ressourcen (einzeln ladbar)
 
-Ein **Theme** ist kein einzelner Typ, sondern ein **Bundle** aus bis zu 8 Theme-Ressourcen:
+Ein **Theme** (`type = "theme"`) ist ein Bundle-Unterart mit **fester Struktur** — maximal 8 Theme-Ressourcen:
 
 | Typ | Rust-Variant | Inhalt |
 |---|---|---|

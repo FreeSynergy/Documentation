@@ -40,7 +40,8 @@ Es gibt keine Kategorien (Server/App/Desktop) — nur **Typen**. Jedes Paket hat
 | `language` | Shared Snippets (Mozilla Fluent) | Deutsch, Arabisch |
 | `bot` | Bot-Definition | Broadcast, Gatekeeper |
 | `task` | Automatisierungs-Template | "Docs ins Wiki" |
-| `bundle` | Meta-Paket aus beliebigen Paketen | server-minimal, desktop-full |
+| `bundle` | Meta-Paket aus beliebigen Paketen — Root-Level (`bundles/`) | Zentinel |
+| `theme` | Bundle-Unterart: feste Design-Struktur — Root-Level (`themes/`) | Midnight Blue |
 | `bootstrap` | Sondertyp: Init-Binary zum Download (kein Install) | fs-init |
 | `repo` | Store-Repository-Quelle — Installation registriert neue Paketquelle | freesynergy-community |
 | `icon_set` | SVG-Icon-Sammlung — kann Default-Set überschreiben, shareable | freesynergy-default |
@@ -60,64 +61,53 @@ Details zu Typen und Manifest-Felder: [Pakete](../../konzepte/pakete.md)
 
 ---
 
-## Bundles (Meta-Pakete)
+## Bundles und Themes (Root-Level)
 
-Bundles sind mehr als dnf groups — sie sind **rekursiv komponierbar** und können Pakete, andere Bundles und Capabilities referenzieren. Damit werden sie zu einer Art "Distribution" für FreeSynergy.
+Bundles und Themes sind **keine Pakete** im normalen Sinn — sie enthalten keine Binaries, sondern referenzieren andere Pakete per ID. Sie leben im Store **außerhalb von `packages/`**:
 
-    [package]
-    id   = "server"
-    name = "Server"
-    type = "bundle"
-    tags = ["server", "node", "iam", "proxy"]
+```
+bundles/          ← type = "bundle"  (generisch)
+themes/           ← type = "theme"   (feste Design-Struktur)
+packages/         ← alle anderen Pakettypen
+```
 
-    # Konkrete Pakete (mit optionalem Version-Pin)
-    [[bundle.packages]]
-    id      = "fs-node"
-    version = ">=0.5.0"
+### Bundle (`type = "bundle"`)
 
-    [[bundle.packages]]
-    id      = "zentinel"
-    version = "1.2.3"
-    pin     = true      # darf nicht gelöscht werden solange Bundle aktiv
+Ein Bundle installiert mehrere Pakete auf einmal. Die Komponenten werden als ID-Referenzen in `[bundle]` aufgeführt:
 
-    # Abstrakte Capabilities (welches Paket das erfüllt, ist egal)
-    [[bundle.capabilities]]
-    name = "iam"
+```toml
+[package]
+id   = "zentinel"
+type = "bundle"
 
-    [[bundle.capabilities]]
-    name = "database.postgres"
+[bundle]
+[[bundle.components]]
+id = "zentinel"
 
-    # Andere Bundles (rekursiv!)
-    [[bundle.bundles]]
-    name = "management-tools"
+[[bundle.components]]
+id = "zentinel-control-plane"
+```
 
-    [[bundle.bundles]]
-    name = "monitoring"
+Das Store-Objekt löst die IDs auf, lädt die Einzel-Kataloge und zeigt dem Benutzer Links zu den Komponentenpaketen. FTL-Beschreibungen können mit `{ $link-zentinel }` auf Komponenten verweisen.
 
-    # Optional
-    [[bundle.optional]]
-    id = "forgejo"
+### Theme (`type = "theme"`)
 
-Ein Starter-Bundle für Anfänger referenziert einfach andere Bundles:
+Ein Theme ist ein Bundle-Unterart mit fester Struktur: es referenziert Design-Ressourcen (ColorScheme, Style, IconSet, FontSet, CursorSet, ButtonStyle, WindowChrome, AnimationSet). Nicht alle müssen vorhanden sein.
 
-    [package]
-    id   = "starter"
-    name = "Starter"
-    type = "bundle"
+```toml
+[package]
+id   = "midnight-blue"
+type = "theme"
 
-    [[bundle.bundles]]
-    name = "server"
+[bundle]
+[[bundle.components]]
+id = "midnight-blue-colors"   # type = color_scheme
 
-    [[bundle.bundles]]
-    name = "desktop-full"
+[[bundle.components]]
+id = "midnight-blue-style"    # type = style
+```
 
-    [[bundle.bundles]]
-    name = "essentials"
-
-**Version-Pins:** `pin = true` blockiert das Löschen der gepinnten Version.
-Erst wenn kein aktives Bundle mehr pinnt, kann sie entfernt werden.
-
-Details: [Capabilities](../../konzepte/capabilities.md)
+Details: [Pakettypen](../../konzepte/pakete.md)
 
 ---
 
