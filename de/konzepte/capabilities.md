@@ -33,9 +33,10 @@ Das ist **Dependency Injection auf Paket-Ebene** — Services sind austauschbar,
 Ein Container-Paket das andere Dienste braucht:
 
     [package]
-    id   = "outline"
-    name = "Outline"
-    type = "container"
+    id      = "outline"
+    name    = "Outline"
+    type    = "container"
+    summary = "Collaborative wiki and knowledge base with OIDC login"
 
     [provides]
     capabilities = ["wiki", "wiki.create-page", "wiki.search", "wiki.api"]

@@ -33,24 +33,25 @@ Es gibt keine Kategorien (Server/App/Desktop) — nur **Typen**. Jedes Paket hat
 
 | Typ | Inhalt | Beispiele |
 |---|---|---|
-| `app` | Native Binary (Cross-Platform, Rust) | Node, Desktop, Kanidm, Zentinel, Stalwart, Mistral |
+| `app` | Native Rust-Binary (Cross-Platform) | Node, Desktop, Browser, Kanidm, Zentinel, Stalwart, Mistral |
+| `container` | Container-App — runtime-agnostisch (Podman oder Docker) | Forgejo, Postgres, Outline, CryptPad |
 | `bridge` | Service-zu-Service-Adapter | Forgejo→Matrix |
 | `widget` | Desktop-Widget | Uhr, System-Info, Nachrichten |
-| `language` | Sprach-Snippets (Mozilla Fluent) für ein Programm | Deutsch, Arabisch |
-| `theme` | Visuelles Theme (Bundle aus bis zu 8 Theme-Ressourcen) | Midnight Blue, Nordic |
+| `language` | Shared Snippets (Mozilla Fluent) | Deutsch, Arabisch |
 | `bot` | Bot-Definition | Broadcast, Gatekeeper |
 | `task` | Automatisierungs-Template | "Docs ins Wiki" |
 | `bundle` | Meta-Paket aus beliebigen Paketen | server-minimal, desktop-full |
 | `bootstrap` | Sondertyp: Init-Binary zum Download (kein Install) | fs-init |
+| `repo` | Store-Repository-Quelle — Installation registriert neue Paketquelle | freesynergy-community |
+| `icon_set` | SVG-Icon-Sammlung — kann Default-Set überschreiben, shareable | freesynergy-default |
 
-**Kein `container`-Typ mehr.** Container-Apps (Forgejo, Outline, Matrix, …) werden als natürliche Apps mit Podman/Docker als Runtime betrieben — es sind normale `app`-Pakete. Ob ein Paket Podman braucht, steht in den Tags: `requires:podman`.
+**`app` vs. `container`:**
+- `app` = natives Rust-Binary, kein Container-Runtime nötig: Kanidm, Stalwart, Zentinel, Mistral
+- `container` = läuft als Container-Image: Forgejo, Postgres, Outline — kein `requires:podman`-Tag nötig, der Node erkennt die verfügbare Runtime (Podman oder Docker) automatisch
 
-**Kanidm, Zentinel, Stalwart, Mistral = `type = "app"`.** Das sind native Rust-Binaries. Kein Container nötig.
-
-**Plattform-Einschränkungen** kommen nicht mehr aus Kategorien, sondern aus Tags + SysInfo:
+**Plattform-Einschränkungen** über Tags + SysInfo:
 - `platform:linux` — nur Linux
 - `platform:linux+macos` — Linux und macOS
-- `requires:podman` — Podman muss installiert sein
 - `requires:systemd` — systemd muss laufen (automatisches Hinweisbanner wenn nicht vorhanden)
 
 **Hinweis:** Libraries (`fs-*` Crates) sind KEINE eigenständigen Pakete. Sie sind Abhängigkeiten die mit den Anwendungen mitkommen.
@@ -187,20 +188,34 @@ Unterstützte Algorithmen:
 
 ```toml
 [package]
-id = "kanidm"                   # Eindeutiger Name (KEIN Typ-Prefix!)
-name = "Kanidm"                 # Anzeigename
-version = "1.5.0"               # SemVer, aus Git-Tag
-type = "container"              # app, container, bundle, language, theme, ...
-description = "Modern identity management"
-icon = "kanidm"                 # SVG oder Icon-Name (PFLICHT)
-tags = ["iam", "oidc", "scim", "mfa", "webauthn", "identity", "rust"]
-author = "Kanidm Project"
+id      = "kanidm"              # Eindeutiger Name (KEIN Typ-Prefix!)
+name    = "Kanidm"              # Anzeigename
+version = "1.4.2"               # SemVer, aus Git-Tag
+type    = "app"                 # app, container, bundle, language, bot, task, bridge,
+                                # widget, bootstrap, repo, icon_set
+summary = "Identity and access management — OAuth2, OIDC, LDAP, SCIM, WebAuthn"
+                                # max 255 Zeichen — Store-Karte, Suchergebnisse
+icon    = "icon.svg"            # SVG-Datei (PFLICHT)
+tags    = ["iam", "oidc", "scim", "mfa", "webauthn", "identity", "rust"]
+author  = "Kanidm Project / FreeSynergy Fork"
 license = "MPL-2.0"
-homepage = "https://kanidm.com"
-source = "https://github.com/FreeSynergy/fs-store"
 ```
 
-**Jedes Paket ist ein Objekt** mit Icon und Metadaten. Überall wo ein Paket angezeigt wird (Store, Desktop, Container Manager, Settings) sieht man Icon, Name, Version, Tags.
+Zusätzlich empfohlen:
+```toml
+description      = "Kanidm is a modern IAM server..."   # mittellang, für Detailansicht
+description_file = "help/en/description.ftl"            # lang, internationalisierbar
+```
+
+### Drei Beschreibungsebenen
+
+| Feld | Max | Wo |
+|---|---|---|
+| `summary` | 255 Zeichen | Store-Karte, Suchergebnisse, Sidebar |
+| `description` | frei | Store-Detailansicht (inline im Catalog) |
+| `description_file` | — | `.ftl`-Datei — Doku, Help-Seiten, internationalisierbar |
+
+**Jedes Paket ist ein Objekt** mit Icon und Metadaten. Überall wo ein Paket angezeigt wird sieht man Icon, Name, Version, Tags.
 
 Jedes Paket MUSS ein Icon haben. Kein Icon → generisches Icon für den Typ.
 
@@ -212,14 +227,15 @@ Tags sind das **primäre Suchinstrument**. Schlechte Tags = Paket unsichtbar.
 
 | Pakettyp | Tag-Regeln |
 |---|---|
-| `container` | Alle Rollen + Unterrollen + kompatible Standards |
-| `language` | Sprach-Code, Region, Anwendungs-ID |
-| `theme` | Farb-Namen, Stil |
+| `app` | Funktion, Plattform, `platform:linux` etc. |
+| `container` | Rollen, Unterrollen, kompatible Standards |
+| `language` | Sprach-Code, Region |
 | `widget` | Funktion, Datenquelle |
 | `bot` | Plattform, Funktion |
 | `task` | Quell-Service, Ziel-Service, Funktion |
-| `app` | Funktion, Plattform |
 | `bundle` | Enthaltene Pakete, Zweck |
+| `icon_set` | Stil, Farbe, Autor |
+| `repo` | Betreiber, Vertrauensstufe |
 
 ### Filter-Kombinationen
 
@@ -269,8 +285,7 @@ Pakete können Abhängigkeiten deklarieren:
 
 ```toml
 [dependencies]
-fsn-node = ">= 0.5.0"
-fsn-container-app = ">= 0.3.0"
+fs-node = ">= 0.5.0"
 
 [optional-dependencies]
 kanidm = ">= 1.4.0"     # Empfohlen, aber nicht Pflicht
@@ -498,33 +513,31 @@ Versucht der Nutzer ein geschütztes Paket zu deinstallieren, erscheint ein Hinw
 
 ## Sprachdateien pro Paket
 
-Jedes Paket bringt seine eigenen Sprachdateien mit — es gibt keine separaten "Sprachpakete für Node" oder "Sprachpakete für Desktop". Die `.ftl`-Dateien sind Teil des Pakets selbst.
+Jedes Paket bringt seine eigenen Sprachdateien mit — die `.ftl`-Dateien sind Teil des Pakets selbst:
 
 ```
-fs-node/
-└── i18n/
+packages/apps/kanidm/
+└── help/
     ├── en/          ← Pflicht (Fallback)
-    │   └── node.ftl
+    │   ├── description.ftl   ← lange Paket-Beschreibung
+    │   ├── overview.ftl      ← Hilfe-Übersicht im Manager
+    │   └── fields.ftl        ← Feldbeschreibungen für Konfiguration
     ├── de/
-    │   └── node.ftl
+    │   ├── description.ftl
+    │   ├── overview.ftl
+    │   └── fields.ftl
     └── ar/
-        └── node.ftl
+        └── ...
 ```
 
-**Sprach-Pakete** (`type = "language"`) sind ausschließlich für **Shared Snippets** — allgemeine Strings die von mehreren Programmen genutzt werden: Aktionen (`save`, `cancel`, `delete`), Status (`loading`, `error`, `success`), Bestätigungen, Zeitangaben.
+Wenn eine Sprache aktiviert wird, koordiniert das **Store-Objekt** die i18n-Sammlung: Es fragt das **Inventory** nach allen installierten Paketen und holt deren `.ftl`-Dateien — denn nur Store + Inventory wissen was installiert ist. Jedes Programm kennt keine anderen Programme; der Store ist der Koordinator.
+
+**Sprach-Pakete** (`type = "language"`) sind ausschließlich für **Shared Snippets** — allgemeine Strings die von allen Programmen genutzt werden: Aktionen (`save`, `cancel`, `delete`), Status (`loading`, `error`, `success`), Bestätigungen, Zeitangaben.
 
 ```
-shared-snippets/
-└── i18n/
-    ├── en/
-    │   └── shared.ftl   ← "save = Save", "cancel = Cancel", ...
-    └── de/
-        └── shared.ftl   ← "save = Speichern", "cancel = Abbrechen", ...
+packages/i18n/de/
+└── shared.ftl   ← "save = Speichern", "cancel = Abbrechen", ...
 ```
-
-Jedes Programm kann auf Shared Snippets zugreifen — ohne sie neu definieren zu müssen.
-
-**Language Manager** (`fs-manager-language`) wird **lazy** installiert — erst wenn das erste Sprachpaket installiert wird. Englisch ist eingebaut (Fallback), braucht keinen Manager.
 
 ---
 
@@ -619,48 +632,86 @@ Source-Build (Fallback):
     → klont Repo → cargo build --release → wie oben
 ```
 
-### catalog.toml — Zwei Ebenen
+### catalog.toml — Drei Ebenen
 
-**Root `catalog.toml`** — App-Pakete (Binaries) mit GitHub Release-URLs:
+Der Store ist in drei Ebenen aufgebaut. Jede Ebene hat eine `catalog.toml`:
+
+```
+Store/
+├── catalog.toml                         ← Ebene 1: Namespace-Index + Store-Metadaten
+├── icon.svg
+├── init/
+│   └── catalog.toml                     ← Bootstrap-Paket (type = "bootstrap")
+└── packages/
+    ├── apps/catalog.toml                ← Ebene 2: Namespace-Catalog
+    │   ├── node/catalog.toml            ← Ebene 3: Paket-Catalog (fs-node)
+    │   ├── kanidm/catalog.toml          ← Ebene 3: Paket-Catalog
+    │   └── ...
+    ├── containers/catalog.toml
+    │   ├── forgejo/catalog.toml
+    │   └── ...
+    ├── widgets/catalog.toml
+    ├── themes/catalog.toml
+    ├── i18n/catalog.toml
+    ├── icons/catalog.toml               ← Icon-Sets
+    ├── repos/catalog.toml               ← Store-Repository-Quellen
+    ├── bots/catalog.toml
+    ├── tasks/catalog.toml
+    ├── bridges/catalog.toml
+    └── bundles/catalog.toml
+```
+
+**Ebene 1 — Root `catalog.toml`** beschreibt welche Namespaces es gibt. Der Store-Client liest das beim Start um die Sidebar aufzubauen:
 
 ```toml
+[catalog]
+id      = "freesynergy-store"
+name    = "FreeSynergy Store"
+icon    = "icon.svg"
+summary = "The official FreeSynergy package registry"
+
+[[namespaces]]
+id      = "init"
+catalog = "init/catalog.toml"
+
+[[namespaces]]
+id      = "apps"
+catalog = "packages/apps/catalog.toml"
+
+[[namespaces]]
+id      = "containers"
+catalog = "packages/containers/catalog.toml"
+# … weitere Namespaces
+```
+
+**Ebene 2 — Namespace-Catalog** (`packages/apps/catalog.toml`) listet die Pakete im Namespace:
+
+```toml
+[catalog]
+id      = "apps"
+name    = "Applications"
+icon    = "icon.svg"
+summary = "Native Rust applications — the core of FreeSynergy"
+
 [[packages]]
-id      = "node"
+id      = "kanidm"
+catalog = "kanidm/catalog.toml"
+```
+
+**Ebene 3 — Paket-Catalog** (`packages/apps/kanidm/catalog.toml`) ist die vollständige Paket-Beschreibung (was früher `manifest.toml` hieß):
+
+```toml
+[package]
+id      = "kanidm"
+name    = "Kanidm"
 type    = "app"
-version = "0.1.0"
-repo    = "https://github.com/FreeSynergy/fs-node"
-
-[packages.distribution]
-linux-x86_64  = "https://github.com/FreeSynergy/fs-node/releases/download/v{version}/fsn-node-x86_64-linux.tar.gz"
-linux-aarch64 = "https://github.com/FreeSynergy/fs-node/releases/download/v{version}/fsn-node-aarch64-linux.tar.gz"
-# ... weitere Plattformen
+version = "1.4.2"
+summary = "Identity and access management — OAuth2, OIDC, LDAP, SCIM, WebAuthn"
+icon    = "icon.svg"
+tags    = ["iam", "oidc", "oauth2", "ldap", "scim", "webauthn"]
 ```
 
-**Namespace-Catalogs** — Je Deployment-Namespace eine eigene `catalog.toml`:
-
-```
-fs-store/
-├── catalog.toml          ← Root: App-Pakete (Binaries) mit GitHub Release-URLs
-├── node/catalog.toml     ← Server-Pakete: native Binaries + Container (kanidm, tuwunel, …)
-├── shared/catalog.toml   ← Plattformübergreifend: Themes, Widgets, Sprachpakete
-├── apps/catalog.toml     ← Standalone-Apps: fs-node, fs-desktop, fs-browser, mistral
-└── desktop/catalog.toml  ← Desktop-Manager-Pakete: fs-managers
-```
-
-Beispiel `node/catalog.toml`:
-
-```toml
-[[packages]]
-id          = "kanidm"
-name        = "Kanidm"
-kind        = "native"
-category    = "iam"
-version     = "1.5.0"
-icon        = "packages/apps/node/kanidm/icon.svg"
-path        = "packages/apps/node/kanidm"
-```
-
-Binaries werden **nie** im Store-Repo gespeichert. Jedes Programm hat ein eigenes GitHub-Repo und veröffentlicht Binaries über GitHub Releases wenn ein Git-Tag gepusht wird (`git tag v0.5.0 && git push --tags`).
+Binaries werden **nie** im Store-Repo gespeichert — nur Metadaten + Referenzen zu GitHub Releases.
 
 ---
 
@@ -682,28 +733,52 @@ Features die noch nicht implementiert sind, aber zum Store-Konzept gehören:
 
 ## Verzeichnisstruktur
 
-    fs-store/
-    ├── catalog.toml           ← Root-Catalog: App-Pakete (Binaries) mit GitHub Release-URLs
-    ├── node/
-    │   └── catalog.toml       ← Server-Pakete: native Binaries + Container-Definitionen
-    ├── shared/
-    │   └── catalog.toml       ← Plattformübergreifend: Themes, Widgets, Sprachpakete (50+ Sprachen)
-    ├── apps/
-    │   └── catalog.toml       ← Standalone-Apps: fs-node, fs-desktop, fs-browser, mistral
-    ├── desktop/
-    │   └── catalog.toml       ← Desktop-Manager-Pakete: fs-managers
-    ├── packages/
-    │   ├── apps/
-    │   │   └── node/          ← Manifeste: kanidm, tuwunel, stalwart, zentinel, mistral, …
-    │   ├── containers/        ← Manifeste: forgejo, outline, postgres, dragonfly, cryptpad, …
-    │   ├── widgets/           ← Manifeste: clock, weather, system-info, messages, …
-    │   ├── themes/            ← Manifeste: midnight-blue, cloud-white, nordic-dark
-    │   ├── bots/              ← Bot-Definitionen
-    │   └── i18n/             ← Sprachpaket-Manifeste (am, ar, bg, … yue)
-    ├── bundles/               ← Bundle-Definitionen (zentinel-bundle, …)
-    └── .github/
-        └── workflows/
-            └── validate.yml   ← CI: Manifest-Integrität + Pfad-Validierung
+    Store/
+    ├── README.md
+    ├── catalog.toml               ← Ebene 1: Namespace-Index + Store-Metadaten
+    ├── icon.svg
+    ├── init/                      ← Bootstrap-Sonderpaket (type = "bootstrap")
+    │   ├── catalog.toml
+    │   ├── icon.svg
+    │   └── help/en|de/description.ftl
+    └── packages/
+        ├── apps/                  ← Native Rust-Binaries
+        │   ├── catalog.toml
+        │   ├── node/              ← fs-node App-Paket
+        │   ├── kanidm/            ← alle anderen Apps flach
+        │   ├── stalwart/
+        │   ├── tuwunel/
+        │   ├── zentinel/
+        │   ├── zentinel-control-plane/
+        │   ├── mistral/
+        │   └── browser/
+        ├── containers/            ← Container-Apps (Podman/Docker-agnostisch)
+        │   ├── catalog.toml
+        │   ├── forgejo/
+        │   ├── postgres/
+        │   └── ...
+        ├── widgets/               ← Desktop-Widgets
+        ├── themes/                ← Visuelle Themes (Bundles aus Theme-Ressourcen)
+        ├── i18n/                  ← Shared Snippets (save, cancel, error, …)
+        ├── icons/                 ← Icon-Sets (type = "icon_set", überschreibbar)
+        ├── repos/                 ← Store-Repository-Quellen (type = "repo")
+        ├── bots/                  ← Bot-Definitionen
+        ├── tasks/                 ← Automatisierungs-Templates
+        ├── bridges/               ← Service-Bridges
+        └── bundles/               ← Meta-Pakete
+
+    Jedes Paket-Verzeichnis enthält:
+        {name}/
+        ├── catalog.toml           ← Vollständige Paket-Beschreibung (war: manifest.toml)
+        ├── icon.svg
+        ├── help/
+        │   ├── en/
+        │   │   ├── description.ftl  ← lange Beschreibung (für Doku)
+        │   │   ├── overview.ftl
+        │   │   └── fields.ftl
+        │   └── de/
+        │       └── ...
+        └── templates/             ← Konfigurationsvorlagen (nur wenn nötig)
 
 ---
 

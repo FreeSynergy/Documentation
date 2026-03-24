@@ -11,6 +11,20 @@
 
 ---
 
+## Phase N0: matrix-sdk State Store (Blocker: fs-db Postgres-Migration)
+
+```
+N0. [ ] matrix-sdk PostgreSQL State Store implementieren
+    - matrix-sdk 0.16 hat keinen offiziellen Postgres-Store (nur SQLite, Sled, In-Memory)
+    - Erst wenn fs-db vollständig auf Postgres migriert ist (sea-orm postgres feature)
+    - Dann: eigenen StateStore-Trait-Impl auf sea-orm/sqlx-postgres Basis
+    - Bis dahin: matrix-sdk läuft mit In-Memory-Store (fs-channel matrix feature)
+    - Kein sqlx-sqlite-Konflikt solange In-Memory genutzt wird
+    - Bekannter Bug: matrix feature → recursion overflow in rustc ≥1.94 (matrix-sdk 0.16 upstream)
+```
+
+---
+
 ## Phase M: Search
 
 ```

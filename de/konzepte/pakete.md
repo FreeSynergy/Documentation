@@ -10,19 +10,23 @@ Es gibt keine Kategorien (Server/App/Desktop). Jedes Paket hat genau einen **Typ
 
 | Typ | Rust-Variant | Inhalt | Beispiele |
 |---|---|---|---|
-| `app` | `App` | Native Binary (Cross-Platform, Rust) | Node, Desktop, Kanidm, Zentinel, Stalwart, Mistral |
+| `app` | `App` | Native Rust-Binary (Cross-Platform) | Node, Desktop, Browser, Kanidm, Zentinel, Stalwart, Mistral |
+| `container` | `Container` | Container-App — läuft mit Podman **oder** Docker (runtime-agnostisch) | Forgejo, Postgres, Outline, CryptPad |
 | `bridge` | `Bridge` | Service-zu-Service-Adapter | Forgejo→Matrix |
 | `widget` | `Widget` | Desktop-Widget | Uhr, System-Info |
 | `language` | `Language` | Shared Snippets (Mozilla Fluent) | Deutsch, Japanisch |
-| `theme` | `Theme` | Visuelles Theme | Midnight Blue, Nordic |
 | `bot` | `Bot` | Bot-Definition | Broadcast, Gatekeeper |
 | `task` | `Task` | Automatisierungs-Template | "Docs ins Wiki" |
 | `bundle` | `Bundle` | Meta-Ressource, fasst beliebige Pakete zusammen | server-minimal, desktop-full |
 | `bootstrap` | `Bootstrap` | Sondertyp: Init-Binary zum Download (kein Install) | fs-init |
+| `repo` | `Repo` | Store-Repository-Quelle — Installation registriert neue Paketquelle | freesynergy-community |
+| `icon_set` | `IconSet` | SVG-Icon-Sammlung — kann Default-Set überschreiben, shareable | freesynergy-default |
 
-**Kein `container`-Typ.** Pakete die Podman/Docker nutzen sind normale `app`-Pakete mit `requires:podman`-Tag. Ob ein Paket auf dem aktuellen System installierbar ist, entscheiden Tags + SysInfo — nicht die Kategorie.
+**`container` vs. `app`:**
+- `app` = natives Rust-Binary (kompiliert, kein Container-Runtime nötig): Kanidm, Stalwart, Zentinel, Mistral
+- `container` = läuft als Container-Image: Forgejo, Postgres, Outline — kein `requires:podman`-Tag nötig, der Node erkennt die verfügbare Runtime automatisch
 
-**`language`-Pakete** sind ausschließlich für **Shared Snippets** (allgemeine Strings wie `save`, `cancel`, `error`). Jedes Programm bringt seine eigenen `.ftl`-Dateien mit — keine separaten Sprachpakete pro Programm.
+**`language`-Pakete** sind ausschließlich für **Shared Snippets** (allgemeine Strings wie `save`, `cancel`, `error`). Jedes Programm bringt seine eigenen `.ftl`-Dateien mit. Wenn eine Sprache aktiviert wird, koordiniert das Store-Objekt die i18n-Sammlung: Es fragt das Inventory nach allen installierten Paketen und holt deren programm-spezifische Übersetzungen — denn nur Store + Inventory wissen was installiert ist.
 
 **Bundles** fassen beliebige Pakete zusammen.
 
@@ -45,7 +49,7 @@ Ein **Theme** ist kein einzelner Typ, sondern ein **Bundle** aus bis zu 8 Theme-
 
 Ein vollständiges Theme = Bundle das je eine dieser Ressourcen referenziert.
 
-**Libraries** (`fsn-*` Crates) sind KEINE eigenständigen Ressourcen. Sie sind Abhängigkeiten die mit den Anwendungen mitkommen. Sie leben in einem shared-Ordner, Git handled das.
+**Libraries** (`fs-*` Crates) sind KEINE eigenständigen Ressourcen. Sie sind Abhängigkeiten die mit den Anwendungen mitkommen. Sie leben im Monorepo `fs-libs`, Git handled das.
 
 ## Manageable-Trait — Pakete als selbstbeschreibende Objekte {#manageable-trait}
 
@@ -131,10 +135,22 @@ Jedes Paket MUSS haben:
 - `id` (einzigartiger Name, KEIN Typ-Prefix)
 - `name` (Anzeigename)
 - `version` (SemVer, aus Git-Tag)
-- `type` (app, bridge, widget, language, theme, bot, task, bundle, bootstrap) — Paket-Typ
-- `description` (Kurzbeschreibung)
-- `tags` (für Suche — muss aussagekräftig sein; inkl. `platform:*` und `requires:*` Tags)
-- `icon` (SVG oder Icon-Name; PFLICHT, wenn fehlt → generisches Icon)
+- `type` (app, container, bridge, widget, language, bot, task, bundle, bootstrap, repo, icon_set)
+- `summary` (max 255 Zeichen — Store-Karte, Suchergebnisse; fehlt oder > 255 → `Incomplete`)
+- `description` (mittellang, inline im Catalog — Store-Detailansicht; fehlt → `Broken`)
+- `description_file` (Pfad zur `.ftl`-Datei — `help/en/description.ftl`; fehlt → `Broken`)
+- `tags` (für Suche — muss aussagekräftig sein; inkl. `platform:*`-Tags)
+- `icon` (SVG-Datei; PFLICHT, fehlt → `Broken`)
+
+### Drei Beschreibungsebenen (alle Pflicht)
+
+| Feld | Max | Wo | Übersetzbar |
+|---|---|---|---|
+| `summary` | 255 Zeichen | Store-Karte, Suchergebnisse, Sidebar | Über i18n-System |
+| `description` | frei | Store-Detailansicht (inline im Catalog) | Über i18n-System |
+| `description_file` | — | Pfad zu `help/en/description.ftl` — Doku, Help-Seiten | Ja — `.ftl` je Sprache |
+
+Wenn ein Paket kein `description` oder kein `description_file` hat, wird es mit `ValidationStatus::Broken` markiert und kann nicht installiert werden. Fehlende Übersetzungen fallen auf `en` zurück.
 
 **Jedes Paket ist ein Objekt.** Überall wo es angezeigt wird sieht man Icon, Name, Version, Tags.
 
@@ -234,7 +250,7 @@ Details: [Store](../programme/store/README.md#paket-signierung)
 
 ```toml
 [dependencies]
-fsn-node = ">= 0.5.0"
+fs-node = ">= 0.5.0"
 
 [optional-dependencies]
 kanidm = ">= 1.4.0"
