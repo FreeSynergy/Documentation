@@ -44,6 +44,7 @@ FreeSynergy dreht das um: **Die Information steht im Vordergrund, nicht das Werk
 - [Inventory](konzepte/inventory.md) — Die lokale Wahrheit: **Store = möglich | Inventory = installiert | Managers = das Wie**
 - [Rechte-Kaskade](konzepte/rechte.md) — Rechte können nur abnehmen
 - [Message Bus](konzepte/bus.md) — Pub/Sub, Rollen-basiert, Bridges
+- [Bus-API Namespaces](konzepte/bus-api-namespaces.md) — Standardisierte Capability-Adressen (installer::packages::...), Vertragsregeln, Master-Liste
 - [Föderation](konzepte/foederation.md) — Zusammenarbeit zwischen Projekten
 - [Pakete](konzepte/pakete.md) — Store-Paket-System: Kategorien (Server/App/Desktop), Typen, Versionierung
 - [Node-Plattformen](konzepte/node-plattformen.md) — Linux-only Entscheidung, Szenarien (Pi, VPS, WSL2, macOS)
