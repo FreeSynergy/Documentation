@@ -1,6 +1,6 @@
 # TODO-Liste
 
-[← Zurück zum Index](../INDEX.md) | [Bugs](BUGS.md)
+[← Zurück zum Index](../INDEX.md) | [Bugs & TODOs](TODO.md)
 
 **Regeln:**
 - Jeder Punkt wird KOMPLETT umgesetzt. Keine Stubs.

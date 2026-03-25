@@ -62,6 +62,7 @@ FreeSynergy dreht das um: **Die Information steht im Vordergrund, nicht das Werk
 - [Storage-Layer (S3)](technik/storage.md) — Eigener S3-Server, opendal, Profiles
 - [Datenspeicherung](technik/datenspeicherung.md) — SQLite-Architektur
 - [Bibliotheken](technik/bibliotheken.md) — Welche Crates wofür
+- [Typen-System](technik/typen.md) — FsValue, FsUrl, LanguageCode, SemVer, FsPort, FsTag, TagLibrary, LanguageProvider
 - [CSS-System](technik/css.md) — CSS-Variablen, Prefixing, Themes
 - [UI-Objekt-System](technik/ui-objekte.md) — FsnObject: Fenster, Widgets, Modals
 - [Installation](technik/installation.md) — Init → Store → Alles
@@ -70,4 +71,4 @@ FreeSynergy dreht das um: **Die Information steht im Vordergrund, nicht das Werk
 
 ### TODO
 - [Aktuelle TODO-Liste](todo/TODO.md) — Was gemacht werden muss
-- [Bekannte Bugs](todo/BUGS.md) — Was kaputt ist
+- [TODO & Bekannte Bugs](todo/TODO.md) — Roadmap, offene TODOs und bekannte Bugs

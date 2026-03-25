@@ -217,24 +217,47 @@ Details: [i18n-Technik](../technik/i18n.md)
 
 Tags sind das primäre Suchinstrument. **Schlechte Tags = Paket unsichtbar.**
 
-### Platform- und Feature-Tags
+Tags sind **typsicher** — Rust-Typ `FsTag` aus bekannten Bibliotheken. Kein freier String.
+Jeder Tag-Schlüssel ist ein i18n-Schlüssel: `tag.<key>` → übersetzt in jeder Sprache.
 
-Neben inhaltlichen Tags gibt es **standardisierte System-Tags** die der Store auswertet:
+```toml
+tags = ["package.database", "platform.linux", "api.oidc"]
+```
 
-| Tag | Bedeutung |
+### Tag-Bibliotheken
+
+Drei eingebaute Bibliotheken (Rust: `PackageTags`, `PlatformTags`, `ApiTags`):
+
+| Bibliothek | Prefix | Beispiele |
+|---|---|---|
+| `PackageTags` | `package.*` | `package.database`, `package.ai`, `package.security`, `package.chat` |
+| `PlatformTags` | `platform.*` / `requires.*` | `platform.linux`, `platform.macos`, `requires.systemd`, `requires.podman` |
+| `ApiTags` | `api.*` | `api.rest`, `api.oidc`, `api.matrix`, `api.activitypub` |
+
+### Platform- und Feature-Tags (standardisiert)
+
+Der Store kombiniert `PlatformTags` mit [SysInfo](sysinfo.md): Pakete werden aus- oder abgeblendet wenn die Voraussetzung auf dem aktuellen System nicht erfüllt ist.
+
+| Tag-Schlüssel | Bedeutung |
 |---|---|
-| `platform:linux` | Nur Linux unterstützt |
-| `platform:macos` | Nur macOS unterstützt |
-| `platform:windows` | Nur Windows unterstützt |
-| `platform:linux+macos` | Linux und macOS, kein Windows |
-| `requires:systemd` | systemd muss laufen |
-| `requires:pam` | PAM muss verfügbar sein |
-| `requires:podman` | Podman muss installiert sein |
-| `requires:git` | Git muss installiert sein |
+| `platform.linux` | Nur Linux unterstützt |
+| `platform.macos` | Nur macOS unterstützt |
+| `platform.windows` | Nur Windows unterstützt |
+| `requires.systemd` | systemd muss laufen |
+| `requires.pam` | PAM muss verfügbar sein |
+| `requires.podman` | Podman muss installiert sein |
+| `requires.git` | Git muss installiert sein |
 
-Der Store kombiniert diese Tags mit [SysInfo](sysinfo.md): Features werden aus- oder abgeblendet wenn die Voraussetzung auf dem aktuellen System nicht erfüllt ist.
+### Neue Tags hinzufügen
 
-Details und Filter-Syntax: [Store](../programme/store/README.md#tag-system)
+Neue Tags in die Bibliothek eintragen (nicht einfach einen freien String verwenden):
+
+1. Schlüssel zu `ALL_KEYS` in `fs-types/src/tags/<bibliothek>.rs`
+2. Factory-Funktion hinzufügen (`pub fn database() -> FsTag`)
+3. i18n-Eintrag `tag.<key>` in alle Sprachpakete schreiben
+4. Der Test `tag_key_convention` in `fs-types` prüft automatisch die Naming Convention
+
+Details: [Typen-System](../technik/typen.md#tag-system) | [Store](../programme/store/README.md#tag-system)
 
 ## Versionierung
 
