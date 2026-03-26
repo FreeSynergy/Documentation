@@ -66,19 +66,11 @@ fs-managers, fs-bots, fs-icons, fs-inventory, fs-session,
 fs-registry, fs-bus, fs-config, fs-libs, Store, fs-documentation
 ```
 
-**Neu angelegt ✅:** fs-db, fs-lenses, fs-ai, fs-container-app, fs-tasks, fs-auth, fs-i18n, fs-info, fs-theme, fs-ui, fs-components
+**Neu angelegt ✅:** fs-db, fs-lenses, fs-ai, fs-container-app, fs-tasks, fs-auth, fs-i18n, fs-info, fs-theme, fs-ui, fs-components, fs-federation, fs-llm
 **Archiviert ✅:** Libs, Wiki.rs, Wiki.rs.Store
 
 **Neue Repos — noch anzulegen:**
 ```
-C20.[ ] FreeSynergy/fs-federation erstellen — Föderations-Logik
-        - Node-zu-Node-Kommunikation, Domain-Auth, Invite-System
-        - Groß genug für eigenes Repo mit eigener Versionierung
-
-C21.[ ] FreeSynergy/fs-llm erstellen — LLM-Abstraktions-Layer
-        - Schnittstelle zu Mistral.rs und anderen LLM-Backends
-        - Wird von fs-ai UND fs-bots gebraucht
-
 C22.[ ] FreeSynergy/fs-channel erstellen — Messaging-Kanal-Abstraktionen
         - Kanal-Adapter: Matrix, Telegram, Signal, ...
         - Basis für fs-bots und zukünftige Messaging-Apps
