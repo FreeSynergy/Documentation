@@ -150,28 +150,10 @@ fs-health   — Health-Check-Trait (alle Services implementieren ihn)
 
 ---
 
-**Bereits erledigt ✅:** fs-bus | fs-config | fs-db | fs-auth | fs-federation → jeweils eigenes Repo
-
-**Eigene Repos — in Arbeit / direkt als nächstes:**
-```
-D4. [ ] fs-i18n → eigenes Repo (Phase C12)
-        Was: Library (Fluent-Parser, Lade-Logik) + alle locales/ zusammen
-        Wer braucht es: ALLE Programme (jeder Text geht durch i18n)
-        Warum eigen: zentrale Übersetzerstelle, unabhängig versionierbar
-        → Anlegen in Phase C, dann Extraktion aus fs-libs
-```
-
----
+**Bereits erledigt ✅:** fs-bus | fs-config | fs-db | fs-auth | fs-federation | fs-i18n | fs-theme → jeweils eigenes Repo
 
 **Eigene Repos — UI-Schicht (wie GTK/Qt — gehören keinem Programm alleine):**
 ```
-D6. [ ] fs-theme → eigenes Repo (Phase C17)
-        Was: Theme-Typen, Farb-Tokens, CSS-Variablen-Namen, Lade-Logik
-        Wer braucht es: Desktop, alle Manager-UIs, Browser, Lenses, jede App mit UI
-        Warum eigen: Themes sind Store-Packages — der Desktop ist damit austauschbar.
-        Themes haben eigene Versionierung unabhängig vom Desktop.
-        (Theme-Manager wendet an, Theme-Packages im Store sind die eigentlichen Daten)
-
 D7. [ ] fs-ui → eigenes Repo (Phase C18)
         Was: Basis-UI-Primitives (Layout, Spacing, Basis-Widgets)
         Wer braucht es: alle Programme mit UI
