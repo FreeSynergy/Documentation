@@ -66,24 +66,11 @@ fs-managers, fs-bots, fs-icons, fs-inventory, fs-session,
 fs-registry, fs-bus, fs-config, fs-libs, Store, fs-documentation
 ```
 
-**Neu angelegt ✅:** fs-db, fs-lenses, fs-ai, fs-container-app, fs-tasks
+**Neu angelegt ✅:** fs-db, fs-lenses, fs-ai, fs-container-app, fs-tasks, fs-auth, fs-i18n
 **Archiviert ✅:** Libs, Wiki.rs, Wiki.rs.Store
 
 **Neue Repos — noch anzulegen:**
 ```
-C11.[ ] FreeSynergy/fs-auth erstellen — eigenes Repo, Kern-Infrastruktur
-        - Adapter-Pattern: Kanidm ist Referenz-Impl, austauschbar
-        - eigene UI (Login-Maske) + eigenes CLI
-        - läuft auch ohne Netzwerk, auch zuhause auf einem Rechner
-        - wird als erstes nach Installation installiert
-        - fs-node nutzt fs-auth — besitzt es nicht
-
-C12.[ ] FreeSynergy/fs-i18n erstellen — zentrale Übersetzungen aller Programme
-        - Library-Crate (Fluent-Parser, Lade-Logik, LanguageCode) + locales/ zusammen
-        - Struktur: locales/{lang}/common.ftl + {programm}.ftl pro Programm
-        - EINE Stelle für alle Übersetzer — kein .ftl in anderen Repos
-        - Regel: KEIN roher String in Code — nur i18n-Keys, auch bei Snippets
-
 C13.[ ] FreeSynergy/fs-info erstellen — System-Info Service
         - Speicher, CPU, Disk, laufende Services
         - Wird von Store, Widgets, Desktop, Managers gebraucht
@@ -304,11 +291,10 @@ D25.[ ] fs-libs committen + pushen
 
 **Reihenfolge:**
 
-**Erledigt ✅:** fs-config, fs-bus, fs-db, fs-inventory, fs-session, fs-registry
+**Erledigt ✅:** fs-config, fs-bus, fs-db, fs-inventory, fs-session, fs-registry, fs-init, fs-icons
 
 ```
-E07.[ ] fs-init     — Bootstrap (klein, kritisch)
-E08.[ ] fs-icons    — Icon-Verwaltung
+E09.[ ] fs-browser  — VORLAGE für alle anderen Programme
 E09.[ ] fs-browser  — VORLAGE für alle anderen Programme
         → erster vollständiger Workflow: Design → OOP → Tests → Clippy → Push
 E10.[ ] fs-store    — Store-Library + Store-App + Store-CLI
