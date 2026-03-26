@@ -241,13 +241,10 @@ D25.[ ] fs-libs committen + pushen
 
 **Reihenfolge:**
 
-**Erledigt ✅:** fs-config, fs-bus, fs-db, fs-inventory, fs-session, fs-registry, fs-init, fs-icons
+**Erledigt ✅:** fs-config, fs-bus, fs-db, fs-inventory, fs-session, fs-registry, fs-init, fs-icons, fs-browser, fs-store
 
 ```
-E09.[ ] fs-browser  — VORLAGE für alle anderen Programme
-        → erster vollständiger Workflow: Design → OOP → Tests → Clippy → Push
-E10.[ ] fs-store    — Store-Library + Store-App + Store-CLI
-        → besonders wichtig: StoreReader liest Store/-Katalog korrekt (Test!)
+E11.[ ] fs-bots     — Bot-Runtime (Workspace mit mehreren Binaries)
 E11.[ ] fs-bots     — Bot-Runtime (Workspace mit mehreren Binaries)
         → Struktur: broadcast-bot, menu-bot, calendar-bot, ... je nach Messenger
 E12.[ ] fs-managers — Alle 7 Manager als Workspace
