@@ -150,11 +150,46 @@ C12.[ ] FreeSynergy/fs-i18n erstellen — zentrale Übersetzungen aller Programm
         - EINE Stelle für alle Übersetzer — kein .ftl in anderen Repos
         - Regel: KEIN roher String in Code — nur i18n-Keys, auch bei Snippets
 
-C13.[ ] FreeSynergy/fs-info erstellen — System-Info Service
+C13.[ ] FreeSynergy/fs-info erstellen — System-Info Daemon
         - Läuft als Daemon, antwortet auf Bus-Anfragen
         - Speicher, CPU, Disk, laufende Services
         - Wird von Store, Widgets, Desktop, Managers gebraucht
         - Eigenständig — wie fs-inventory, fs-session, fs-registry
+
+C17.[ ] FreeSynergy/fs-theme erstellen — Theme-Primitives Library
+        - Farb-Tokens, CSS-Variablen-Namen, Theme-Typen, Lade-Logik
+        - Wird von ALLEN UI-Programmen gebraucht — gehört keinem alleine
+        - Theme-Packages im Store sind die eigentlichen Daten (Farben, Fonts, Icons)
+        - Theme-Manager (fs-managers) wendet sie an
+
+C18.[ ] FreeSynergy/fs-ui erstellen — Basis-UI-Primitives
+        - Layout, Spacing, Basis-Widgets (wie GTK-Primitives)
+        - Wird von allen UI-Programmen gebraucht
+
+C19.[ ] FreeSynergy/fs-components erstellen — Wiederverwendbare UI-Komponenten
+        - Button, Input, Card, List, Dialog, ...
+        - Wird von allen UI-Programmen gebraucht
+
+C20.[ ] FreeSynergy/fs-federation erstellen — Föderations-Logik
+        - Node-zu-Node-Kommunikation, Domain-Auth, Invite-System
+        - Groß genug für eigenes Repo mit eigener Versionierung
+
+C21.[ ] FreeSynergy/fs-llm erstellen — LLM-Abstraktions-Layer
+        - Schnittstelle zu Mistral.rs und anderen LLM-Backends
+        - Wird von fs-ai UND fs-bots gebraucht
+
+C22.[ ] FreeSynergy/fs-channel erstellen — Messaging-Kanal-Abstraktionen
+        - Kanal-Adapter: Matrix, Telegram, Signal, ...
+        - Basis für fs-bots und zukünftige Messaging-Apps
+
+C23.[ ] FreeSynergy/fs-packages erstellen — Paket- und Plugin-Verwaltung
+        - Kombiniert: fs-pkg (Paket-Format), fs-plugin-sdk, fs-plugin-runtime
+        - Wird von fs-store UND fs-init gebraucht (daher nicht in fs-store)
+
+C24.[ ] FreeSynergy/fs-container erstellen — Container-Deployment-Library
+        - Container starten, stoppen, verwalten (Library, nicht UI)
+        - Wird von fs-managers/container UND fs-node gebraucht
+        - Achtung: NICHT fs-container-app (das ist die UI, bereits C4)
 ```
 
 **Alte Repos archivieren (auf GitHub als archived markieren):**
@@ -168,95 +203,188 @@ C16.[ ] FreeSynergy/Wiki.rs.Store → archivieren (falls nicht mehr aktiv)
 
 ## Phase D: fs-libs schrumpfen
 
-> Ziel: fs-libs enthält nur echte, universelle Primitives.
-> Alles Domain-spezifische geht ins zugehörige Programm-Repo.
+> Ziel: fs-libs enthält am Ende nur wenige echte, universelle Primitives.
+> Alle anderen Crates bekommen eigene Repos oder wandern in ihr Programm-Repo.
 
-> **Grundregel:** Crates/Repos werden nur zusammengelegt wenn es einen echten fachlichen
-> Grund gibt, warum etwas zusammengehört — **nicht umgekehrt**.
-> Lieber ein Repo mehr als zu wenig. Kleine, fokussierte Module — wie Linux.
-> **Vor jeder Migration: Begründung schreiben.** "Es ist klein" ist kein Grund zu mergen.
-> **Vorher immer prüfen:** Was braucht dieses Modul? Gibt es schon eine API im Store?
+> **Grundregel — wie Linux:**
+> Jedes Modul ist klein, fokussiert, eigenständig versionierbar.
+> Zusammenlegen nur wenn es einen echten fachlichen Grund gibt — nicht umgekehrt.
+> Lieber ein Repo mehr. Trennen ist die Regel, Mergen die Ausnahme.
+> Separates Repo = separate Version = unabhängige Updates = kein Aufblähen.
+> Vorher immer prüfen: Wer nutzt dieses Modul? Gibt es eine API im Store?
 
-**Bleibt in fs-libs (echte Primitives — alle Programme brauchen sie):**
+**Was bleibt in fs-libs (echte universelle Primitives — winzig, stabil, alle brauchen sie):**
 ```
-fs-types    — FsValue, FsUrl, SemVer, LanguageCode, FsPort, FsTag
-fs-error    — Basis-Fehler-Infrastruktur
-fs-crypto   — Verschlüsselung (alle brauchen sie)
+fs-types    — FsValue, FsUrl, SemVer, LanguageCode, FsPort, FsTag (Basis-Typen)
+fs-error    — Basis-Fehler-Infrastruktur (alle Programme brauchen Fehlertypen)
+fs-crypto   — Verschlüsselung (alle Services brauchen Crypto)
 fs-health   — Health-Check-Trait (alle Services implementieren ihn)
 ```
 
-**Wandert in eigene Repos (bereits vorhanden oder neu):**
+---
+
+**Bereits erledigt:**
 ```
-D1. [x] fs-bus     → bereits eigenes Repo, aus fs-libs entfernen
-D2. [x] fs-config  → bereits eigenes Repo, aus fs-libs entfernen
-D3. [~] fs-db      → neues Repo (Phase C1), aus fs-libs extrahieren — IN ARBEIT
-D4. [ ] fs-i18n    → eigenes Repo (Phase C12), aus fs-libs extrahieren
-        Library-Crate (Parser, Lade-Logik) + locales/ in einem Repo
-        Alle Programme laden Übersetzungen daraus — eine Stelle für Übersetzer
-D5. [ ] fs-auth    → eigenes Repo (Phase C11), aus fs-libs extrahieren
-        Kern-Infrastruktur: läuft auch ohne Netzwerk, auch ohne Node
-        fs-node *nutzt* fs-auth — besitzt es nicht
+D1. [x] fs-bus    → eigenes Repo (fs-bus), aus fs-libs entfernen
+D2. [x] fs-config → eigenes Repo (fs-config), aus fs-libs entfernen
 ```
 
-**Strings aufräumen — Migration zu fs-i18n:**
+---
+
+**Eigene Repos — in Arbeit / direkt als nächstes:**
 ```
-D6. [ ] Code-Audit: alle hardcodierten Strings finden (grep nach println!, format!, eprintln!)
-D7. [ ] common.ftl erstellen: gemeinsame Fehlermeldungen
-        error-not-found, error-permission-denied, error-invalid-input, ...
-        → KEINE rohen Strings in Code, immer nur i18n-Keys
-D8. [ ] Pro Programm: eigene {programm}.ftl in fs-i18n/locales/{lang}/
-        Reihenfolge: parallel zu Phase E (je Programm beim Sauber-Machen)
+D3. [~] fs-db → eigenes Repo (Phase C1) — IN ARBEIT
+        Wer braucht es: alle Programme mit SQLite (Node, Store, Desktop, Manager, ...)
+        → Extraktion aus fs-libs, Repo bereits angelegt
+
+D4. [ ] fs-i18n → eigenes Repo (Phase C12)
+        Was: Library (Fluent-Parser, Lade-Logik) + alle locales/ zusammen
+        Wer braucht es: ALLE Programme (jeder Text geht durch i18n)
+        Warum eigen: zentrale Übersetzerstelle, unabhängig versionierbar
+        → Anlegen in Phase C, dann Extraktion aus fs-libs
+
+D5. [ ] fs-auth → eigenes Repo (Phase C11) — nach Gespräch G1
+        Was: Auth-Schnittstelle (Design noch offen — siehe G1)
+        Wer braucht es: Init, Node, Desktop, alle Programme mit Login
+        Warum eigen: Kern-Infrastruktur, läuft auch ohne Node, auch lokal zuhause
+        → ERST G1 führen, dann entscheiden wie fs-auth aussieht, dann extrahieren
 ```
 
-**Wandert in eigene kleine Repos (Begründung: viele Nutzer, nicht nur ein Programm):**
+---
+
+**Eigene Repos — UI-Schicht (wie GTK/Qt — gehören keinem Programm alleine):**
 ```
-D9. [ ] fs-sysinfo → eigenes Repo fs-info (NICHT nach fs-node)
-        Begründung: Store, Widgets, Manager, Desktop — alle brauchen System-Info
-        Läuft als Daemon, antwortet auf Bus-Anfragen
-        Wie fs-inventory, fs-session, fs-registry — eigenständiger Service
-        → In Phase C als C13 anlegen
+D6. [ ] fs-theme → eigenes Repo (Phase C17)
+        Was: Theme-Typen, Farb-Tokens, CSS-Variablen-Namen, Lade-Logik
+        Wer braucht es: Desktop, alle Manager-UIs, Browser, Lenses, jede App mit UI
+        Warum eigen: Themes sind Store-Packages — der Desktop ist damit austauschbar.
+        Themes haben eigene Versionierung unabhängig vom Desktop.
+        (Theme-Manager wendet an, Theme-Packages im Store sind die eigentlichen Daten)
+
+D7. [ ] fs-ui → eigenes Repo (Phase C18)
+        Was: Basis-UI-Primitives (Layout, Spacing, Basis-Widgets)
+        Wer braucht es: alle Programme mit UI
+        Warum eigen: wie KDE Frameworks — nicht Desktop-Eigentum
+
+D8. [ ] fs-components → eigenes Repo (Phase C19)
+        Was: Wiederverwendbare UI-Komponenten (Button, Input, Card, List, ...)
+        Wer braucht es: alle Programme mit UI
+        Warum eigen: kann unabhängig versioniert und erweitert werden
+
+D9. [ ] fs-render → prüfen: wer nutzt es konkret?
+        Falls alle UI-Programme → eigenes Repo (wie D7/D8)
+        Falls nur Desktop-Shell → nach fs-desktop
+        Entscheidung nach Blick in den Code
 ```
 
-**Wandert in Programm-Repos (nur wenn wirklich nur EIN Nutzer):**
+---
+
+**Eigene Repos — Netzwerk / Protokoll-Schicht:**
 ```
-D10.[ ] fs-llm                  → nach fs-ai
-        Begründung: LLM-Abstraktion wird nur von fs-ai gebraucht — prüfen!
+D10.[ ] fs-federation → eigenes Repo (Phase C20)
+        Was: Föderations-Logik (Node-zu-Node, Domain-Auth, Invite-System)
+        Wer braucht es: Node primär, aber Federation ist groß genug für eigenes Repo
+        Warum eigen: eigener Release-Zyklus, eigene Tests, unabhängig von Node-Builds
 
-D11.[ ] fs-bot, fs-channel      → nach fs-bots
-        Begründung: Bot-Runtime + Messenger-Adapter — prüfen ob wirklich nur fs-bots
+D11.[ ] fs-llm → eigenes Repo (Phase C21)
+        Was: LLM-Abstraktion (Schnittstelle zu Mistral und anderen)
+        Wer braucht es: fs-ai UND fs-bots (Bots nutzen LLMs genauso)
+        Warum eigen: mehrere Nutzer, LLM-Backends ändern sich schnell
 
-D12.[ ] fs-ui, fs-components,
-        fs-render, fs-theme     → nach fs-desktop
-        Begründung: UI-Primitives — prüfen ob Manager/Apps sie auch brauchen
+D12.[ ] fs-channel → eigenes Repo (Phase C22)
+        Was: Messaging-Kanal-Abstraktion (Matrix, Telegram, Signal, ...)
+        Wer braucht es: fs-bots primär, aber auch zukünftige Messaging-Apps
+        Warum eigen: Kanal-Adapter sind unabhängige Einheiten
 
-D13.[ ] fs-container            → nach fs-managers (container)
-        Begründung: Container-Deployment — prüfen ob fs-node es auch braucht
+D13.[ ] fs-bot → nach fs-bots
+        Was: Bot-Runtime-Logik (Nachrichten empfangen, verarbeiten, antworten)
+        Wer braucht es: NUR fs-bots
+        Begründung: echte 1:1-Zuordnung — Bot-Runtime gehört zum Bot-Programm
+```
 
-D14.[ ] fs-pkg, fs-plugin-sdk,
-        fs-plugin-runtime       → nach fs-store
-        Begründung: Paket-Verwaltung — prüfen ob andere Programme es brauchen
+---
 
-D15.[ ] fs-federation           → prüfen: eigenes Repo oder nach fs-node?
-        Begründung nötig: was nutzt Federation außer dem Node?
-        Falls mehrere: eigenes Repo
+**Eigene Repos — Infrastruktur-Dienste (laufen als Daemons, antworten auf Bus):**
+```
+D14.[ ] fs-sysinfo → eigenes Repo fs-info (Phase C13)
+        Was: System-Info-Daemon (Speicher, CPU, Disk, laufende Services)
+        Wer braucht es: Store (ist Platz da?), Widgets, Desktop, Manager
+        Warum eigen: eigenständiger Dienst — wie fs-inventory, fs-session, fs-registry
+        → NICHT nach fs-node. Node kennt den Rechner nicht besser als alle anderen.
+```
 
-D16.[ ] fs-sync                 → prüfen: wer nutzt es?
+---
+
+**Paket- und Plugin-Verwaltung:**
+```
+D15.[ ] fs-pkg, fs-plugin-sdk, fs-plugin-runtime → eigenes Repo fs-packages (Phase C23)
+        Was: Paket-Format, Plugin-Schnittstelle, Plugin-Laufzeitumgebung
+        Wer braucht es: fs-store primär, aber auch fs-init (installiert Pakete beim Bootstrap)
+        Warum eigen: die drei gehören fachlich zusammen (Paket-Verwaltungs-Schicht)
+        Warum nicht in fs-store: fs-init braucht sie auch, vor dem Store
+
+D16.[ ] fs-container → eigenes Repo (Phase C24)
+        Was: Container-Deployment-Logik (starten, stoppen, verwalten)
+        Wer braucht es: fs-managers/container UND fs-node (Bootstrap)
+        Warum eigen: mehrere Nutzer
+        (Achtung: fs-container = Library. fs-container-app = UI. Zwei verschiedene Repos.)
+```
+
+---
+
+**Strings aufräumen — Migration zu fs-i18n (parallel zu Phase E):**
+```
+D17.[ ] Code-Audit: alle hardcodierten Strings finden
+        grep nach: println!, format!, eprintln!, direkte String-Literals in UI
+        Gilt für ALLE Repos, nicht nur fs-libs
+
+D18.[ ] common.ftl anlegen in fs-i18n/locales/de/ und /en/
+        Inhalt: alle wiederverwendbaren Fehlermeldungen
+        error-not-found, error-permission-denied, error-invalid-input,
+        error-connection-failed, error-parse-failed, ...
+        → Einmal definiert, überall referenziert
+
+D19.[ ] Pro Programm: {programm}.ftl in fs-i18n/locales/{lang}/
+        Reihenfolge: parallel zu Phase E — je Programm beim Sauber-Machen
+        Regel: KEIN roher String in Code — immer nur i18n-Keys
+```
+
+---
+
+**Noch zu prüfen (Code lesen, dann entscheiden):**
+```
+D20.[ ] fs-sync → Code lesen: was synchronisiert es und für wen?
         Falls nur fs-store: nach fs-store
-        Falls mehrere: eigenes Repo (nicht in fs-libs lassen)
+        Falls mehrere oder unklar: eigenes Repo
 
-D17.[ ] fs-template             → prüfen: wer nutzt es?
-        Falls nur ein Programm: dort hin
+D21.[ ] fs-template → Code lesen: wer nutzt es?
+        Falls nur ein Programm: dorthin
+        Falls mehrere: eigenes Repo oder in fs-libs lassen
 
-D18.[ ] fs-help                 → prüfen: wer nutzt es?
-        Falls Desktop + andere: eigenes Repo
+D22.[ ] fs-help → Code lesen: ist es eine Library oder ein Programm?
+        Falls Library für alle: eigenes Repo (Phase C25)
+        Falls Desktop-spezifisch: nach fs-desktop
 
-D19.[ ] fs-bridge-sdk           → löschen (Adapter-Pattern ersetzt Bridges)
-        Erst löschen wenn fs-registry voll funktioniert
+D23.[ ] fs-core → Code lesen: was ist drin?
+        Vermutung: nur Glue-Code → auflösen und verteilen
+```
 
-D20.[ ] fs-core                 → prüfen: was ist drin?
-        Falls nur Glue-Code: auflösen
+---
 
-D21.[ ] fs-libs committen + pushen (nach allen Migrationen)
+**Löschen:**
+```
+D24.[ ] fs-bridge-sdk → löschen
+        Adapter-Pattern hat Bridges ersetzt — kein Nutzen mehr
+        Erst löschen wenn fs-registry läuft und alle Bridges migriert sind
+```
+
+---
+
+**Abschluss:**
+```
+D25.[ ] fs-libs committen + pushen
+        Erst wenn alle Migrationen abgeschlossen und alle abhängigen Repos angepasst sind
+        Erwartetes Ergebnis: fs-libs hat nur noch fs-types, fs-error, fs-crypto, fs-health
 ```
 
 ---
@@ -363,10 +491,32 @@ F6. [ ] End-to-End Test: Paket installieren
 > Kein Code ohne Gespräch und Entscheidung.
 
 ```
-G1. fs-node Architektur (deep-dive)
-    - Was genau macht der Node? Welche Module hat er?
-    - Auth (Kanidm-Integration), S3, Federation, externer Desktop-Zugriff
-    - Wie trennen wir die Verantwortlichkeiten sauber?
+G1. fs-auth Design-Entscheidung + fs-node Architektur
+    AUTH — Entscheidung nötig bevor Code geschrieben wird:
+
+    Option A: fs-auth = Adapter-Schicht
+      - fs-auth definiert Traits + eigene Login-UI + CLI
+      - Kanidm ist eine Implementierung davon (austauschbar)
+      - Pro: flexibel, Kanidm kann später ersetzt werden
+      - Con: wir reimplementieren Auth-Konzepte nach; mehr Code für weniger Mehrwert
+        wenn wir Kanidm sowieso immer nutzen
+
+    Option B: Kanidm direkt integrieren (kein Adapter)
+      - Kanidm wird direkt als Auth-Backend eingebunden
+      - Pro: nutzt Kanidm voll aus (PAM, SCIM intern, OIDC/LDAP)
+        PAM = OS-Level-Auth (seltenes Feature, sehr mächtig für ein Platform-OS)
+      - Con: tightly coupled; Wechsel zu anderem Backend wäre großer Aufwand
+      - Frage: Wollen wir Kanidm langfristig? Oder ist das nur der erste Schritt?
+
+    Zu bedenken:
+      - Kanidm kann PAM (OS-Ebene) + SCIM (intern, extern in Entwicklung)
+      - Kanidm wird aktiv entwickelt, aber unsicher wie groß das Projekt bleibt
+      - FreeSynergy ist ein Platform-OS — Auth ist keine optionale Komponente
+
+    NODE — nach Auth-Entscheidung:
+      - Was macht der Node genau? (S3, externer Desktop-Zugriff, Orchestrierung)
+      - Wie viel bleibt im Node, was geht in eigene Module?
+      - Verbindung zu fs-auth, fs-federation, fs-registry
 
 G2. Desktop Architektur
     - App-Lifecycle: wie wird ein Programm gestartet/minimiert/beendet?
