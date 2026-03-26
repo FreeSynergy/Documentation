@@ -109,28 +109,7 @@ fs-health   — Health-Check-Trait (alle Services implementieren ihn)
 
 ---
 
-**Bereits erledigt ✅:** fs-bus | fs-config | fs-db | fs-auth | fs-federation | fs-i18n | fs-theme | fs-ui | fs-components | fs-render | fs-llm | fs-channel → jeweils eigenes Repo
-
----
-
-**Eigene Repos — Netzwerk / Protokoll-Schicht:**
-```
-D13.[ ] fs-bot → nach fs-bots
-        Was: Bot-Runtime-Logik (Nachrichten empfangen, verarbeiten, antworten)
-        Wer braucht es: NUR fs-bots
-        Begründung: echte 1:1-Zuordnung — Bot-Runtime gehört zum Bot-Programm
-```
-
----
-
-**Eigene Repos — Infrastruktur-Dienste (laufen als Daemons, antworten auf Bus):**
-```
-D14.[ ] fs-sysinfo → eigenes Repo fs-info (Phase C13)
-        Was: System-Info (Speicher, CPU, Disk, laufende Services)
-        Wer braucht es: Store (ist Platz da?), Widgets, Desktop, Manager
-        Warum eigen: mehrere Nutzer — NICHT nach fs-node
-        Ob Daemon, Bus-Subscriber oder Library: offen → siehe G8
-```
+**Bereits erledigt ✅:** fs-bus | fs-config | fs-db | fs-auth | fs-federation | fs-i18n | fs-theme | fs-ui | fs-components | fs-render | fs-llm | fs-channel | fs-bot (→ fs-bots) | fs-sysinfo (→ fs-info) → migriert
 
 ---
 
