@@ -59,20 +59,15 @@ Diese Regeln gelten ohne Ausnahme. Kein Commit ohne grüne Gates.
 
 > Ziel: Jedes Programm hat sein eigenes sauberes Repo auf GitHub, lokal geklont.
 
-**Bereits vorhanden (kein Handlungsbedarf):**
+**Lokal vorhanden + GitHub ✅ (kein Handlungsbedarf):**
 ```
-fs-init, fs-node, fs-desktop, fs-store, fs-browser (✅ umbenannt),
-fs-managers, fs-bots, fs-icons, fs-tasks, fs-inventory, fs-session,
+fs-init, fs-node, fs-desktop, fs-store, fs-browser,
+fs-managers, fs-bots, fs-icons, fs-inventory, fs-session,
 fs-registry, fs-bus, fs-config, fs-libs, Store, fs-documentation
 ```
 
-**Repos erstellt ✅:** fs-db, fs-lenses, fs-ai, fs-container-app, fs-bus (geklont), fs-config (geklont)
-
-**Lokales Klonen:**
-```
-C7. [ ] fs-tasks lokal klonen nach /home/kal/Server/fs-tasks/
-        (Repo existiert auf GitHub, aber Inhalt prüfen)
-```
+**Neu angelegt ✅:** fs-db, fs-lenses, fs-ai, fs-container-app, fs-tasks
+**Archiviert ✅:** Libs, Wiki.rs, Wiki.rs.Store
 
 **Neue Repos — noch anzulegen:**
 ```
@@ -129,13 +124,6 @@ C24.[ ] FreeSynergy/fs-container erstellen — Container-Deployment-Library
         - Container starten, stoppen, verwalten (Library, nicht UI)
         - Wird von fs-managers/container UND fs-node gebraucht
         - Achtung: NICHT fs-container-app (das ist die UI, bereits C4)
-```
-
-**Alte Repos archivieren (auf GitHub als archived markieren):**
-```
-C14.[ ] FreeSynergy/Libs → archivieren (ersetzt durch fs-libs)
-C15.[ ] FreeSynergy/Wiki.rs → archivieren (falls nicht mehr aktiv)
-C16.[ ] FreeSynergy/Wiki.rs.Store → archivieren (falls nicht mehr aktiv)
 ```
 
 ---
@@ -588,11 +576,11 @@ O3. [ ] Task-Templates aus Store
 ## Reihenfolge (Gesamt)
 
 ```
-A  Dokumentation aktualisieren          ← jetzt
-B  Store bereinigen                     ← jetzt
-C  Repositories anlegen                 ← jetzt
+A  Dokumentation aktualisieren          ✅ (2026-03-26)
+B  Store bereinigen                     ✅ (2026-03-26)
+C  Repositories anlegen                 ← in Arbeit (C11–C24 offen)
 D  fs-libs schrumpfen                   ← parallel zu C
-E  Programme einzeln sauber machen      ← E01–E09 zuerst
+E  Programme einzeln sauber machen      ← E03–E18 offen
 F  Integration                          ← nach E
 G  Gespräche (parallel zu E+F führen)   ← laufend
 —  Archiv-Phasen                        ← wenn Zeit da ist
