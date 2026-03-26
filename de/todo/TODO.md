@@ -109,12 +109,12 @@ fs-registry, fs-bus, fs-config, fs-libs, Store, fs-documentation
 
 **Fehlende Repos — erstellen:**
 ```
-C1. [ ] FreeSynergy/fs-db erstellen
+C1. [x] FreeSynergy/fs-db erstellen
         - DB-Abstraktion (SQLite via sea-orm, gemeinsam für alle Programme)
         - Workspace: eine Crate fs-db
         - Aus fs-libs extrahieren: src aus fs-libs/fs-db/
 
-C2. [ ] FreeSynergy/fs-lenses erstellen
+C2. [x] FreeSynergy/fs-lenses erstellen
         - Lenses App (Informations-Betrachter)
         - Code-Basis: fs-apps/crates/fs-lenses/
 
