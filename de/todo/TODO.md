@@ -109,24 +109,7 @@ fs-health   — Health-Check-Trait (alle Services implementieren ihn)
 
 ---
 
-**Bereits erledigt ✅:** fs-bus | fs-config | fs-db | fs-auth | fs-federation | fs-i18n | fs-theme | fs-ui | fs-components | fs-render | fs-llm | fs-channel | fs-bot (→ fs-bots) | fs-sysinfo (→ fs-info) → migriert
-
----
-
-**Paket- und Plugin-Verwaltung:**
-```
-D15.[ ] fs-pkg, fs-plugin-sdk, fs-plugin-runtime → eigenes Repo fs-packages (Phase C23)
-        Was: Paket-Format, Plugin-Schnittstelle, Plugin-Laufzeitumgebung
-        Wer braucht es: fs-store primär, aber auch fs-init (installiert Pakete beim Bootstrap)
-        Warum eigen: die drei gehören fachlich zusammen (Paket-Verwaltungs-Schicht)
-        Warum nicht in fs-store: fs-init braucht sie auch, vor dem Store
-
-D16.[ ] fs-container → eigenes Repo (Phase C24)
-        Was: Container-Deployment-Logik (starten, stoppen, verwalten)
-        Wer braucht es: fs-managers/container UND fs-node (Bootstrap)
-        Warum eigen: mehrere Nutzer
-        (Achtung: fs-container = Library. fs-container-app = UI. Zwei verschiedene Repos.)
-```
+**Bereits erledigt ✅:** fs-bus | fs-config | fs-db | fs-auth | fs-federation | fs-i18n | fs-theme | fs-ui | fs-components | fs-render | fs-llm | fs-channel | fs-bot (→ fs-bots) | fs-sysinfo (→ fs-info) | fs-pkg+fs-plugin-sdk+fs-plugin-runtime (→ fs-packages) | fs-container → migriert
 
 ---
 
