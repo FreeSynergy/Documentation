@@ -125,24 +125,12 @@ fs-health   — Health-Check-Trait (alle Services implementieren ihn)
 
 ---
 
-**Bereits erledigt ✅:** fs-bus | fs-config | fs-db | fs-auth | fs-federation | fs-i18n | fs-theme | fs-ui | fs-components | fs-render → jeweils eigenes Repo
+**Bereits erledigt ✅:** fs-bus | fs-config | fs-db | fs-auth | fs-federation | fs-i18n | fs-theme | fs-ui | fs-components | fs-render | fs-llm | fs-channel → jeweils eigenes Repo
 
 ---
 
 **Eigene Repos — Netzwerk / Protokoll-Schicht:**
 ```
-
-
-D11.[ ] fs-llm → eigenes Repo (Phase C21)
-        Was: LLM-Abstraktion (Schnittstelle zu Mistral und anderen)
-        Wer braucht es: fs-ai UND fs-bots (Bots nutzen LLMs genauso)
-        Warum eigen: mehrere Nutzer, LLM-Backends ändern sich schnell
-
-D12.[ ] fs-channel → eigenes Repo (Phase C22)
-        Was: Messaging-Kanal-Abstraktion (Matrix, Telegram, Signal, ...)
-        Wer braucht es: fs-bots primär, aber auch zukünftige Messaging-Apps
-        Warum eigen: Kanal-Adapter sind unabhängige Einheiten
-
 D13.[ ] fs-bot → nach fs-bots
         Was: Bot-Runtime-Logik (Nachrichten empfangen, verarbeiten, antworten)
         Wer braucht es: NUR fs-bots
