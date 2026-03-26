@@ -150,25 +150,15 @@ fs-health   — Health-Check-Trait (alle Services implementieren ihn)
 
 ---
 
-**Bereits erledigt ✅:** fs-bus → eigenes Repo | fs-config → eigenes Repo
+**Bereits erledigt ✅:** fs-bus | fs-config | fs-db | fs-auth | fs-federation → jeweils eigenes Repo
 
 **Eigene Repos — in Arbeit / direkt als nächstes:**
 ```
-D3. [~] fs-db → eigenes Repo (Phase C1) — IN ARBEIT
-        Wer braucht es: alle Programme mit SQLite (Node, Store, Desktop, Manager, ...)
-        → Extraktion aus fs-libs, Repo bereits angelegt
-
 D4. [ ] fs-i18n → eigenes Repo (Phase C12)
         Was: Library (Fluent-Parser, Lade-Logik) + alle locales/ zusammen
         Wer braucht es: ALLE Programme (jeder Text geht durch i18n)
         Warum eigen: zentrale Übersetzerstelle, unabhängig versionierbar
         → Anlegen in Phase C, dann Extraktion aus fs-libs
-
-D5. [ ] fs-auth → eigenes Repo (Phase C11) — nach Gespräch G1
-        Was: Auth-Schnittstelle (Design noch offen — siehe G1)
-        Wer braucht es: Init, Node, Desktop, alle Programme mit Login
-        Warum eigen: Kern-Infrastruktur, läuft auch ohne Node, auch lokal zuhause
-        → ERST G1 führen, dann entscheiden wie fs-auth aussieht, dann extrahieren
 ```
 
 ---
@@ -202,10 +192,7 @@ D9. [ ] fs-render → prüfen: wer nutzt es konkret?
 
 **Eigene Repos — Netzwerk / Protokoll-Schicht:**
 ```
-D10.[ ] fs-federation → eigenes Repo (Phase C20)
-        Was: Föderations-Logik (Node-zu-Node, Domain-Auth, Invite-System)
-        Wer braucht es: Node primär, aber Federation ist groß genug für eigenes Repo
-        Warum eigen: eigener Release-Zyklus, eigene Tests, unabhängig von Node-Builds
+
 
 D11.[ ] fs-llm → eigenes Repo (Phase C21)
         Was: LLM-Abstraktion (Schnittstelle zu Mistral und anderen)
