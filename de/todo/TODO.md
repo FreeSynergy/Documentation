@@ -66,19 +66,11 @@ fs-managers, fs-bots, fs-icons, fs-inventory, fs-session,
 fs-registry, fs-bus, fs-config, fs-libs, Store, fs-documentation
 ```
 
-**Neu angelegt ✅:** fs-db, fs-lenses, fs-ai, fs-container-app, fs-tasks, fs-auth, fs-i18n, fs-info, fs-theme, fs-ui, fs-components, fs-federation, fs-llm
+**Neu angelegt ✅:** fs-db, fs-lenses, fs-ai, fs-container-app, fs-tasks, fs-auth, fs-i18n, fs-info, fs-theme, fs-ui, fs-components, fs-federation, fs-llm, fs-channel, fs-packages
 **Archiviert ✅:** Libs, Wiki.rs, Wiki.rs.Store
 
 **Neue Repos — noch anzulegen:**
 ```
-C22.[ ] FreeSynergy/fs-channel erstellen — Messaging-Kanal-Abstraktionen
-        - Kanal-Adapter: Matrix, Telegram, Signal, ...
-        - Basis für fs-bots und zukünftige Messaging-Apps
-
-C23.[ ] FreeSynergy/fs-packages erstellen — Paket- und Plugin-Verwaltung
-        - Kombiniert: fs-pkg (Paket-Format), fs-plugin-sdk, fs-plugin-runtime
-        - Wird von fs-store UND fs-init gebraucht (daher nicht in fs-store)
-
 C24.[ ] FreeSynergy/fs-container erstellen — Container-Deployment-Library
         - Container starten, stoppen, verwalten (Library, nicht UI)
         - Wird von fs-managers/container UND fs-node gebraucht
