@@ -64,6 +64,7 @@ FreeSynergy dreht das um: **Die Information steht im Vordergrund, nicht das Werk
 - [AI-Inferenz](konzepte/ai-inferenz.md) — Lokale LLMs via Mistral.rs: Installation, Modelle, Workflow mit Claude
 
 ### Technik
+- [Build-Workflow](technik/build-workflow.md) — Design Pattern → OOP → Tests → Clippy → Push, Quality Gates, Binary-Distribution
 - [Storage-Layer (S3)](technik/storage.md) — Eigener S3-Server, opendal, Profiles
 - [Datenspeicherung](technik/datenspeicherung.md) — SQLite-Architektur
 - [Bibliotheken](technik/bibliotheken.md) — Welche Crates wofür
