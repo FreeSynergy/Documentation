@@ -89,41 +89,41 @@ A8. [ ] todo/TODO.md — das ist diese Datei, sie ist bereits aktuell
 
 ---
 
-## Phase B: Store bereinigen
+## Phase B: Store bereinigen ✅ (2026-03-26)
 
 > Ziel: Der Store enthält nur Pakete die tatsächlich existieren oder realistisch bald kommen.
 > Nichts löschen — Phantasie-Pakete in `packages/archive/` verschieben.
 
 ```
-B1. [ ] packages/archive/ Verzeichnis anlegen
+B1. [x] packages/archive/ Verzeichnis anlegen
         - catalog.toml erstellen (namespace: archive, type: archived)
         - README.md: "Diese Pakete sind noch nicht implementiert.
           Sie werden hierher verschoben bis ein echtes Repo existiert."
 
-B2. [ ] Folgende Pakete nach packages/archive/ verschieben:
+B2. [x] Folgende Pakete nach packages/archive/ verschieben:
         - apps/builder/     → in Container Manager aufgegangen, kein eigenes Paket mehr
         - apps/showcase/    → Desktop-interne Entwicklungs-Ansicht, kein Store-Paket
         - apps/profile/     → Desktop-intern (fs-desktop/crates/fs-profile)
         - apps/settings/    → Desktop-intern (fs-desktop/crates/fs-settings)
 
-B3. [ ] Folgende Pakete behalten, aber Katalog-TOMLs korrigieren:
-        - apps/theme-app/   → umbenennen zu apps/managers/ (Theme = Teil von fs-managers)
-        - apps/managers/    → aufteilen: managers/language, managers/theme, managers/icons,
+B3. [x] Folgende Pakete behalten, aber Katalog-TOMLs korrigieren:
+        - apps/theme-app/   → nach archive/ (Theme = managers/theme)
+        - apps/managers/    → aufgeteilt: managers/language, managers/theme, managers/icons,
                                managers/cursor, managers/container, managers/bots, managers/ai
-        - apps/bots/        → bleibt, aber binary-URLs anpassen (mehrere Binaries)
+        - apps/bots/        → Repo-Referenz fs-apps → fs-bots korrigiert
 
-B4. [ ] Package-Format upgraden: [[binaries]] einführen
-        - Alle packages/apps/*/catalog.toml auf neues Format prüfen
-        - Wo bisher binary = "..." steht: auf [[binaries]] umstellen
-        - capabilities + bus_messages Felder hinzufügen (auch wenn noch leer)
+B4. [x] Package-Format upgraden: [[binaries]] einführen
+        - Alle packages/apps/*/catalog.toml auf neues Format umgestellt (24 Dateien)
+        - binary = "..." → [[binaries]] Array
+        - bus = [...] → bus_messages = [...]
+        - capabilities + bus_messages Felder überall ergänzt
 
-B5. [ ] Container-Pakete prüfen (packages/containers/)
-        - cryptpad, dragonfly, forgejo, openobserver, otel-collector, outline,
-          postgres, pretix, umap, vikunja
-        - Welche sind tatsächlich testbar? Welche sind Phantasie?
-        - Unrealistische → archive/containers/
+B5. [x] Container-Pakete prüfen (packages/containers/)
+        - Alle 10 bleiben: cryptpad, dragonfly, forgejo, openobserver, otel-collector,
+          outline, postgres, pretix, umap, vikunja
+        - Werden als erste installiert — später separat verfeinert
 
-B6. [ ] Store/ committen und pushen
+B6. [x] Store/ committen und pushen
 ```
 
 ---
