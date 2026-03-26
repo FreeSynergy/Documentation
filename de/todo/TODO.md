@@ -304,11 +304,9 @@ D25.[ ] fs-libs committen + pushen
 
 **Reihenfolge:**
 
-**Erledigt ✅:** fs-config, fs-bus, fs-db, fs-inventory
+**Erledigt ✅:** fs-config, fs-bus, fs-db, fs-inventory, fs-session, fs-registry
 
 ```
-E05.[ ] fs-session  — Session-Management (bereits sauber, Integration prüfen)
-E06.[ ] fs-registry — Capability-Registry (bereits sauber, Integration prüfen)
 E07.[ ] fs-init     — Bootstrap (klein, kritisch)
 E08.[ ] fs-icons    — Icon-Verwaltung
 E09.[ ] fs-browser  — VORLAGE für alle anderen Programme
