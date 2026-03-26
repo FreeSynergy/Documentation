@@ -77,11 +77,12 @@ fs-types    — FsValue, FsUrl, SemVer, LanguageCode, FsPort, FsTag (Basis-Typen
 fs-error    — Basis-Fehler-Infrastruktur (alle Programme brauchen Fehlertypen)
 fs-crypto   — Verschlüsselung (alle Services brauchen Crypto)
 fs-health   — Health-Check-Trait (alle Services implementieren ihn)
+fs-core     — FsManager-Trait, ManagerRegistry, ManagerStore (zero deps; 5 Manager + Desktop nutzen es)
 ```
 
 ---
 
-**Bereits erledigt ✅:** fs-bus | fs-config | fs-db | fs-auth | fs-federation | fs-i18n | fs-theme | fs-ui | fs-components | fs-render | fs-llm | fs-channel | fs-bot (→ fs-bots) | fs-sysinfo (→ fs-info) | fs-pkg+fs-plugin-sdk+fs-plugin-runtime (→ fs-packages) | fs-container → migriert
+**Bereits erledigt ✅:** fs-bus | fs-config | fs-db | fs-auth | fs-federation | fs-i18n | fs-theme | fs-ui | fs-components | fs-render | fs-llm | fs-channel | fs-bot (→ fs-bots) | fs-sysinfo (→ fs-info) | fs-pkg+fs-plugin-sdk+fs-plugin-runtime (→ fs-packages) | fs-container → migriert | fs-help (→ eigenes Repo) | fs-core (bleibt in fs-libs als 5. Primitiv)
 
 ---
 
@@ -104,12 +105,19 @@ D19.[ ] Pro Programm: {programm}.ftl in fs-i18n/locales/{lang}/
 
 ---
 
-**D22/D23/D25 ✅:** fs-help + fs-core → eigene Repos; fs-libs hat jetzt nur noch fs-types, fs-error, fs-crypto, fs-health
-
 **Offen (blockiert):**
 ```
 D24.[ ] fs-bridge-sdk → löschen
         Erst löschen wenn fs-registry läuft und alle Bridges migriert sind
+```
+
+---
+
+**Abschluss:**
+```
+D25.[ ] fs-libs committen + pushen
+        Erst wenn alle Migrationen abgeschlossen und alle abhängigen Repos angepasst sind
+        Erwartetes Ergebnis: fs-libs hat nur noch fs-types, fs-error, fs-crypto, fs-health, fs-core
 ```
 
 ---
