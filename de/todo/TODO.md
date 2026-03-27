@@ -200,7 +200,7 @@ G1. fs-auth Design + fs-node Architektur
 
     AUTH — Umsetzung:
     G1.1 ✅ fs-auth: 4 Protokoll-Traits + AuthCapabilities (2026-03-27)
-    G1.2 ✅ KanidmBackend: Stub für alle 4 Traits (2026-03-27)
+    G1.2 ✅ KanidmBackend: echte reqwest-Impl für alle 4 Traits — PAM (3-step /v1/auth), SCIM (/v1/person), OAuth2 (/oauth2/*), SSO (/v1/auth/valid) (2026-03-27)
     G1.3 [ ] fs-auth: eigene Login-UI + CLI
               UI/CLI nutzen Traits, nie Kanidm direkt
     G1.4 [ ] Bus-Integration
