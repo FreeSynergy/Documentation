@@ -10,6 +10,23 @@ Desktop ist die UI für den Menschen. Es zeigt was Node und Container Manager tu
 
 Desktop ist auch UI für die Services selbst — Web-Interfaces werden im eingebetteten Browser geöffnet.
 
+## Rendering-Architektur
+
+Desktop importiert **niemals** direkt eine GUI-Bibliothek (iced, bevy o.ä.).
+Stattdessen nutzt es die Abstraktionsschicht [fs-render](../../architektur/render-architektur.md):
+
+```
+fs-desktop / fs-apps
+      ↓ (nur Traits)
+  fs-render  ←→  fs-theme
+      ↓
+fs-gui-engine-iced   (Standard — libcosmic)
+fs-gui-engine-bevy   (Optional — 3D-fähig)
+```
+
+Die Engine wird per Feature-Flag oder Laufzeit-Konfiguration gewählt.
+Ein Wechsel der Engine erfordert keine Änderung am App-Code.
+
 ## Sideboard (Sidebar)
 
 Die Sidebar — das **Sideboard** — ist die primäre Navigation des Desktops. Es ist in zwei Bereiche aufgeteilt:
@@ -49,19 +66,44 @@ Pakete definieren selbst, **wo** sie im Sideboard erscheinen (oberer Bereich, Pi
 | 📦 Store | Oben | Pakete installieren — 3 Sections: Server, Apps, Desktop |
 | 🔎 Search | Oben | Suche über alle Services |
 | 🔨 Builder | Oben | Resource Builder (Pakete bauen) |
-| ⚙️ Settings | **Pinned** | Themes, Shortcuts, Profil, Layout |
+| ⚙️ Settings | **Pinned** | Themes, Shortcuts, Profil, Layout, Animationen |
 | ❓ Help | Oben | Dokumentation |
 
 ## Interface-Typen
 
 | Interface | Kürzel | Technologie |
 |---|---|---|
-| Web-based GUI | WGUI | Dioxus WebView (webkit2gtk / WebView2 / WKWebView) |
-| Web | WGUI (WASM) | Dioxus WASM im Browser |
-| Mobile | WGUI | Dioxus (Android/iOS — reiner Client) |
+| Native GUI | GUI | fs-render → fs-gui-engine-iced (Standard) oder fs-gui-engine-bevy |
+| Web (WASM) | WASM | fs-render → WASM-Target (geplant) |
+| Mobile | GUI | fs-render → Mobile-Engine (geplant) |
 | Command Line | CLI | clap |
 
-**WGUI** bedeutet: Die UI wird immer in einer Web-Engine gerendert (HTML/CSS). Auch auf dem Desktop ist es technisch ein WebView — kein natives GTK/Qt.
+**GUI** bedeutet: Die UI wird über `fs-render` gerendert — welche Engine dahinter liegt, ist konfigurierbar.
+Der Desktop läuft nativ — kein WebView, kein Chromium, keine Browser-Engine für die Haupt-UI.
+
+## Konfigurierbare Desktop-Einstellungen
+
+Der Desktop ist hochgradig konfigurierbar — angelehnt an KDE:
+
+| Bereich | Was konfiguriert werden kann |
+|---|---|
+| Fensterverhalten | Titelleiste-Stil, Resize-Edges, Snap-Zones, Doppelklick-Aktion |
+| Click-Verhalten | Single/Double-Click-Aktionen, Focus-Follows-Mouse, Drag-Threshold |
+| Animationen | AnimationSet wählen, Geschwindigkeit, einzelne Animationen deaktivieren |
+| Theme | Farben, Fonts, Abstände, Rounding, Schatten (→ fs-theme) |
+| Icon-Sets | Icon-Set wählen (→ fs-icons) |
+| Cursor-Sets | Mauszeiger-Set wählen (→ fs-icons) |
+| Shortcuts | Alle Tastenkürzel konfigurierbar (Action Registry) |
+| Workspace | Sideboard-Position, Panel-Anordnung, Spalten-Layout |
+
+## Animations-System
+
+Animationen sind **Store-Pakete** — austauschbar und erweiterbar wie Icon-Sets:
+
+- **Vordefiniert:** slide-left, slide-right, fade, scale, rotate, ...
+- **User-Animationen:** WASM-basiert via `fs-plugin-sdk` — eigene Timing-Curves
+- **Konfigurierbar:** je App-Aktion welche Animation + Geschwindigkeit oder aus
+- **Store-erweiterbar:** Community-Animations-Packs im Store veröffentlichbar
 
 ## UI-Objekt-System
 
@@ -75,22 +117,25 @@ Desktop läuft auch offline. Für Live-Daten braucht es eine Verbindung zu einem
 
 | OS | Status |
 |---|---|
-| Linux | ✅ (webkit2gtk) |
-| macOS | ✅ (WKWebView) |
-| Windows | ✅ (WebView2) |
-| Android/iOS | ✅ Reiner Client (per Invite verbinden) |
+| Linux | ✅ (primär, fs-gui-engine-iced via libcosmic) |
+| macOS | ✅ (fs-gui-engine-iced) |
+| Windows | ✅ (fs-gui-engine-iced) |
+| Android/iOS | Geplant (reiner Client — per Invite verbinden) |
 
 ## Repos
 
 - **Shell:** https://github.com/FreeSynergy/fs-desktop
 - **Apps:** https://github.com/FreeSynergy/fs-apps
+- **Render-Abstraktion:** https://github.com/FreeSynergy/fs-render
+- **GUI-Engine iced:** https://github.com/FreeSynergy/fs-gui-engine-iced
+- **GUI-Engine Bevy:** https://github.com/FreeSynergy/fs-gui-engine-bevy
 
 ## Desktop-Crates (fs-desktop/crates/) — Shell & Infrastruktur
 
 | Crate | Zweck |
 |---|---|
 | `fs-shell` | Desktop-Shell: Taskbar, Fenstermanager, Sidebar, WindowFrame |
-| `fs-settings` | Einstellungen: Appearance, Language, Rollen, Desktop, Pakete |
+| `fs-settings` | Einstellungen: Appearance, Language, Rollen, Desktop, Pakete, Animationen |
 | `fs-profile` | Benutzerprofil |
 | `fs-db-desktop` | SQLite-Schemas für Desktop + Apps |
 | `fs-app` | Haupt-Launcher-Binary |
@@ -101,7 +146,7 @@ Desktop läuft auch offline. Für Live-Daten braucht es eine Verbindung zu einem
 | Crate | Zweck |
 |---|---|
 | `fs-store-app` | Paket-Browser (Store-UI) |
-| `fs-browser` | Eingebetteter Web-Browser |
+| `fs-browser` | Eingebetteter Web-Browser (nutzt fs-web-engine) |
 | `fs-lenses` | Aggregierte Cross-Service-Ansichten |
 | `fs-theme-app` | Theme-Manager (Farben, Cursor, Chrome) |
 | `fs-builder` | Container-Builder, Bridge-Builder, i18n-Editor |
@@ -111,12 +156,13 @@ Desktop läuft auch offline. Für Live-Daten braucht es eine Verbindung zu einem
 | `fs-container-app` | Container/Service-Verwaltung |
 | `fs-managers` | Vereintes Manager-Panel (Language, Icons, Cursor, Theme, Container) |
 
-## Bibliotheken (fs-libs)
+## Bibliotheken
 
 | Crate | Zweck |
 |---|---|
-| `dioxus` 0.6.x | UI-Framework (WebView Desktop + WASM) |
-| `fs-components` | Wiederverwendbare UI-Komponenten |
+| `fs-render` | GUI-Abstraktions-Traits — einziger Render-Einstiegspunkt |
+| `fs-gui-engine-iced` | iced-Engine (Standard), libcosmic-Basis |
+| `fs-gui-engine-bevy` | Bevy-Engine (3D, optional) |
 | `fs-theme` | Theme-System |
 | `fs-i18n` | Sprach-Snippets (Mozilla Fluent) + Locale-Formatierung |
 | `fs-db` | SQLite (fs-desktop.db) |
@@ -131,7 +177,8 @@ Desktop läuft auch offline. Für Live-Daten braucht es eine Verbindung zu einem
 - **`WindowLayout`:** Sidebar/Hilfe-Panel Position per Nutzer konfigurierbar
 - **`ManagerView`:** Eine Komponente für alle Pakete — das Paket liefert das WAS, der Manager das WIE
 - **`PackageSettingsView`:** Alle Paket-Einstellungen aggregiert an einem Ort
+- **`RenderEngine`-Trait:** Desktop kennt keine Engine — nur den Trait (→ [Render-Architektur](../../architektur/render-architektur.md))
 
 ---
 
-Weiter: [Browser](../browser/README.md) | [Lenses](../lenses/README.md) | [BotManager](../botmanager/README.md) | [Manager](../../konzepte/manager.md) | [UI-Standards](../../konzepte/ui-standards.md)
+Weiter: [Render-Architektur](../../architektur/render-architektur.md) | [Browser](../browser/README.md) | [Lenses](../lenses/README.md) | [BotManager](../botmanager/README.md) | [Manager](../../konzepte/manager.md)

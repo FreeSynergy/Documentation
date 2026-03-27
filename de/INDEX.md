@@ -22,6 +22,7 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 ### Architektur
 - [Gesamtübersicht](architektur/uebersicht.md) — Philosophie, Schichten-Diagramm, Programme, Datenfluss
 - [Repository-Übersicht](architektur/repositories.md) — Jedes Repo, sein Zweck, lokaler Pfad, GitHub-URL
+- [Render-Architektur](architektur/render-architektur.md) — GUI-Abstraktion (fs-render), Engines (iced, Bevy), Browser-Engine (Servo), Animations-System
 
 ### Programme
 - [Init](programme/init/README.md) — Bootstrap: prüft System, lädt Store

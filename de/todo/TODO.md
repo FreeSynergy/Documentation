@@ -196,37 +196,96 @@ F6. ✅ End-to-End Test: Paket installieren
 > Kein Code ohne Gespräch und Entscheidung.
 
 ```
-G1. fs-auth Design-Entscheidung + fs-node Architektur
-    AUTH — Entscheidung nötig bevor Code geschrieben wird:
+G1. fs-auth Design + fs-node Architektur
+    ENTSCHEIDUNG (2026-03-27): Protokoll-Traits-Ansatz — modular, Bus-kompatibel.
+    fs-auth definiert 4 separate Protokoll-Traits. Kanidm implementiert alle 4.
+    Jedes zukünftige Auth-Backend implementiert nur die Protokolle die es unterstützt.
 
-    Option A: fs-auth = Adapter-Schicht
-      - fs-auth definiert Traits + eigene Login-UI + CLI
-      - Kanidm ist eine Implementierung davon (austauschbar)
-      - Pro: flexibel, Kanidm kann später ersetzt werden
-      - Con: wir reimplementieren Auth-Konzepte nach; mehr Code für weniger Mehrwert
-        wenn wir Kanidm sowieso immer nutzen
+    AUTH — Umsetzung:
+    G1.1 [ ] fs-auth: 4 Protokoll-Traits + AuthCapabilities
+              pub trait OAuthProvider  { fn authorize(...) }
+              pub trait ScimProvider   { fn provision_user(...) }
+              pub trait SsoProvider    { fn validate_session(...) }
+              pub trait PamProvider    { fn authenticate_pam(...) }
+              AuthCapabilities: welche Protokolle ein Backend unterstützt
+    G1.2 [ ] KanidmBackend: impl für alle 4 Traits
+              Kanidm = Standard-Implementierung (Fork: fs-kanidm)
+    G1.3 [ ] fs-auth: eigene Login-UI + CLI
+              UI/CLI nutzen Traits, nie Kanidm direkt
+    G1.4 [ ] Bus-Integration
+              auth.login / auth.logout / auth.provision → fs-bus Events
 
-    Option B: Kanidm direkt integrieren (kein Adapter)
-      - Kanidm wird direkt als Auth-Backend eingebunden
-      - Pro: nutzt Kanidm voll aus (PAM, SCIM intern, OIDC/LDAP)
-        PAM = OS-Level-Auth (seltenes Feature, sehr mächtig für ein Platform-OS)
-      - Con: tightly coupled; Wechsel zu anderem Backend wäre großer Aufwand
-      - Frage: Wollen wir Kanidm langfristig? Oder ist das nur der erste Schritt?
+    NODE — Orchestrierungs-Schichten:
+    G1.5 [ ] fs-node: Grundstruktur
+              AuthGateway    → fs-auth (Protokoll-Traits)
+              S3Provider     → fs-s3 (s3s + opendal — bereits implementiert)
+              ServiceProxy   → fs-registry (Capability-Lookup)
+              FederationGate → fs-federation (später, nach Federation-Phase)
+              NodeAPI        → HTTP/gRPC nach außen (Desktop-Client, andere Nodes)
+    G1.6 [ ] fs-node: Einladungs-System (nach G1.5)
+              Token-basierte Node-Einladungen
+              Verschlüsselte TOML-Pakete, Port pro Einladung
 
-    Zu bedenken:
-      - Kanidm kann PAM (OS-Ebene) + SCIM (intern, extern in Entwicklung)
-      - Kanidm wird aktiv entwickelt, aber unsicher wie groß das Projekt bleibt
-      - FreeSynergy ist ein Platform-OS — Auth ist keine optionale Komponente
+    HINWEIS S3: MinIO wird NICHT verwendet.
+    fs-s3 nutzt `s3s` + `s3s-fs` (MIT) als eingebetteten S3-Server.
+    `opendal` (Apache-2.0) übernimmt austauschbare Replikations-Backends
+    (Hetzner Storagebox, S3-remote, SFTP). Kein Lizenzproblem.
 
-    NODE — nach Auth-Entscheidung:
-      - Was macht der Node genau? (S3, externer Desktop-Zugriff, Orchestrierung)
-      - Wie viel bleibt im Node, was geht in eigene Module?
-      - Verbindung zu fs-auth, fs-federation, fs-registry
+G2. Desktop Rendering-Architektur
+    ENTSCHEIDUNG (2026-03-27): Abstraktions-API zuerst, dann austauschbare Engines.
+    Kein Code in fs-desktop/fs-apps der direkt iced, bevy oder Servo importiert.
+    Dioxus wird vollständig entfernt. fs-render wird neu aufgebaut.
 
-G2. Desktop Architektur
-    - App-Lifecycle: wie wird ein Programm gestartet/minimiert/beendet?
-    - Fenster-Management: wer verwaltet was?
-    - Verbindung zu fs-session
+    RENDER-LAYER (GUI):
+    G2.1 [ ] fs-render: Abstraktions-Traits neu aufbauen (Dioxus-Code entfernen)
+              RenderEngine Trait — Engine-Lifecycle, Widget-Rendering
+              FsWidget Trait    — Buttons, Listen, Felder, Dialoge
+              FsWindow Trait    — App-Lifecycle: start/minimize/restore/close
+              FsTheme Trait     — Farben, Fonts, Abstände, Rounding, Schatten
+              FsEvent System    — Input-Events, Window-Events, Custom-Events
+    G2.2 [ ] fs-gui-engine-iced (neues Repo)
+              libcosmic als direkte Dependency (Apache-2.0/MIT dual)
+              Implementiert alle fs-render Traits
+              Standard-Engine für klassische UI (Dialoge, Sideboard, Listen)
+    G2.3 [ ] fs-gui-engine-bevy (neues Repo)
+              Bevy ECS als Basis
+              3D-fähig: Workspace-Visualisierungen, animierter Desktop
+              Mischform möglich: Bevy für 3D-Canvas, iced für Dialoge
+              Implementiert alle fs-render Traits
+
+    ANIMATIONS-SYSTEM (Teil von fs-render, Store-erweiterbar):
+    G2.4 [ ] AnimationSet als Store-Paket
+              Vordefiniert: slide-left, slide-right, fade, scale, rotate, ...
+              User-Animationen: WASM-basiert (fs-plugin-sdk)
+              Konfigurierbar je App-Aktion: welche Animation + Geschwindigkeit + aus
+              Im Store veröffentlichbar → Community-Animationen
+
+    BROWSER-LAYER:
+    G2.5 [ ] fs-web-engine (neues Repo — Abstraktions-Trait)
+              WebEngine Trait — load, reload, navigate, execute_js
+              WebView Trait   — embed in fs-render Window
+              Plugin-Schnittstelle: WASM-basiert via fs-plugin-sdk
+    G2.6 [ ] fs-web-engine-servo (neues Repo)
+              Servo-Implementierung (SpiderMonkey JS — vollständig, MPL-2.0)
+              Implementiert fs-web-engine Traits
+              Blitz-Migration möglich wenn Blitz reif ist (MIT)
+    G2.7 [ ] fs-browser anpassen
+              Importiert fs-web-engine (nicht Servo direkt)
+              Engine wählbar (Feature-Flag oder Runtime-Konfiguration)
+
+    INTEGRATION:
+    G2.8 [ ] fs-desktop anpassen
+              Importiert fs-render (nicht iced/bevy direkt)
+              Engine-Auswahl via Feature-Flag (default: iced)
+    G2.9 [ ] fs-settings erweitern: Desktop-Konfiguration (KDE-Idee)
+              Fensterverhalten: Titelleiste-Stil, Resize-Edges, Snap-Zones,
+                                Doppelklick-Aktion, Focus-Follows-Mouse
+              Click-Verhalten: Single/Double-Click, Drag-Threshold
+              Animationen:     AnimationSet wählen, Geschwindigkeit, deaktivieren
+              Theme:           Farben, Fonts, Abstände, Rounding, Schatten
+              Icon-Sets, Cursor-Sets (→ fs-icons)
+              Shortcuts:       Action Registry, alle Shortcuts konfigurierbar
+              Workspace:       Sideboard-Position, Panel-Anordnung, Spalten
 
 G3. Bus API Namespaces (Vertrags-Design)
     - Welche Bus-Message-Namespaces brauchen wir?
