@@ -199,14 +199,8 @@ G1. fs-auth Design + fs-node Architektur
     Jedes zukünftige Auth-Backend implementiert nur die Protokolle die es unterstützt.
 
     AUTH — Umsetzung:
-    G1.1 [ ] fs-auth: 4 Protokoll-Traits + AuthCapabilities
-              pub trait OAuthProvider  { fn authorize(...) }
-              pub trait ScimProvider   { fn provision_user(...) }
-              pub trait SsoProvider    { fn validate_session(...) }
-              pub trait PamProvider    { fn authenticate_pam(...) }
-              AuthCapabilities: welche Protokolle ein Backend unterstützt
-    G1.2 [ ] KanidmBackend: impl für alle 4 Traits
-              Kanidm = Standard-Implementierung (Fork: fs-kanidm)
+    G1.1 ✅ fs-auth: 4 Protokoll-Traits + AuthCapabilities (2026-03-27)
+    G1.2 ✅ KanidmBackend: Stub für alle 4 Traits (2026-03-27)
     G1.3 [ ] fs-auth: eigene Login-UI + CLI
               UI/CLI nutzen Traits, nie Kanidm direkt
     G1.4 [ ] Bus-Integration
@@ -234,11 +228,8 @@ G2. Desktop Rendering-Architektur
     Dioxus wird vollständig entfernt. fs-render wird neu aufgebaut.
 
     RENDER-LAYER (GUI):
-    G2.1 [ ] fs-render: Abstraktions-Traits neu aufbauen (Dioxus-Code entfernen)
-              RenderEngine Trait — Engine-Lifecycle, Widget-Rendering
-              FsWidget Trait    — Buttons, Listen, Felder, Dialoge
-              FsWindow Trait    — App-Lifecycle: start/minimize/restore/close
-              FsTheme Trait     — Farben, Fonts, Abstände, Rounding, Schatten
+    G2.1 ✅ fs-render: Abstraktions-Traits neu aufgebaut (Dioxus entfernt) (2026-03-27)
+              RenderEngine, FsWidget, FsWindow, FsTheme, FsEvent, AnimationSet
               FsEvent System    — Input-Events, Window-Events, Custom-Events
     G2.2 [ ] fs-gui-engine-iced (neues Repo)
               libcosmic als direkte Dependency (Apache-2.0/MIT dual)
