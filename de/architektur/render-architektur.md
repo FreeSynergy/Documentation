@@ -19,6 +19,18 @@ Dasselbe gilt für den Browser: `fs-web-engine` ist der Trait, `fs-web-engine-se
 
 ---
 
+## Implementierungs-Status
+
+| Repo | Status |
+|---|---|
+| `fs-render` | ✅ G2.1 — alle Traits implementiert, 19 Tests grün |
+| `fs-gui-engine-iced` | ✅ G2.2 — IcedEngine/IcedWindow/IcedWidget/IcedTheme, 16 Tests grün |
+| `fs-gui-engine-bevy` | G2.3 — geplant |
+| `fs-web-engine` | G2.5 — geplant |
+| `fs-web-engine-servo` | G2.6 — geplant |
+
+---
+
 ## GUI-Schichtmodell
 
 ```
@@ -33,7 +45,7 @@ Dasselbe gilt für den Browser: `fs-web-engine` ist der Trait, `fs-web-engine-se
 ├──────────────────┬──────────────────────────────┤
 │ fs-gui-engine-   │ fs-gui-engine-bevy           │
 │ iced             │                              │
-│ (libcosmic-Basis)│ (Bevy ECS, 3D-fähig)        │
+│ (iced 0.13-Basis)│ (Bevy ECS, 3D-fähig)        │
 └──────────────────┴──────────────────────────────┘
 ```
 
@@ -61,7 +73,7 @@ Dasselbe gilt für den Browser: `fs-web-engine` ist der Trait, `fs-web-engine-se
 | Repo | Lizenz | Rolle |
 |---|---|---|
 | `fs-render` | MIT | GUI-Abstraktions-Traits |
-| `fs-gui-engine-iced` | MIT | iced-Engine; libcosmic als Basis (Apache-2.0/MIT dual) |
+| `fs-gui-engine-iced` | MIT | iced-Engine; libcosmic-Ausbau geplant (Apache-2.0/MIT dual) |
 | `fs-gui-engine-bevy` | MIT | Bevy-Engine (Apache-2.0/MIT dual) |
 | `fs-web-engine` | MIT | Browser-Engine-Abstraktions-Traits |
 | `fs-web-engine-servo` | MIT | Servo-Implementierung (Servo: MPL-2.0) |
@@ -73,32 +85,71 @@ Dasselbe gilt für den Browser: `fs-web-engine` ist der Trait, `fs-web-engine-se
 ### Kern-Traits
 
 ```rust
-/// Die Engine selbst — Lifecycle, Rendering-Loop
-pub trait RenderEngine {
-    fn run(&self, app: Box<dyn FsApp>) -> Result<()>;
-    fn capabilities(&self) -> EngineCapabilities;
+/// Die Engine selbst — Lifecycle, Window-Erstellung, Event-Dispatch
+pub trait RenderEngine: Send + Sync + 'static {
+    type Window: FsWindow;
+    type Widget: FsWidget;
+    type Theme: FsTheme;
+
+    fn name(&self) -> &str;
+    fn version(&self) -> &str;
+    fn create_window(&self, config: WindowConfig) -> Self::Window;
+    fn apply_theme(&self, theme: &Self::Theme);
+    fn dispatch_event(&self, event: FsEvent);
+    fn shutdown(&self);
 }
 
-/// Jedes UI-Element
-pub trait FsWidget {
-    fn render(&self, ctx: &RenderContext) -> WidgetTree;
+/// Jedes UI-Element — Engines wrappen ihre nativen Widgets in diesem Trait
+pub trait FsWidget: Send + Sync {
+    fn widget_id(&self) -> &str;
+    fn is_enabled(&self) -> bool;
+    fn set_enabled(&mut self, enabled: bool);
 }
 
 /// Jedes Fenster / App-Hauptfenster
-pub trait FsWindow {
+pub trait FsWindow: Send + Sync {
     fn title(&self) -> &str;
-    fn on_minimize(&mut self);
-    fn on_restore(&mut self);
-    fn on_close(&mut self) -> CloseAction;
-    fn layout(&self) -> WindowLayout;
+    fn is_visible(&self) -> bool;
+    fn show(&mut self);
+    fn hide(&mut self);
+    fn minimize(&mut self);
+    fn restore(&mut self);
+    fn close(&mut self);
+    fn set_title(&mut self, title: String);
+    fn on_event(&mut self, event: FsEvent);
 }
 
-/// Theme-Schnittstelle
-pub trait FsTheme {
-    fn colors(&self) -> &ColorPalette;
-    fn fonts(&self) -> &FontSet;
-    fn spacing(&self) -> &SpacingScale;
-    fn animation_set(&self) -> &AnimationSet;
+/// Theme-Schnittstelle — engine-neutral
+pub trait FsTheme: Send + Sync + Clone + Default {
+    fn name(&self) -> &str;
+    fn primary_color(&self) -> Color;
+    fn background_color(&self) -> Color;
+    fn text_color(&self) -> Color;
+    fn accent_color(&self) -> Color;
+    fn border_radius(&self) -> f32;
+    fn font_size_base(&self) -> f32;
+}
+```
+
+### Widget-Deskriptoren
+
+`fs-render` definiert auch konkrete Deskriptoren die Engine-unabhängig beschreiben
+welche Widgets existieren sollen:
+
+```rust
+pub struct ButtonWidget   { pub id, label, enabled, action }
+pub struct TextInputWidget{ pub id, placeholder, value, enabled }
+pub struct ListWidget     { pub id, items, selected_index }
+```
+
+### FsEvent
+
+```rust
+pub enum FsEvent {
+    Key(KeyEvent),        // Taste + Modifier-Flags
+    Mouse(MouseEvent),    // Click, Move, Scroll
+    Window(WindowEvent),  // Resized, Focused, Minimized, CloseRequested, ...
+    Custom(CustomEvent),  // Action, TextChanged, SelectionChanged
 }
 ```
 
@@ -108,37 +159,58 @@ Animationen sind keine hartkodierten Werte — sie sind **Store-Pakete**:
 
 ```rust
 pub struct AnimationSet {
-    pub name: String,
-    pub window_open:  Animation,
-    pub window_close: Animation,
-    pub tab_switch:   Animation,
-    pub app_launch:   Animation,
-    // ...
+    pub id: String,
+    pub definitions: Vec<AnimationDefinition>,
 }
 
-pub struct Animation {
-    pub kind: AnimationKind,   // SlideLeft, SlideRight, Fade, Scale, Custom(WasmModule)
+pub struct AnimationDefinition {
+    pub name: String,
+    pub animation_type: AnimationType,  // SlideLeft, Fade, Scale, Custom(String), ...
     pub duration_ms: u32,
-    pub easing: EasingFn,
+    pub easing: EasingFunction,
 }
 ```
 
-`Custom(WasmModule)` erlaubt WASM-basierte User-Animationen via `fs-plugin-sdk`.
+`AnimationType::Custom(name)` erlaubt WASM-basierte User-Animationen via `fs-plugin-sdk`.
 AnimationSets werden wie Icon-Sets als Pakete im Store veröffentlicht und installiert.
+
+### RenderCtx
+
+```rust
+pub struct RenderCtx {
+    pub locale: String,           // z.B. "de", "en"
+    pub animation: AnimationConfig,
+}
+```
 
 ---
 
-## fs-gui-engine-iced
+## fs-gui-engine-iced ✅
 
-Implementiert alle `fs-render`-Traits auf Basis von **iced** + **libcosmic** (System76).
+Implementiert alle `fs-render`-Traits auf Basis von **iced 0.13**.
 
-**libcosmic** liefert:
-- Fertige Widgets (Buttons, Listen, Dialoge, Tabs, Sideboard-Elemente)
-- Theming-System (CSS-Variablen-ähnlich)
-- Fensterverhalten (Titelleiste, Resize, Snap)
-- Dark/Light-Mode-Unterstützung
+**Aktuelle Implementierung:**
 
-**Lizenz:** libcosmic ist Apache-2.0/MIT dual — problemlos nutzbar.
+| Struct | Trait |
+|---|---|
+| `IcedEngine` | `RenderEngine` |
+| `IcedWindow` | `FsWindow` — Descriptor + Event-Queue |
+| `IcedWidget` | `FsWidget` — ID + enabled-State |
+| `IcedTheme` | `FsTheme` — wraps `iced::Theme`, FS Default = Dark + Cyan |
+
+**IcedWindow — Event-Queue-Pattern:**
+
+Da iced ein funktionales Elm-Modell hat, speichert `IcedWindow` pending Events
+in einer Queue. Die iced-Application liest diese Queue im `update()`-Loop:
+
+```rust
+let events = window.drain_events(); // gibt Vec<FsEvent> zurück und leert Queue
+```
+
+**libcosmic-Ausbau (geplant für G2.8):**
+
+Die vollständige libcosmic-Integration (Pop!_OS COSMIC Design System, System-Palette,
+Portal-Integration) kommt wenn `fs-desktop` in Phase G2.8 auf diese Engine umgestellt wird.
 
 **Standard-Engine** für fs-desktop. Gut für:
 - Klassische UI (Formulare, Listen, Dialoge)
@@ -147,7 +219,7 @@ Implementiert alle `fs-render`-Traits auf Basis von **iced** + **libcosmic** (Sy
 
 ---
 
-## fs-gui-engine-bevy
+## fs-gui-engine-bevy (geplant — G2.3)
 
 Implementiert alle `fs-render`-Traits auf Basis von **Bevy** (ECS-Game-Engine).
 
@@ -162,9 +234,9 @@ Die Apps brauchen keine Änderung — nur der Engine-Feature-Flag ändert sich.
 
 ---
 
-## fs-web-engine — Browser-Abstraktion
+## fs-web-engine — Browser-Abstraktion (geplant — G2.5)
 
-### Kern-Traits
+### Kern-Traits (geplant)
 
 ```rust
 pub trait WebEngine {
@@ -189,7 +261,7 @@ Das passt ins bestehende Plugin-System und ist auf allen Plattformen portierbar.
 
 ---
 
-## fs-web-engine-servo
+## fs-web-engine-servo (geplant — G2.6)
 
 **Servo** ist ein Browser-Engine in Rust (Mozilla-Projekt, jetzt eigenständig).
 
@@ -214,7 +286,7 @@ Das passt ins bestehende Plugin-System und ist auf allen Plattformen portierbar.
 ```toml
 # fs-desktop/Cargo.toml
 [features]
-default  = ["engine-iced"]
+default      = ["engine-iced"]
 engine-iced  = ["dep:fs-gui-engine-iced"]
 engine-bevy  = ["dep:fs-gui-engine-bevy"]
 ```
@@ -229,7 +301,7 @@ Engine-Auswahl über Settings → aus dem installierten AnimationSet und Engine-
 
 | Platform | GUI-Engine | Status |
 |---|---|---|
-| Linux | iced (libcosmic) | ✅ primär |
+| Linux | iced | ✅ primär |
 | macOS | iced | ✅ |
 | Windows | iced | ✅ |
 | Linux 3D | Bevy | Geplant |

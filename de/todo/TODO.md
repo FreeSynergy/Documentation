@@ -228,13 +228,8 @@ G2. Desktop Rendering-Architektur
     Dioxus wird vollständig entfernt. fs-render wird neu aufgebaut.
 
     RENDER-LAYER (GUI):
-    G2.1 ✅ fs-render: Abstraktions-Traits neu aufgebaut (Dioxus entfernt) (2026-03-27)
-              RenderEngine, FsWidget, FsWindow, FsTheme, FsEvent, AnimationSet
-              FsEvent System    — Input-Events, Window-Events, Custom-Events
-    G2.2 [ ] fs-gui-engine-iced (neues Repo)
-              libcosmic als direkte Dependency (Apache-2.0/MIT dual)
-              Implementiert alle fs-render Traits
-              Standard-Engine für klassische UI (Dialoge, Sideboard, Listen)
+    G2.1 ✅ fs-render: RenderEngine, FsWidget, FsWindow, FsTheme, FsEvent, AnimationSet — 19 Tests grün (2026-03-27)
+    G2.2 ✅ fs-gui-engine-iced — IcedEngine/IcedWindow/IcedWidget/IcedTheme, iced 0.13, 16 Tests grün (2026-03-27)
     G2.3 [ ] fs-gui-engine-bevy (neues Repo)
               Bevy ECS als Basis
               3D-fähig: Workspace-Visualisierungen, animierter Desktop
