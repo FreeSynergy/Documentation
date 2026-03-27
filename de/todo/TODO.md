@@ -169,14 +169,14 @@ E18.[ ] fs-desktop  — Desktop-Shell
 > Erst wenn alle Repos aus Phase E ihren Repo-Gate bestanden haben.
 
 ```
-F1. [ ] fs-store ↔ Store/ Kompatibilitäts-Test
-        - StoreReader liest alle TOML-Kataloge aus Store/ korrekt
-        - Paket-Parsing: alle Felder werden erkannt (auch [[binaries]])
-        - Integrations-Test: store-cli list gibt tatsächlich Pakete aus
+F1. ✅ fs-store ↔ Store/ Kompatibilitäts-Test
+        97 Pakete geladen (18 apps + 7 managers + 10 containers + ...),
+        [[binaries]] + [distribution] + [interfaces] geparst,
+        managers als eigener Namespace (war fälschlich als App referenziert)
 
-F2. [ ] Manager → fs-inventory
-        - Jeder Manager schreibt nach erfolgreicher Aktion ins Inventory
-        - Test: Theme-Manager installiert Theme → fs-inventory zeigt es als installiert
+F2. ✅ Manager → fs-inventory
+        ThemeManager::install_from_store(inventory, id, version) implementiert
+        2 Integration-Tests grün: recorded + idempotent upsert
 
 F3. [ ] fs-bus verdrahten
         - fs-inventory subscribt auf installer::* Bus-Messages
