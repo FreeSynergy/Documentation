@@ -142,11 +142,9 @@ D24.[ ] fs-bridge-sdk → löschen
 
 **Reihenfolge:**
 
-**Erledigt ✅:** fs-config, fs-bus, fs-db, fs-inventory, fs-session, fs-registry, fs-init, fs-icons, fs-browser, fs-store, fs-lenses, fs-tasks, fs-bots, fs-managers, fs-container-app, fs-ai
+**Erledigt ✅:** fs-config, fs-bus, fs-db, fs-inventory, fs-session, fs-registry, fs-init, fs-icons, fs-browser, fs-store, fs-lenses, fs-tasks, fs-bots, fs-managers, fs-container-app, fs-ai, fs-node
 
 ```
-E17.[ ] fs-node     — Server (Auth, S3, Federation, externer Zugriff)
-        → größtes und komplexestes Repo, erst wenn alle Libs stabil sind
 E18.[ ] fs-desktop  — Desktop-Shell
         → nach fs-node (braucht Node für Authentifizierung)
 ```
