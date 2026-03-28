@@ -266,18 +266,18 @@ G2. Desktop Rendering-Architektur
               Feature-Flag: iced-gui (default) + servo (future)
 
     INTEGRATION:
-    G2.8 [ ] fs-desktop anpassen — ⚠️ COMPILE-FEHLER (blockiert alles in fs-desktop!)
-              Problem: workspace.dependencies hat kein dioxus mehr, ABER:
-                - fs-settings/Cargo.toml: noch `dioxus = { workspace = true }`
-                - fs-profile/Cargo.toml: noch `dioxus = { workspace = true }`
-                - fs-showcase/Cargo.toml: noch `dioxus = { workspace = true }`
-                - Alle .rs in fs-gui-workspace + fs-settings + fs-profile + fs-showcase: `use dioxus::prelude::*`
-              Aktion: Dioxus vollständig entfernen, auf fs-render/iced migrieren
-              Engine-Auswahl via Feature-Flag (default: iced)
-    G2.9 [ ] fs-settings/fs-desktop Dioxus-Inhalt nach G2.8 migrieren
-              Daten-Structs in fs-settings sind fertig (KDE-Konfig: Fenster, Click, Animationen, Theme,
-              Icons, Cursor, Shortcuts, Workspace) — Commit existiert "feat(fs-settings): G2.9"
-              ABER: alles noch in Dioxus-Code — muss auf iced/fs-render umgeschrieben werden
+    G2.8 ✅ fs-desktop anpassen (2026-03-28)
+              Dioxus vollständig entfernt aus fs-gui-workspace (22 Dateien), fs-profile, fs-showcase
+              shell.rs: DesktopShell + DesktopMessage (iced MVU — Elm Pattern)
+              window.rs: WindowRenderFn → AppId enum (Strategy Pattern)
+              fs-profile: ProfileApp + ProfileMessage in iced neu geschrieben
+              fs-showcase: iced-basierte Component-Gallery
+              fs-settings: Sub-Module (accounts/appearance/...) clippy-clean
+              cargo clippy + cargo test: alles grün
+    G2.9 [ ] fs-apps auf iced migrieren (fs-store-app, fs-lenses, fs-managers, …)
+              fs-apps Workspace noch vollständig Dioxus-basiert.
+              Reihenfolge: klein → groß. Jedes App-Crate einzeln.
+              Desktop-Shell zeigt Placeholder bis App migriert ist.
 
 G3. Bus API Namespaces (Vertrags-Design)
     - Welche Bus-Message-Namespaces brauchen wir?
@@ -334,11 +334,8 @@ G8. Daemon vs. Bus-Subscriber vs. Library — wann brauchen wir was?
 > Reihenfolge: Kritisch → Architektur → Große Dateien → Docs
 
 ```
-H1. [ ] ⚠️ KRITISCH: fs-desktop kompiliert nicht
-        Ursache: G2.8 halb-fertig — dioxus aus workspace.dependencies entfernt,
-        aber fs-settings/fs-profile/fs-showcase Cargo.tomls + alle .rs-Dateien
-        noch auf Dioxus. Blockiert jede Arbeit an fs-desktop.
-        → Vor H1 muss G2.8 erledigt werden.
+H1. ✅ fs-desktop kompiliert jetzt (G2.8 abgeschlossen 2026-03-28)
+        Dioxus vollständig entfernt. cargo check + clippy + test: alles grün.
 
 H2. [ ] Orphan-Repo fs-core (standalone) aufräumen
         /home/kal/Server/fs-core/ ist ein Überbleibsel der D22/D23-Migration.
@@ -483,7 +480,7 @@ C  Repositories anlegen                 ✅ (2026-03-26)
 D  fs-libs schrumpfen                   ✅ (2026-03-26) — D17–D19 ✅ (2026-03-28) — D24 noch offen
 E  Programme einzeln sauber machen      ✅ (2026-03-28)
 F  Integration                          ✅ (2026-03-28) — F1–F6 grün
-G  Architektur-Gespräche                ← laufend — G2.8/G2.9 offen, G3–G8 ausstehend
-H  Repo-Aufräumen (Audit-Ergebnis)      ← H1 kritisch (fs-desktop compile-fehler)
+G  Architektur-Gespräche                ← laufend — G2.8 ✅, G2.9 offen, G3–G8 ausstehend
+H  Repo-Aufräumen (Audit-Ergebnis)      ← H1 ✅ (fs-desktop kompiliert), H2–H13 offen
 —  Archiv-Phasen                        ← wenn Zeit da ist
 ```
