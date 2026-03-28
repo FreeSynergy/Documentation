@@ -256,14 +256,10 @@ G2. Desktop Rendering-Architektur
               8 Tests grün, WASM-Erweiterung via fs-plugin-sdk (später)
 
     BROWSER-LAYER:
-    G2.5 [ ] fs-web-engine (neues Repo — Abstraktions-Trait)
-              WebEngine Trait — load, reload, navigate, execute_js
-              WebView Trait   — embed in fs-render Window
-              Plugin-Schnittstelle: WASM-basiert via fs-plugin-sdk
-    G2.6 [ ] fs-web-engine-servo (neues Repo)
-              Servo-Implementierung (SpiderMonkey JS — vollständig, MPL-2.0)
-              Implementiert fs-web-engine Traits
-              Blitz-Migration möglich wenn Blitz reif ist (MIT)
+    G2.5 ✅ fs-web-engine — WebEngine/WebView/WebPlugin Traits, WebCapabilities, NavigationHistory,
+              JsValue, WebUrl, WebError, StubWebEngine/View — 16 Tests grün (2026-03-28)
+    G2.6 ✅ fs-web-engine-servo — ServoWebEngine/View/PluginRegistry, Request-Interception + Redirect,
+              feature-gated servo Integration — 27 Tests grün (2026-03-28)
     G2.7 [ ] fs-browser anpassen
               Importiert fs-web-engine (nicht Servo direkt)
               Engine wählbar (Feature-Flag oder Runtime-Konfiguration)
