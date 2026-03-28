@@ -11,6 +11,7 @@
 - **Erledigte Items löschen** — kein [x] behalten. Löschen spart Token in zukünftigen Sessions.
   Abgeschlossene Phasen werden auf eine Zeile komprimiert.
 - **Vor jeder Aktion:** Was braucht dieses Modul? Store als Single Source of Truth prüfen.
+- **Cleanen:** gehe bitte alle repos durch und räume auf. schau, ob alles OK ist. sei es im Repository, sei es, ob sie vollständig sind und ob man sie compilieren kann … schau nach, das gute design patterns genommen wurden und die Dateien nicht zu groß sind …
 
 ---
 
@@ -260,23 +261,23 @@ G2. Desktop Rendering-Architektur
               JsValue, WebUrl, WebError, StubWebEngine/View — 16 Tests grün (2026-03-28)
     G2.6 ✅ fs-web-engine-servo — ServoWebEngine/View/PluginRegistry, Request-Interception + Redirect,
               feature-gated servo Integration — 27 Tests grün (2026-03-28)
-    G2.7 [ ] fs-browser anpassen
-              Importiert fs-web-engine (nicht Servo direkt)
-              Engine wählbar (Feature-Flag oder Runtime-Konfiguration)
+    G2.7 ✅ fs-browser anpassen (2026-03-28)
+              Migriert zu iced via fs-gui-engine-iced (Commit: "migrate browser from Dioxus to iced")
+              Feature-Flag: iced-gui (default) + servo (future)
 
     INTEGRATION:
-    G2.8 [ ] fs-desktop anpassen
-              Importiert fs-render (nicht iced/bevy direkt)
+    G2.8 [ ] fs-desktop anpassen — ⚠️ COMPILE-FEHLER (blockiert alles in fs-desktop!)
+              Problem: workspace.dependencies hat kein dioxus mehr, ABER:
+                - fs-settings/Cargo.toml: noch `dioxus = { workspace = true }`
+                - fs-profile/Cargo.toml: noch `dioxus = { workspace = true }`
+                - fs-showcase/Cargo.toml: noch `dioxus = { workspace = true }`
+                - Alle .rs in fs-gui-workspace + fs-settings + fs-profile + fs-showcase: `use dioxus::prelude::*`
+              Aktion: Dioxus vollständig entfernen, auf fs-render/iced migrieren
               Engine-Auswahl via Feature-Flag (default: iced)
-    G2.9 [ ] fs-settings erweitern: Desktop-Konfiguration (KDE-Idee)
-              Fensterverhalten: Titelleiste-Stil, Resize-Edges, Snap-Zones,
-                                Doppelklick-Aktion, Focus-Follows-Mouse
-              Click-Verhalten: Single/Double-Click, Drag-Threshold
-              Animationen:     AnimationSet wählen, Geschwindigkeit, deaktivieren
-              Theme:           Farben, Fonts, Abstände, Rounding, Schatten
-              Icon-Sets, Cursor-Sets (→ fs-icons)
-              Shortcuts:       Action Registry, alle Shortcuts konfigurierbar
-              Workspace:       Sideboard-Position, Panel-Anordnung, Spalten
+    G2.9 [ ] fs-settings/fs-desktop Dioxus-Inhalt nach G2.8 migrieren
+              Daten-Structs in fs-settings sind fertig (KDE-Konfig: Fenster, Click, Animationen, Theme,
+              Icons, Cursor, Shortcuts, Workspace) — Commit existiert "feat(fs-settings): G2.9"
+              ABER: alles noch in Dioxus-Code — muss auf iced/fs-render umgeschrieben werden
 
 G3. Bus API Namespaces (Vertrags-Design)
     - Welche Bus-Message-Namespaces brauchen wir?
@@ -323,6 +324,74 @@ G8. Daemon vs. Bus-Subscriber vs. Library — wann brauchen wir was?
     Falls nein → Daemon mit Bus-Integration als Fallback
 
     Betrifft: fs-info (C13/D14), fs-inventory, fs-session, fs-registry
+```
+
+---
+
+## Phase H: Repo-Aufräumen (2026-03-28 — Audit-Ergebnis)
+
+> Befunde aus vollständigem Repo-Scan aller 30+ Repos.
+> Reihenfolge: Kritisch → Architektur → Große Dateien → Docs
+
+```
+H1. [ ] ⚠️ KRITISCH: fs-desktop kompiliert nicht
+        Ursache: G2.8 halb-fertig — dioxus aus workspace.dependencies entfernt,
+        aber fs-settings/fs-profile/fs-showcase Cargo.tomls + alle .rs-Dateien
+        noch auf Dioxus. Blockiert jede Arbeit an fs-desktop.
+        → Vor H1 muss G2.8 erledigt werden.
+
+H2. [ ] Orphan-Repo fs-core (standalone) aufräumen
+        /home/kal/Server/fs-core/ ist ein Überbleibsel der D22/D23-Migration.
+        fs-core wurde in D25 zurück in fs-libs geholt (Commit: "restore fs-core into fs-libs").
+        Standalone Repo hat nur 1 Commit, identischen Inhalt, wird nirgends referenziert.
+        Aktion: Repo archivieren oder löschen.
+
+H3. [ ] MEMORY.md: fs-bus, fs-config, fs-db als eigene Repos eintragen
+        Alle drei existieren, kompilieren, sind aktiv als Abhängigkeiten genutzt — fehlen aber
+        in der Repo-Tabelle in MEMORY.md.
+        fs-bus:    git@github.com:FreeSynergy/fs-bus.git
+        fs-config: git@github.com:FreeSynergy/fs-config.git
+        fs-db:     git@github.com:FreeSynergy/fs-db.git
+
+H4. [ ] Große Datei aufteilen: fs-packages/fs-pkg/src/manifest.rs (1394 Zeilen)
+        → Aufteilen in: manifest/fields.rs, manifest/validation.rs, manifest/builder.rs o.ä.
+
+H5. [ ] Große Datei aufteilen: fs-components/src/nav.rs (1204 Zeilen)
+        → Aufteilen in kleinere Komponenten-Module
+
+H6. [ ] Große Datei aufteilen: fs-packages/fs-pkg/src/setup_step.rs (886 Zeilen)
+        → Aufteilen nach Step-Typen
+
+H7. [ ] Große Datei aufteilen: fs-packages/fs-pkg/src/installer.rs (706 Zeilen)
+        → Aufteilen nach Installer-Phasen
+
+H8. [ ] Große Datei aufteilen: fs-bots/bot-db/src/lib.rs (735 Zeilen)
+        → Aufteilen nach DB-Entitäten/Operationen
+
+H9. [ ] Große Dateien in fs-apps/crates/fs-managers (nach G2.8):
+        language_panel.rs: 1060 Zeilen
+        cursor_panel.rs:    808 Zeilen
+        manager_view.rs:    792 Zeilen
+        install_wizard.rs:  606 Zeilen (fs-store-app)
+        → Panels nach Sub-Abschnitten aufteilen
+
+H10.[ ] Große Dateien in fs-desktop (nach G2.8/G2.9):
+        fs-gui-workspace/src/desktop.rs:              1362 Zeilen
+        fs-settings/src/desktop_settings.rs:          1172 Zeilen
+        fs-settings/src/language.rs:                  1150 Zeilen
+        → Nach G2.8-Migration in kleinere Module aufteilen
+
+H11.[ ] fs-ui description + README updaten
+        Cargo.toml noch: "Dioxus UI component library" — nach G2-Entscheidung veraltet.
+        fs-ui gehört zu fs-render/iced Welt, nicht mehr Dioxus.
+
+H12.[ ] fs-node: kein Cargo.toml im Root
+        fs-node hat cli/, validator/, migration/ mit eigenen Cargo.tomls aber kein
+        Workspace-Cargo.toml im Root. Prüfen ob das gewollt ist oder ob ein Workspace fehlt.
+
+H13.[ ] D17-D19: i18n-Audit noch offen
+        Code-Audit auf hardcodierte Strings, common.ftl + programm.ftl anlegen.
+        Gilt für ALLE Repos. (Parallel zu anderen Phasen möglich)
 ```
 
 ---
@@ -412,10 +481,11 @@ O3. [ ] Task-Templates aus Store
 ```
 A  Dokumentation aktualisieren          ✅ (2026-03-26)
 B  Store bereinigen                     ✅ (2026-03-26)
-C  Repositories anlegen                 ← in Arbeit (C11–C24 offen)
-D  fs-libs schrumpfen                   ← parallel zu C
-E  Programme einzeln sauber machen      ← E03–E18 offen
-F  Integration                          ← nach E
-G  Gespräche (parallel zu E+F führen)   ← laufend
+C  Repositories anlegen                 ✅ (2026-03-26)
+D  fs-libs schrumpfen                   ✅ (2026-03-26) — D17–D19 (i18n) + D24 noch offen
+E  Programme einzeln sauber machen      ✅ (2026-03-28)
+F  Integration                          ✅ (2026-03-28) — F1–F6 grün
+G  Architektur-Gespräche                ← laufend — G2.8/G2.9 offen, G3–G8 ausstehend
+H  Repo-Aufräumen (Audit-Ergebnis)      ← H1 kritisch (fs-desktop compile-fehler)
 —  Archiv-Phasen                        ← wenn Zeit da ist
 ```
