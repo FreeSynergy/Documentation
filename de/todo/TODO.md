@@ -89,19 +89,19 @@ fs-core     — FsManager-Trait, ManagerRegistry, ManagerStore (zero deps; 5 Man
 
 **Strings aufräumen — Migration zu fs-i18n (parallel zu Phase E):**
 ```
-D17.[ ] Code-Audit: alle hardcodierten Strings finden
-        grep nach: println!, format!, eprintln!, direkte String-Literals in UI
-        Gilt für ALLE Repos, nicht nur fs-libs
+D17. ✅ Code-Audit (2026-03-28): alle Repos auf hardcodierte Strings geprüft.
+         Befund: nahezu alle UI-Strings in allen Repos noch hardcodiert.
+         Abstellung: schrittweise, je Programm beim nächsten Anfassen.
+         Regel gilt: kein roher String in Code — immer i18n-Keys.
 
-D18.[ ] common.ftl anlegen in fs-i18n/locales/de/ und /en/
-        Inhalt: alle wiederverwendbaren Fehlermeldungen
-        error-not-found, error-permission-denied, error-invalid-input,
-        error-connection-failed, error-parse-failed, ...
-        → Einmal definiert, überall referenziert
+D18. ✅ common.ftl angelegt in fs-i18n/locales/{de,en}/ (2026-03-28)
+         80+ Keys: error-*, action-*, label-*, status-*, phrase-*
+         Alle wiederverwendbaren Fehlermeldungen + Aktionen + Labels
 
-D19.[ ] Pro Programm: {programm}.ftl in fs-i18n/locales/{lang}/
-        Reihenfolge: parallel zu Phase E — je Programm beim Sauber-Machen
-        Regel: KEIN roher String in Code — immer nur i18n-Keys
+D19. ✅ Per-Programm FTL angelegt in fs-i18n/locales/{lang}/ (2026-03-28)
+         settings, store, browser, lenses, bots, container-app, managers,
+         ai, auth, tasks, init, node, icons, theme-app — je en+de
+         BUILTIN_LOCALES in snippets.rs eingebunden + 13 Tests grün
 ```
 
 ---
@@ -389,9 +389,7 @@ H12.[ ] fs-node: kein Cargo.toml im Root
         fs-node hat cli/, validator/, migration/ mit eigenen Cargo.tomls aber kein
         Workspace-Cargo.toml im Root. Prüfen ob das gewollt ist oder ob ein Workspace fehlt.
 
-H13.[ ] D17-D19: i18n-Audit noch offen
-        Code-Audit auf hardcodierte Strings, common.ftl + programm.ftl anlegen.
-        Gilt für ALLE Repos. (Parallel zu anderen Phasen möglich)
+H13. ✅ D17-D19: i18n-Audit + common.ftl + programm.ftl — erledigt (2026-03-28)
 ```
 
 ---
@@ -482,7 +480,7 @@ O3. [ ] Task-Templates aus Store
 A  Dokumentation aktualisieren          ✅ (2026-03-26)
 B  Store bereinigen                     ✅ (2026-03-26)
 C  Repositories anlegen                 ✅ (2026-03-26)
-D  fs-libs schrumpfen                   ✅ (2026-03-26) — D17–D19 (i18n) + D24 noch offen
+D  fs-libs schrumpfen                   ✅ (2026-03-26) — D17–D19 ✅ (2026-03-28) — D24 noch offen
 E  Programme einzeln sauber machen      ✅ (2026-03-28)
 F  Integration                          ✅ (2026-03-28) — F1–F6 grün
 G  Architektur-Gespräche                ← laufend — G2.8/G2.9 offen, G3–G8 ausstehend
