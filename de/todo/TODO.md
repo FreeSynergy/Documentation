@@ -219,30 +219,30 @@ Dokumentation
 
 ```
 OOP & Design
-[ ] Adapter Pattern: SqliteEngine wraps SeaORM + SQLite
-[ ] SqliteEngine implementiert DbEngine-Trait vollständig
+[✓] Adapter Pattern: SqliteEngine wraps sqlx + SQLite
+[✓] SqliteEngine implementiert DbEngine-Trait vollständig
 [ ] Registriert Capability "db.engine.sqlite" in fs-registry
-[ ] Immer gegen Interface — Consumer kennt nur DbEngine-Trait
+[✓] Immer gegen Interface — Consumer kennt nur DbEngine-Trait
 
 Repo
-[ ] GitHub Repo anlegen: git@github.com:FreeSynergy/fs-db-engine-sqlite.git
-[ ] Lokal anlegen: /home/kal/Server/fs-db-engine-sqlite/
-[ ] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[ ] Containerfile
+[✓] GitHub Repo anlegen: git@github.com:FreeSynergy/fs-db-engine-sqlite.git
+[✓] Lokal anlegen: /home/kal/Server/fs-db-engine-sqlite/
+[✓] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
+[✓] Containerfile
 
 Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
+[✓] #![deny(clippy::all, clippy::pedantic, warnings)]
 [ ] FTL-Keys für alle user-facing Fehlermeldungen (Verbindungsfehler, Migration, etc.)
-[ ] cargo clippy: 0 Fehler
-[ ] cargo fmt --check: sauber
-[ ] cargo test: connect / migrate / query / health getestet
+[✓] cargo clippy: 0 Fehler
+[✓] cargo fmt --check: sauber
+[✓] cargo test: connect / migrate / query / health getestet
 [ ] cargo build --release: fehlerfrei
 
 API
-[ ] gRPC (tonic): connect / disconnect / migrate / query / health
-[ ] Proto-Datei: db_engine.proto (geteilt mit fs-db-engine-postgres)
-[ ] REST (axum): GET /health, POST /migrate, POST /query
-[ ] OpenAPI (utoipa): auto-generiert
+[✓] gRPC (tonic): open / close / migrate / execute / health
+[✓] Proto-Datei: db_engine.proto (geteilt mit fs-db-engine-postgres)
+[✓] REST (axum): GET /health, POST /migrate, POST /execute
+[✓] OpenAPI (utoipa): auto-generiert
 
 Dokumentation
 [ ] Doku-Seite: SqliteEngine-Impl, Capability-Registration, API
