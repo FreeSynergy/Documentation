@@ -27,6 +27,7 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [fs-gui-engine-iced](programme/fs-gui-engine-iced.md) — iced Render-Engine: IcedEngine, MVU-Muster, IcedTheme, Capability "render.engine.iced"
 - [fs-session](programme/fs-session.md) — Session-Management: SessionStore-Trait, SqliteSessionStore, SessionTracker, AppSession
 - [fs-info](programme/fs-info.md) — System-Info: SystemInfo-Trait, FsInfo-Facade, MetricsCollector, Alerting
+- [fs-container](programme/fs-container.md) — Container-Management: ContainerEngine-Trait, QuadletManager, ServiceConfig (Podman Quadlet)
 
 ### Programme
 - [Init](programme/init/README.md) — Bootstrap: prüft System, lädt Store
