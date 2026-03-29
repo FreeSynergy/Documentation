@@ -77,6 +77,8 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [Build-Workflow](technik/build-workflow.md) — Design Pattern → OOP → Tests → Clippy → Push, Quality Gates, Binary-Distribution
 - [Storage-Layer (S3)](technik/storage.md) — Eigener S3-Server, opendal, Profiles
 - [Datenspeicherung](technik/datenspeicherung.md) — SQLite-Architektur, Datenbank pro Service
+- [fs-db-engine-sqlite](technik/fs-db-engine-sqlite.md) — SQLite-Adapter: DbEngine-Trait-Impl, gRPC+REST, Capability "db.engine.sqlite"
+- [fs-db-engine-postgres](technik/fs-db-engine-postgres.md) — PostgreSQL-Adapter: DbEngine-Trait-Impl, gRPC+REST, Capability "db.engine.postgres"
 - [Bibliotheken](technik/bibliotheken.md) — Welche Crates wofür
 - [Typen-System](technik/typen.md) — FsValue, FsUrl, LanguageCode, SemVer, FsPort, FsTag
 - [CSS-System](technik/css.md) — CSS-Variablen, Prefixing, Themes

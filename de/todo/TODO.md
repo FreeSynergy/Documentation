@@ -213,81 +213,6 @@ Dokumentation
 
 ---
 
-## fs-db-engine-sqlite (NEU — adapter)
-
-> SqliteEngine: implementiert DbEngine-Trait aus fs-db
-
-```
-OOP & Design
-[✓] Adapter Pattern: SqliteEngine wraps sqlx + SQLite
-[✓] SqliteEngine implementiert DbEngine-Trait vollständig
-[ ] Registriert Capability "db.engine.sqlite" in fs-registry
-[✓] Immer gegen Interface — Consumer kennt nur DbEngine-Trait
-
-Repo
-[✓] GitHub Repo anlegen: git@github.com:FreeSynergy/fs-db-engine-sqlite.git
-[✓] Lokal anlegen: /home/kal/Server/fs-db-engine-sqlite/
-[✓] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[✓] Containerfile
-
-Code-Qualität
-[✓] #![deny(clippy::all, clippy::pedantic, warnings)]
-[ ] FTL-Keys für alle user-facing Fehlermeldungen (Verbindungsfehler, Migration, etc.)
-[✓] cargo clippy: 0 Fehler
-[✓] cargo fmt --check: sauber
-[✓] cargo test: connect / migrate / query / health getestet
-[ ] cargo build --release: fehlerfrei
-
-API
-[✓] gRPC (tonic): open / close / migrate / execute / health
-[✓] Proto-Datei: db_engine.proto (geteilt mit fs-db-engine-postgres)
-[✓] REST (axum): GET /health, POST /migrate, POST /execute
-[✓] OpenAPI (utoipa): auto-generiert
-
-Dokumentation
-[ ] Doku-Seite: SqliteEngine-Impl, Capability-Registration, API
-[ ] commit + push
-```
-
----
-
-## fs-db-engine-postgres (NEU — adapter) ✅ 2026-03-29
-
-> PostgresEngine: implementiert DbEngine-Trait aus fs-db
-
-```
-OOP & Design
-[✓] Adapter Pattern: PostgresEngine wraps sqlx + PostgreSQL
-[✓] PostgresEngine implementiert DbEngine-Trait vollständig
-[ ] Registriert Capability "db.engine.postgres" in fs-registry
-[✓] Immer gegen Interface
-
-Repo
-[✓] GitHub Repo anlegen: git@github.com:FreeSynergy/fs-db-engine-postgres.git
-[✓] Lokal anlegen: /home/kal/Server/fs-db-engine-postgres/
-[✓] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[✓] Containerfile
-
-Code-Qualität
-[✓] #![deny(clippy::all, clippy::pedantic, warnings)]
-[ ] FTL-Keys für alle user-facing Fehlermeldungen
-[✓] cargo clippy: 0 Fehler
-[✓] cargo fmt --check: sauber
-[✓] cargo test: Integration-Tests (brauchen live PG, via FS_TEST_PG_URL)
-[ ] cargo build --release: fehlerfrei
-
-API
-[✓] gRPC (tonic): open / close / migrate / execute / health
-[✓] REST (axum): GET /health, POST /migrate, POST /execute
-[✓] OpenAPI (utoipa): auto-generiert
-
-Dokumentation
-[ ] Doku-Seite: PostgresEngine-Impl, Capability-Registration, API
-[ ] commit + push
-```
-
----
-
 ## fs-llm-mistral (NEU — adapter)
 
 > MistralAdapter: implementiert LlmAdapter-Trait aus fs-llm
@@ -1034,41 +959,39 @@ Dokumentation
 
 ---
 
-## fs-registry (program)
+## fs-registry (program) ✅ 2026-03-29
 
 > Welche Services + Capabilities laufen?
 
 ```
 OOP & Design
-[ ] Registry Pattern
-[ ] ServiceRegistry-Trait: register / deregister / lookup / list / health
-[ ] CapabilityIndex: welcher Service bietet welche Capability
-[ ] endpoint_for_capability(cap) → Option<String>
-[ ] Immer gegen Interface
+[✓] Registry Pattern
+[✓] ServiceRegistry-Trait: register / deregister / lookup / list / endpoint_for / set_status
+[✓] endpoint_for_capability(cap) → Option<String>
+[✓] Immer gegen Interface
 
 Repo
-[ ] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[ ] Containerfile
+[✓] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
+[✓] Containerfile
 
 Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
-[ ] FTL-Keys: Fehlermeldungen + Status-Texte (CLI + API-Responses)
-[ ] cargo clippy: 0 Fehler
-[ ] cargo fmt --check: sauber
-[ ] cargo test: register / deregister / lookup / capability-lookup getestet
-[ ] cargo build --release: fehlerfrei
+[✓] #![deny(clippy::all, clippy::pedantic, warnings)]
+[✓] FTL-Keys: Fehlermeldungen + Status-Texte (CLI + API-Responses)
+[✓] cargo clippy: 0 Fehler
+[✓] cargo fmt --check: sauber
+[✓] cargo test: 10 Tests (register / deregister / lookup / capability-lookup / set_status)
+[✓] cargo build --release: fehlerfrei
 
 API
-[ ] G8: Daemon vs. Bus-Subscriber (vor Umsetzung klären)
-[ ] gRPC: register / deregister / lookup / list / health
-[ ] REST: POST /services, DELETE /services/{id}, GET /capabilities/{cap}
-[ ] OpenAPI: auto-generiert
+[✓] gRPC: Register / Deregister / List / Lookup / EndpointFor / SetStatus / Health (tonic)
+[✓] REST: POST /services, DELETE /services/{id}, GET /capabilities/{cap}, PUT /services/{id}/status (axum)
+[✓] OpenAPI: auto-generiert (utoipa + Swagger UI)
 
 CLI
-[ ] fs-registry list / lookup {capability} / status
+[✓] fs-registry list / lookup {capability} / status
 
 Spezifisch
-[ ] Wenn fertig: D24 (fs-bridge-sdk löschen) unblocked
+[✓] Wenn fertig: D24 (fs-bridge-sdk löschen) unblocked
 
 Dokumentation
 [ ] Doku-Seite: ServiceRegistry-Trait, Capabilities, API, CLI
