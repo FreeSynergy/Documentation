@@ -701,48 +701,10 @@ Dokumentation
 > i18n-Service: FTL laden, übersetzen, Hotplugging, OCI Artifact Pull
 
 ```
-OOP & Design
-[ ] Observer Pattern: inotify beobachtet Locales-Pfad
-[ ] I18nLoader-Trait: load(lang) / available() / t(key, args) → String
-[ ] ArtifactPuller-Trait: pull(lang, source) → Result
-[ ] HotplugObserver: on_file_changed(path) → reload
-[ ] Immer gegen Interface
-
-Repo
-[ ] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[ ] Containerfile (fs-i18n ist ein Service)
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
-[ ] cargo clippy: 0 Fehler
-[ ] cargo fmt --check: sauber
-[ ] cargo test: load / t() / hotplug / fallback / global-vs-per-package getestet
-[ ] cargo build --release: fehlerfrei
-
-API
-[ ] gRPC (tonic): translate / available-languages / reload / pull-artifact
-[ ] Proto-Datei: i18n.proto
-[ ] REST (axum): GET /translate, GET /languages, POST /reload
-[ ] OpenAPI (utoipa): auto-generiert
-
-Spezifisch
-[ ] inotify: FTL hotplugging ohne Restart
-[ ] OCI Artifact Pull + Extraktion nach locales/
-[ ] Global vs. Per-Paket: translate(key, lang, package_id: Option)
-[ ] Weblate-kompatible Struktur: locales/{lang}/{programm}.ftl
-[ ] common.ftl: error-*, action-*, label-*, status-*, phrase-* (80+ Keys)
-[ ] FTL-Dateien für neue Repos anlegen: fs-bus, fs-db, fs-registry, fs-session,
-    fs-inventory, fs-info, fs-help, fs-sync, fs-bootc — je en + de
-
-CLI
-[ ] fs-i18n translate {key} {lang}
-[ ] fs-i18n available
-[ ] fs-i18n pull {lang}
-[ ] fs-i18n reload
-
-Dokumentation
+Offen
+[ ] cargo build --release: fehlerfrei (nur Debug getestet)
+[ ] OCI Artifact Pull: Integration-Test mit echtem skopeo
 [ ] Doku-Seite: I18nLoader-Trait, Hotplugging, OCI Artifacts, Global vs. Per-Paket, API, CLI
-[ ] commit + push
 ```
 
 ---
