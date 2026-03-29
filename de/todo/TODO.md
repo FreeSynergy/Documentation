@@ -140,14 +140,7 @@ Konkrete Engine kommt als Artifact (fs-db-engine-sqlite default)
 
 ## Offene Blocker
 
-```
-[ ] D24: fs-bridge-sdk löschen
-        Erst wenn fs-registry läuft und alle Nutzer auf Adapter migriert
-
-[ ] H2:  fs-core Standalone-Repo bereinigen
-        /home/kal/Server/fs-core/ — Überbleibsel, nicht mehr genutzt
-        Aktion: GitHub archivieren + lokales Verzeichnis löschen
-```
+Keine offenen Blocker.
 
 ---
 
