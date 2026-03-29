@@ -825,14 +825,14 @@ Code-Qualität
 [x] cargo clippy: 0 Fehler
 [x] cargo fmt --check: sauber
 [x] cargo test: 40 Tests, alle grün (alle Traits mit Stub-Impl getestet)
-[ ] cargo build --release: fehlerfrei
+[x] cargo build --release: fehlerfrei
 
 Spezifisch
 [x] AppContext: Locale + Theme + FeatureFlags — durch RenderEngine::set_context durchgereicht
 [x] 3D-Erweiterungs-API: Fs3dExtension + Fs3dDescriptor (optional, FsView-Basis unverändert)
 
 Dokumentation
-[ ] Doku-Seite: alle Traits, FsView-Pattern (Warum hier?), AppContext, 3D-Erweiterung
+[x] Doku-Seite: alle Traits, FsView-Pattern (Warum hier?), AppContext, 3D-Erweiterung
 [ ] commit + push
 ```
 

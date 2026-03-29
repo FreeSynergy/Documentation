@@ -23,6 +23,7 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [Gesamtübersicht](architektur/uebersicht.md) — Philosophie, Schichten-Diagramm, Programme, Datenfluss
 - [Repository-Übersicht](architektur/repositories.md) — Jedes Repo, sein Zweck, lokaler Pfad, GitHub-URL
 - [Render-Architektur](architektur/render-architektur.md) — GUI-Abstraktion (fs-render), Engines (iced, Bevy), Browser-Engine (Servo), Animations-System
+- [fs-render](programme/fs-render.md) — GUI-Abstraktions-Traits: RenderEngine, FsView, FsWidget, FsWindow, FsTheme, FsEvent, AppContext, AnimationRegistry, Fs3dExtension
 - [fs-gui-engine-iced](programme/fs-gui-engine-iced.md) — iced Render-Engine: IcedEngine, MVU-Muster, IcedTheme, Capability "render.engine.iced"
 
 ### Programme
