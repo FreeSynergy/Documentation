@@ -39,6 +39,7 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [fs-init](programme/fs-init.md) — Bootstrap-Binary: Store klonen via gix, kein System-git nötig
 - [fs-node](programme/fs-node.md) — Node-Server: Deploy-Engine, Auth-Gateway, S3, DNS, Invite-System, gRPC+REST
 - [fs-desktop](programme/fs-desktop.md) — Wayland Shell: DesktopShell, WindowManager, AppLauncher, Settings, Profile (iced/libcosmic)
+- [fs-store](programme/fs-store.md) — Paketmanager: Katalog, Suche, Installation, GUI+CLI, Pointer-Model
 
 ### Programme
 - [Init](programme/init/README.md) — Bootstrap: prüft System, lädt Store
