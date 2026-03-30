@@ -43,6 +43,7 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [fs-store](programme/fs-store.md) — Paketmanager: Katalog, Suche, Installation, GUI+CLI, Pointer-Model
 - [fs-icons](programme/fs-icons.md) — SVG-Icon-Sets: homarrlabs, we10x; fs-icons-sync Binary (gix, kein System-git)
 - [fs-apps](programme/fs-apps.md) — 9 Apps: Store-App, Lenses, Theme, AI, Container, Tasks, Bots, Builder, Managers
+- [fs-managers](programme/fs-managers.md) — 7 Manager-Backends: Language, Theme, Icons, Cursor, AI, Bots, Container
 
 ### Programme
 - [Init](programme/init/README.md) — Bootstrap: prüft System, lädt Store
