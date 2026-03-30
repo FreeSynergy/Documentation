@@ -107,6 +107,7 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [fs-health](technik/fs-health.md) — HealthCheck-Trait, HealthStatus, HealthLevel, HealthRules, HealthMonitor
 - [Bibliotheken](technik/bibliotheken.md) — Welche Crates wofür
 - [Typen-System](technik/typen.md) — FsValue, FsUrl, LanguageCode, SemVer, FsPort, FsTag
+- [fs-theme](technik/fs-theme.md) — ThemeEngine, ThemeRegistry, Palette, CSS-Generierung, Tailwind-Config
 - [CSS-System](technik/css.md) — CSS-Variablen, Prefixing, Themes
 - [UI-Objekt-System](technik/ui-objekte.md) — Fenster, Widgets, Modals
 - [Installation](technik/installation.md) — Init → Store → Alles

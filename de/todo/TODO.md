@@ -248,47 +248,7 @@ Dokumentation
 
 ---
 
-## fs-theme (program)
-
-> Theme-Definitionen + Loader
-
-```
-OOP & Design
-[ ] Repository Pattern (ThemeRepository) + Factory (ThemeFactory)
-[ ] ThemeLoader-Trait: load(id) / list() / active() / apply(theme)
-[ ] FsTheme: Farben, Fonts, Abstände, Icon-Set, Cursor-Set — alles typisiert
-[ ] ThemeValidator-Trait: validate(theme) → Result
-[ ] Immer gegen Interface
-
-Repo
-[ ] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[ ] Containerfile
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
-[ ] FTL-Keys: Theme-Namen + Beschreibungen + Fehlermeldungen (CLI + UI)
-[ ] cargo clippy: 0 Fehler
-[ ] cargo fmt --check: sauber
-[ ] cargo test: load / validate / apply getestet
-[ ] cargo build --release: fehlerfrei
-
-API
-[ ] gRPC (tonic): load / list / active / apply / validate
-[ ] REST (axum): GET /themes, GET /themes/{id}, POST /themes/{id}/apply
-[ ] OpenAPI (utoipa): auto-generiert
-
-Spezifisch
-[ ] Palette-Typen vollständig (src/palette.rs)
-[ ] Bus-Integration: theme::changed Event publizieren
-[ ] Theme als Artifact nachladen (global oder per-Paket)
-
-CLI
-[ ] fs-theme list / active / apply {id}
-
-Dokumentation
-[ ] Doku-Seite: ThemeLoader-Trait, FsTheme-Format, Artifacts, API, CLI
-[ ] commit + push
-```
+## fs-theme (library) ✅ 2026-03-30
 
 ---
 
