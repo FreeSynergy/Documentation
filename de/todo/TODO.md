@@ -353,16 +353,7 @@ Dokumentation
 
 ---
 
-## fs-i18n (program)
-
-> i18n-Service: FTL laden, übersetzen, Hotplugging, OCI Artifact Pull
-
-```
-Offen
-[ ] cargo build --release: fehlerfrei (nur Debug getestet)
-[ ] OCI Artifact Pull: Integration-Test mit echtem skopeo
-[ ] Doku-Seite: I18nLoader-Trait, Hotplugging, OCI Artifacts, Global vs. Per-Paket, API, CLI
-```
+## fs-i18n (program) ✅ 2026-03-30
 
 ---
 

@@ -105,6 +105,7 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [Installation](technik/installation.md) — Init → Store → Alles
 - [Sicherheit](technik/sicherheit.md) — Encryption, Tokens, Signierung
 - [i18n](technik/i18n.md) — Mozilla Fluent, Sprach-Snippets, RTL, Fallback
+- [fs-i18n](technik/fs-i18n.md) — i18n-Daemon + Library: t()/t_with(), Hotplugging, OCI Artifacts, gRPC+REST
 
 ### TODO
 - [Build Plan](todo/TODO.md) — Aktive Phasen, nächste Gespräche, Archiv / Ideen-Pool
