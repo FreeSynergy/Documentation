@@ -725,14 +725,7 @@ Dokumentation
 
 ---
 
-## fs-registry (program) ✅ 2026-03-29
-
-> Welche Services + Capabilities laufen?
-
-```
-Offen
-[ ] Doku-Seite: ServiceRegistry-Trait, Capabilities, API, CLI
-```
+## fs-registry (program) ✅ 2026-03-30
 
 ---
 
