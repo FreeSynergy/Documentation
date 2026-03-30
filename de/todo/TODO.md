@@ -176,32 +176,12 @@ Keine offenen Blocker.
 
 ---
 
-## fs-bootc (NEU — program)
-
-> Fedora bootc OS-Images: fs-server + fs-workstation
+## fs-bootc (program) ✅ 2026-03-30
 
 ```
-OOP & Design
-[ ] ImageVariant-Trait: build() / push() / name()
-[ ] ServerImage + WorkstationImage: implementieren ImageVariant
-[ ] Immer gegen Interface
-
-Repo
-[ ] GitHub Repo anlegen: git@github.com:FreeSynergy/fs-bootc.git
-[ ] Lokal anlegen: /home/kal/Server/fs-bootc/
-[ ] CLAUDE.md / LICENSE / README.md / assets/icon.svg / package.toml
-[ ] Containerfile: fs-server (FROM fedora-bootc:41, kein Wayland)
-[ ] Containerfile: fs-workstation (FROM fedora-bootc:41, Wayland-Pakete)
-[ ] Butane/Ignition-Config für fs-init-Integration
+Offen:
 [ ] GitHub Actions: build + push zu ghcr.io/freesynergy/ bei Tag
-
-CLI
-[ ] fs-bootc build server|workstation
-[ ] fs-bootc push
-
-Dokumentation
-[ ] Doku-Seite: Image-Aufbau, Varianten, bootc install to-disk
-[ ] commit + push
+[ ] Butane/Ignition-Config für fs-init-Integration
 ```
 
 ---

@@ -91,6 +91,7 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [Bridges](konzepte/bridges.md) — **ARCHIVIERT** — ersetzt durch Adapter-Pattern (März 2026)
 
 ### Technik
+- [fs-bootc](technik/fs-bootc.md) — bootc OS-Images: ImageVariant-Trait, ServerImage, WorkstationImage, CLI
 - [Build-Workflow](technik/build-workflow.md) — Design Pattern → OOP → Tests → Clippy → Push, Quality Gates, Binary-Distribution
 - [Storage-Layer (S3)](technik/storage.md) — Eigener S3-Server, opendal, Profiles
 - [Datenspeicherung](technik/datenspeicherung.md) — SQLite-Architektur, Datenbank pro Service
