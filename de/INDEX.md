@@ -92,6 +92,8 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [fs-db-engine-postgres](technik/fs-db-engine-postgres.md) — PostgreSQL-Adapter: DbEngine-Trait-Impl, gRPC+REST, Capability "db.engine.postgres"
 - [fs-llm-mistral](technik/fs-llm-mistral.md) — MistralAdapter: LlmAdapter-Trait-Impl, Capability "llm.mistral"
 - [fs-llm-openai](technik/fs-llm-openai.md) — OpenAiAdapter: LlmAdapter-Trait-Impl, Capability "llm.openai"
+- [fs-channel-matrix](technik/fs-channel-matrix.md) — MatrixAdapter: Channel-Trait-Impl, Capability "channel.matrix"
+- [fs-channel-telegram](technik/fs-channel-telegram.md) — TelegramAdapter: Channel-Trait-Impl, Capability "channel.telegram"
 - [fs-error](technik/fs-error.md) — FsError, FsErrorTrait, ErrorSeverity, Repairable, ValidationIssue
 - [fs-crypto](technik/fs-crypto.md) — CryptoProvider-Trait, age, HMAC-SHA256, Ed25519, mTLS, KeyGen, JoinToken
 - [fs-health](technik/fs-health.md) — HealthCheck-Trait, HealthStatus, HealthLevel, HealthRules, HealthMonitor

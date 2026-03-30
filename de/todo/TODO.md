@@ -206,84 +206,6 @@ Dokumentation
 
 ---
 
-## fs-channel-matrix (NEU — adapter)
-
-> MatrixAdapter: implementiert ChannelAdapter-Trait aus fs-channel
-
-```
-OOP & Design
-[ ] Adapter Pattern: MatrixAdapter wraps matrix-sdk (fs-tuwunel Fork)
-[ ] MatrixAdapter implementiert ChannelAdapter-Trait
-[ ] Registriert Capability "channel.matrix" in fs-registry
-[ ] Immer gegen Interface
-
-Repo
-[ ] GitHub Repo anlegen: git@github.com:FreeSynergy/fs-channel-matrix.git
-[ ] Lokal anlegen: /home/kal/Server/fs-channel-matrix/
-[ ] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[ ] Containerfile
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
-[ ] FTL-Keys für alle user-facing Texte + Fehlermeldungen
-[ ] cargo clippy: 0 Fehler
-[ ] cargo fmt --check: sauber
-[ ] cargo test: ChannelAdapter-Trait getestet
-[ ] cargo build --release: fehlerfrei
-
-API
-[ ] gRPC (tonic): send / receive / subscribe / list-rooms / join / leave
-[ ] REST (axum): POST /messages, GET /rooms, POST /rooms/{id}/join
-[ ] OpenAPI (utoipa): auto-generiert
-
-Spezifisch
-[ ] N0: PostgreSQL State Store (Blocker: fs-db-engine-postgres fertig)
-        Bis dann: In-Memory-Store
-        Bekannter Bug: matrix feature → recursion overflow in rustc ≥1.94 (upstream)
-
-Dokumentation
-[ ] Doku-Seite: MatrixAdapter-Impl, State-Store, Capability, API
-[ ] commit + push
-```
-
----
-
-## fs-channel-telegram (NEU — adapter)
-
-> TelegramAdapter: implementiert ChannelAdapter-Trait aus fs-channel
-
-```
-OOP & Design
-[ ] Adapter Pattern: TelegramAdapter wraps Telegram Bot API
-[ ] TelegramAdapter implementiert ChannelAdapter-Trait
-[ ] Registriert Capability "channel.telegram" in fs-registry
-[ ] Immer gegen Interface
-
-Repo
-[ ] GitHub Repo anlegen: git@github.com:FreeSynergy/fs-channel-telegram.git
-[ ] Lokal anlegen: /home/kal/Server/fs-channel-telegram/
-[ ] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[ ] Containerfile
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
-[ ] FTL-Keys für alle user-facing Texte + Fehlermeldungen
-[ ] cargo clippy: 0 Fehler
-[ ] cargo fmt --check: sauber
-[ ] cargo test: ChannelAdapter-Trait getestet
-[ ] cargo build --release: fehlerfrei
-
-API
-[ ] gRPC (tonic): send / receive / subscribe / list-rooms / join / leave
-[ ] REST (axum): POST /messages, GET /chats
-[ ] OpenAPI (utoipa): auto-generiert
-
-Dokumentation
-[ ] Doku-Seite: TelegramAdapter-Impl, Capability, API
-[ ] commit + push
-```
-
----
 
 ---
 
@@ -1636,8 +1558,7 @@ N0. [ ] PostgreSQL State Store (Blocker: fs-db-engine-postgres fertig)
 ```
 1.  Blocker klären (D24, H2)
 2.  Architektur-Gespräche (G3, G7, G8)
-3.  Neue Repos anlegen (fs-bootc, fs-db-engine-sqlite, fs-db-engine-postgres,
-    fs-llm-mistral, fs-llm-openai, fs-channel-matrix, fs-channel-telegram)
+3.  Neue Repos anlegen (fs-bootc)
 4.  Store/ Katalog: package.toml + bundle.toml Format + Bundles anlegen
 5.  fs-db: DbEngine-Trait final
 6.  fs-i18n: inotify + OCI Artifacts + Global vs. Per-Paket
