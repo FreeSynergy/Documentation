@@ -32,6 +32,7 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [fs-federation](programme/fs-federation.md) — ActivityPub Federation: FederationGate-Trait, ActivityPubAdapter, OIDC/SCIM/WebFinger
 - [fs-sync](programme/fs-sync.md) — CRDT-Sync: SyncDoc, SyncPeer, SyncEngine, WsTransport (Automerge)
 - [fs-channel](programme/fs-channel.md) — Messaging-Abstraktion: Channel-Trait, MatrixAdapter, TelegramAdapter
+- [fs-llm](programme/fs-llm.md) — LLM-Abstraktion: LlmProvider-Trait, Ollama/Claude/OpenAI-compat, Tasks
 
 ### Programme
 - [Init](programme/init/README.md) — Bootstrap: prüft System, lädt Store
