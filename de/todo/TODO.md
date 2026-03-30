@@ -337,107 +337,15 @@ Dokumentation
 
 ---
 
-## fs-gui-engine-bevy (adapter)
-
-> Bevy-Implementierung von fs-render (3D-fähig)
-
-```
-OOP & Design
-[ ] Adapter Pattern: BevyEngine adaptiert Bevy ECS für fs-render
-[ ] BevyEngine implementiert RenderEngine-Trait
-[ ] WorkspaceScene: Resource (Bevy ECS), Builder Pattern
-[ ] AnimatedBackground: Component (Particles / Gradient / WaveField / Static)
-[ ] 3D-Erweiterungs-API: zusätzlich, stört FsView-Basis nicht
-[ ] Registriert Capability "render.engine.bevy" in fs-registry
-[ ] Immer gegen Interface
-
-Repo
-[ ] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[ ] Containerfile
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
-[ ] FTL-Keys für Fehlermeldungen
-[ ] cargo clippy: 0 Fehler
-[ ] cargo fmt --check: sauber
-[ ] cargo test
-[ ] cargo build --release: fehlerfrei
-
-Spezifisch
-[ ] WorkspaceLayout: Grid / Circular / Freeform
-[ ] FsRenderPlugin: Bevy Plugin, korrekt registriert
-
-Dokumentation
-[ ] Doku-Seite: BevyEngine-Impl, WorkspaceScene, AnimatedBackground, 3D-API, Capability
-[ ] commit + push
-```
+## fs-gui-engine-bevy (adapter) ✅ 2026-03-30
 
 ---
 
-## fs-web-engine (library, kein Container)
-
-> Browser-Engine-Abstraktions-Traits
-
-```
-OOP & Design
-[ ] Abstract Factory: WebEngine erstellt WebViews
-[ ] WebEngine-Trait: create_view / capabilities / version
-[ ] WebView-Trait: navigate / reload / go_back / execute_js
-[ ] WebPlugin-Trait: init / handle_request / name
-[ ] Immer gegen Interface
-
-Repo
-[ ] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[ ] Kein Containerfile (reine Library)
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
-[ ] Keine FTL (reine Trait-Library)
-[ ] cargo clippy: 0 Fehler
-[ ] cargo fmt --check: sauber
-[ ] cargo test: StubWebEngine + Navigation getestet
-[ ] cargo build --release: fehlerfrei
-
-Dokumentation
-[ ] Doku-Seite: WebEngine-Trait, WebView, WebPlugin, Capabilities
-[ ] commit + push
-```
+## fs-web-engine (library) ✅ 2026-03-30
 
 ---
 
-## fs-web-engine-servo (adapter)
-
-> Servo-Implementierung von fs-web-engine (SpiderMonkey JS, MPL-2.0)
-
-```
-OOP & Design
-[ ] Adapter Pattern: ServoWebEngine adaptiert Servo für fs-web-engine
-[ ] ServoWebEngine implementiert WebEngine-Trait
-[ ] ServoPluginRegistry: Composite Pattern für WASM-Plugins
-[ ] Request-Interception: Decorator Pattern
-[ ] Registriert Capability "web.engine.servo" in fs-registry
-[ ] Immer gegen Interface
-
-Repo
-[ ] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md (MPL-2.0!) / assets/icon.svg / package.toml
-[ ] Containerfile
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
-[ ] FTL-Keys für Fehlermeldungen
-[ ] cargo clippy: 0 Fehler
-[ ] cargo fmt --check: sauber
-[ ] cargo test
-[ ] cargo build --release: fehlerfrei
-
-Spezifisch
-[ ] Feature-Flag: servo (optional) — ohne Flag: StubWebEngine
-[ ] WASM-Plugin-API via fs-plugin-sdk
-
-Dokumentation
-[ ] Doku-Seite: ServoWebEngine-Impl, Lizenz (MPL-2.0!), Plugin-API, Capability
-[ ] commit + push
-```
+## fs-web-engine-servo (adapter) ✅ 2026-03-30
 
 ---
 

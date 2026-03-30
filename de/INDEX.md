@@ -108,6 +108,9 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [Bibliotheken](technik/bibliotheken.md) — Welche Crates wofür
 - [Typen-System](technik/typen.md) — FsValue, FsUrl, LanguageCode, SemVer, FsPort, FsTag
 - [fs-theme](technik/fs-theme.md) — ThemeEngine, ThemeRegistry, Palette, CSS-Generierung, Tailwind-Config
+- [fs-gui-engine-bevy](technik/fs-gui-engine-bevy.md) — Bevy Render Engine: RenderEngine-Trait, WorkspaceScene, AnimatedBackground, 3D-API
+- [fs-web-engine](technik/fs-web-engine.md) — Browser-Engine-Abstraktion: WebEngine, WebView, WebPlugin Traits
+- [fs-web-engine-servo](technik/fs-web-engine-servo.md) — Servo-Adapter: WebEngine-Impl, Capability "web.engine.servo" (MPL-2.0)
 - [CSS-System](technik/css.md) — CSS-Variablen, Prefixing, Themes
 - [UI-Objekt-System](technik/ui-objekte.md) — Fenster, Widgets, Modals
 - [Installation](technik/installation.md) — Init → Store → Alles
