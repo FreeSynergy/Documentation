@@ -94,6 +94,7 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [fs-llm-openai](technik/fs-llm-openai.md) — OpenAiAdapter: LlmAdapter-Trait-Impl, Capability "llm.openai"
 - [fs-error](technik/fs-error.md) — FsError, FsErrorTrait, ErrorSeverity, Repairable, ValidationIssue
 - [fs-crypto](technik/fs-crypto.md) — CryptoProvider-Trait, age, HMAC-SHA256, Ed25519, mTLS, KeyGen, JoinToken
+- [fs-health](technik/fs-health.md) — HealthCheck-Trait, HealthStatus, HealthLevel, HealthRules, HealthMonitor
 - [Bibliotheken](technik/bibliotheken.md) — Welche Crates wofür
 - [Typen-System](technik/typen.md) — FsValue, FsUrl, LanguageCode, SemVer, FsPort, FsTag
 - [CSS-System](technik/css.md) — CSS-Variablen, Prefixing, Themes
