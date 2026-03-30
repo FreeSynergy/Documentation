@@ -937,47 +937,9 @@ Offen
 
 ---
 
-## fs-inventory (program)
+## fs-inventory (program) ✅ 2026-03-30
 
 > Was ist installiert?
-
-```
-OOP & Design
-[ ] Repository Pattern
-[ ] InventoryStore-Trait: upsert / uninstall / list / query / get
-[ ] InstalledPackage: Status (Installing / Active / Failed / Removed)
-[ ] Idempotent upsert
-[ ] Immer gegen Interface
-
-Repo
-[ ] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[ ] Containerfile
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
-[ ] FTL-Keys: Status-Texte + Fehlermeldungen (CLI + UI)
-[ ] cargo clippy: 0 Fehler
-[ ] cargo fmt --check: sauber
-[ ] cargo test: upsert / uninstall / query / idempotenz getestet
-[ ] cargo build --release: fehlerfrei
-
-API
-[ ] G8: Daemon vs. Bus-Subscriber (vor Umsetzung klären)
-[ ] gRPC: list / upsert / uninstall / query / status
-[ ] REST: GET /packages, POST /packages, DELETE /packages/{id}
-[ ] OpenAPI: auto-generiert
-
-CLI
-[ ] fs-inventory list / status {id} / uninstall {id}
-
-DB
-[ ] Nur über fs-db DbEngine-Trait (fs-db-engine-sqlite default)
-[ ] Migration-Datei anlegen
-
-Dokumentation
-[ ] Doku-Seite: InventoryStore-Trait, InstalledPackage, API, CLI, DB-Schema
-[ ] commit + push
-```
 
 ---
 
