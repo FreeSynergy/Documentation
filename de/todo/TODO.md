@@ -448,15 +448,7 @@ OOP & Design
 [ ] ThemeAppController kennt nur ThemeLoader-Trait
 [ ] ThemePreview: Observer Pattern
 [ ] Immer gegen Interface
-
-Repo (in fs-apps/crates/fs-theme-app/)
-[ ] CLAUDE.md / assets/icon.svg / package.toml
-[ ] Containerfile
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
 [ ] FTL-Keys: alle UI + CLI Texte
-[ ] cargo clippy: 0 Fehler / cargo fmt / cargo test / cargo build --release
 
 UI
 [ ] iced-Migration: FsView-Trait
@@ -485,14 +477,7 @@ OOP & Design
 [ ] LensRenderer-Trait: render(data) → FsWidget
 [ ] LensRegistry: welcher Renderer für welchen Typ
 [ ] Immer gegen Interface
-
-Repo (in fs-apps/crates/fs-lenses/)
-[ ] CLAUDE.md / assets/icon.svg / package.toml / Containerfile
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
 [ ] FTL-Keys: Lens-Namen + UI-Texte
-[ ] cargo clippy: 0 Fehler / cargo fmt / cargo test / cargo build --release
 
 UI
 [ ] iced-Migration: FsView-Trait
@@ -512,14 +497,7 @@ OOP & Design
 [ ] ConversationStore: Repository Pattern
 [ ] Kennt nur LlmAdapter-Trait — nie Mistral direkt
 [ ] Immer gegen Interface
-
-Repo (in fs-apps/crates/fs-ai/)
-[ ] CLAUDE.md / assets/icon.svg / package.toml / Containerfile
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
 [ ] FTL-Keys: alle UI + CLI Texte
-[ ] cargo clippy: 0 Fehler / cargo fmt / cargo test / cargo build --release
 
 UI / CLI / API
 [ ] iced-Migration: FsView-Trait (Chat-Interface + Modell-Auswahl)
@@ -540,14 +518,7 @@ OOP & Design
 [ ] ContainerAppController kennt nur ContainerEngine-Trait
 [ ] ContainerList: Observer Pattern (Status-Updates)
 [ ] Immer gegen Interface
-
-Repo (in fs-apps/crates/fs-container-app/)
-[ ] CLAUDE.md / assets/icon.svg / package.toml / Containerfile
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
 [ ] FTL-Keys: alle UI + CLI Texte
-[ ] cargo clippy: 0 Fehler / cargo fmt / cargo test / cargo build --release
 
 UI / CLI / API
 [ ] iced-Migration: FsView-Trait (Container-Liste + Status + Logs)
@@ -568,14 +539,7 @@ OOP & Design
 [ ] TaskTemplate-Trait: instantiate(params) → Task
 [ ] DataOffer-Trait: offer / accept / list-offers
 [ ] Immer gegen Interface
-
-Repo (in fs-apps/crates/fs-tasks/)
-[ ] CLAUDE.md / assets/icon.svg / package.toml / Containerfile
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
 [ ] FTL-Keys: alle UI + CLI Texte
-[ ] cargo clippy: 0 Fehler / cargo fmt / cargo test / cargo build --release
 
 UI / CLI / API
 [ ] iced-Migration: FsView-Trait
@@ -601,18 +565,7 @@ OOP & Design
 [ ] BotRegistry: welche Bots sind aktiv
 [ ] Bots als Artifacts nachladen (global oder per-Paket)
 [ ] Immer gegen Interface
-
-Repo
-[ ] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[ ] Containerfile
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
 [ ] FTL-Keys: Bot-Antworten + Fehlermeldungen (CLI + UI)
-[ ] cargo clippy: 0 Fehler
-[ ] cargo fmt --check: sauber
-[ ] cargo test: BotAdapter-Trait + BotCommand getestet
-[ ] cargo build --release: fehlerfrei
 
 Spezifisch
 [ ] H8: bot-db/src/lib.rs aufteilen (735 Zeilen)
@@ -643,14 +596,7 @@ OOP & Design
 [ ] BuildStep-Trait: execute / rollback / display_name
 [ ] BuildPipeline: Chain of Responsibility
 [ ] Immer gegen Interface
-
-Repo (in fs-apps/crates/fs-builder/)
-[ ] CLAUDE.md / assets/icon.svg / package.toml / Containerfile
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
 [ ] FTL-Keys: alle UI + CLI Texte
-[ ] cargo clippy: 0 Fehler / cargo fmt / cargo test / cargo build --release
 
 UI / CLI / API
 [ ] iced-Migration: FsView-Trait (Build-Wizard)
@@ -691,18 +637,7 @@ OOP & Design
 [ ] Jeder Manager: view.rs als Bindeglied zu fs-render (FsView-Trait)
 [ ] Alle Manager einheitliches Aussehen via fs-render (kein Bruch)
 [ ] Immer gegen Interface
-
-Repo
-[ ] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[ ] Containerfile
-
-Code-Qualität
-[ ] #![deny(clippy::all, clippy::pedantic, warnings)]
 [ ] FTL-Keys: alle Manager-Texte (UI + CLI + API)
-[ ] cargo clippy: 0 Fehler
-[ ] cargo fmt --check: sauber
-[ ] cargo test: alle Manager-Traits getestet
-[ ] cargo build --release: fehlerfrei
 
 Spezifisch — große Dateien aufteilen
 [ ] H9b: language_panel.rs (1060 Zeilen)
