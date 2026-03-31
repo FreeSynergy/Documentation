@@ -201,15 +201,11 @@ Offen:
 
 ---
 
-## fs-bus (program) — G3 offen
+## fs-bus (program) ✅ 2026-03-31
 
 ```
-G3 — Event Topics als Konstanten definieren
-[ ] topics.rs: alle Standard-Topics als pub const (registry::, session::, inventory::, system::, auth::)
-[ ] Payload-Structs in fs-types: ServiceRegisteredEvent, UserLoginEvent, PackageInstalledEvent, etc.
-[ ] fs-types Dependency in fs-bus aufnehmen (falls noch nicht vorhanden)
-[ ] Tests: Topic-Konstanten vollständig, Payload-Serialisierung
-[ ] commit + push
+G3 erledigt: topics.rs (20 Konstanten, ::‑Separator), topic_matches auf :: umgestellt,
+alle Tests aktualisiert, bus_wiring.rs + e2e_install.rs verwenden Konstanten.
 ```
 
 ---
@@ -364,56 +360,40 @@ Offen (G2 — nach iced-Migration):
 
 ---
 
-## fs-registry (program) — G8 offen
+## fs-registry (program) ✅ 2026-03-31
 
 ```
-G8 — Event-Driven Integration
-[ ] Bus-Events subscriben: registry::service::registered / stopped / capability::added / removed
-[ ] Bus-Events publishen: eigene Registrierung beim Start + beim Shutdown
-[ ] Startup-Reihenfolge sicherstellen: fs-bus muss vor fs-registry laufen
-[ ] gRPC: lookup_capability / list_services / list_capabilities
-[ ] Tests: Event-Subscribe + State-Update, gRPC-Calls
-[ ] commit + push
+G8 erledigt: RegistryBusHandler in MessageBus eingehängt, startup::registered + shutdown::stopped
+publishen, 2 neue Bus-End-to-End-Tests, gRPC schon vollständig (Register/Deregister/List/Lookup/EndpointFor/SetStatus/Health).
 ```
 
 ---
 
-## fs-inventory (program) — G8 offen
+## fs-inventory (program) ✅ 2026-03-31
 
 ```
-G8 — Event-Driven Integration
-[ ] Bus-Events subscriben: inventory::package::installed / removed / updated
-[ ] State in lokaler DB persistieren (über fs-db Repository<T>)
-[ ] gRPC: list_installed / get_package / is_installed
-[ ] Tests: Event → DB-Eintrag, gRPC-Calls
-[ ] commit + push
+G8 erledigt: InventoryBusHandler auf inventory::#, upsert_resource aktualisiert Version+Paths,
+4 neue Bus-Tests (install/update/remove via event, topic_pattern).
+gRPC: list_installed/get_package/is_installed bereits vollständig.
 ```
 
 ---
 
-## fs-session (program) — G8 offen
+## fs-session (program) ✅ 2026-03-31
 
 ```
-G8 — Event-Driven Integration
-[ ] Bus-Events subscriben: session::user::login / logout / app::opened / app::closed
-[ ] Session-State in Memory halten (+ optionale DB-Persistenz)
-[ ] gRPC: current_user / open_apps / session_info
-[ ] Tests: Event → State-Update, gRPC-Calls
-[ ] commit + push
+G8 erledigt: SessionBusHandler implementiert (login/logout/app::opened/app::closed),
+Daemon mit gRPC (CurrentUser/OpenApps/SessionInfo/Health), SessionStore-Trait + SQLite-Impl,
+4 Bus-Tests + 9 Store-Tests, alle grün.
 ```
 
 ---
 
-## fs-info (program) — G8 offen
+## fs-info (program) ✅ 2026-03-31
 
 ```
-G8 — Event-Driven Integration (nur publishen, kein Subscribe)
-[ ] Health-Alerting: bei Schwellwert-Überschreitung system::health::degraded publishen
-[ ] Bei Normalisierung: system::health::restored publishen
-[ ] Schwellwerte konfigurierbar (via fs-config)
-[ ] gRPC on-demand: system_info / cpu_usage / memory_info / disk_info
-[ ] Tests: Alerting-Logik, gRPC-Calls
-[ ] commit + push
+G8 erledigt: bus_topic auf system::health::degraded migriert + detail_topic (disk/cpu/memory/smart).
+gRPC bereits vollständig (system_info/cpu_usage/memory_info/disk_info).
 ```
 
 ---
