@@ -44,6 +44,8 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [fs-icons](programme/fs-icons.md) — SVG-Icon-Sets: homarrlabs, we10x; fs-icons-sync Binary (gix, kein System-git)
 - [fs-apps](programme/fs-apps.md) — 9 Apps: Store-App, Lenses, Theme, AI, Container, Tasks, Bots, Builder, Managers
 - [fs-managers](programme/fs-managers.md) — 7 Manager-Backends: Language, Theme, Icons, Cursor, AI, Bots, Container
+- [fs-ui](programme/fs-ui.md) — Basis-UI-Komponenten: Button, Card, Form, Modal, Table, etc. (Dioxus → iced/G2)
+- [fs-components](programme/fs-components.md) — App-Komponenten: NavBar, Chat, AppShell, Toast (Dioxus → iced/G2)
 
 ### Programme
 - [Init](programme/init/README.md) — Bootstrap: prüft System, lädt Store
