@@ -725,37 +725,20 @@ Offen:
 
 ---
 
-## fs-ci (neues Repo — reusable workflows)
+## fs-ci (neues Repo — reusable workflows) ✅ 2026-03-31
 
 ```
-[ ] Repo anlegen: FreeSynergy/fs-ci
-[ ] .github/workflows/ci-check.yml: Clippy + fmt + test + deny (für alle Repos, läuft auf jedem PR)
-[ ] .github/workflows/release-desktop.yml: Linux x2 + Windows x2 + macOS Universal + OCI-Image
-    → Binary-Release auf GitHub + Image push zu ghcr.io/freesynergy/{name}:{tag}
-    → SHA256-Hash je Binary
-    → Auto-PR gegen Store/-Repo (catalog entry aktualisieren)
-[ ] .github/workflows/release-mobile.yml: Android APK/AAB + iOS IPA (separate Phase)
-[ ] CLAUDE.md / README.md
-[ ] commit + push
+ci-check.yml (Clippy+fmt+test+deny+audit) + release-desktop.yml (Linux x2 + Win x2 + macOS + OCI).
+Offen: release-mobile.yml (Android + iOS — separate Phase)
 ```
 
 ---
 
-## GitHub Actions — alle bestehenden Repos nachrüsten
+## GitHub Actions — alle bestehenden Repos nachrüsten ✅ 2026-03-31
 
 ```
-Betrifft alle program + adapter Repos:
-[ ] fs-bus, fs-i18n, fs-auth, fs-registry, fs-inventory, fs-session, fs-info, fs-container
-[ ] fs-db-engine-sqlite, fs-db-engine-postgres
-[ ] fs-gui-engine-iced, fs-gui-engine-bevy, fs-web-engine-servo
-[ ] fs-llm-mistral, fs-llm-openai, fs-channel-matrix, fs-channel-telegram
-[ ] fs-render (library — nur ci-check, kein Release-Workflow)
-[ ] fs-libs (library — nur ci-check)
-
-Jeweils:
-[ ] .github/workflows/ci.yml → ruft fs-ci/ci-check.yml auf
-[ ] .github/workflows/release.yml → ruft fs-ci/release-desktop.yml auf
-[ ] commit + push
+19 Repos mit .github/workflows/ci.yml + release.yml (außer fs-render + fs-libs: nur ci.yml).
+Alle committed + gepusht.
 ```
 
 ---
