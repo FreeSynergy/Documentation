@@ -884,8 +884,8 @@ Q8. [ ] Alle Stubs / toten Code entfernen
 ## matrix-sdk State Store
 
 ```
-N0. [ ] PostgreSQL State Store (Blocker: fs-db-engine-postgres fertig)
-        Bug: matrix feature → recursion overflow in rustc ≥1.94 (upstream)
+N0. [ ] PostgreSQL State Store (Blocker aufgelöst: fs-db-engine-postgres ✅ 2026-03-31)
+        Bug: matrix feature → recursion overflow in rustc ≥1.94 (upstream, noch offen)
 ```
 
 ---
