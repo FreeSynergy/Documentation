@@ -558,11 +558,12 @@ Offen (G2 — iced-Migration):
 ```
 Erledigt: ManagersController (MVC, Arc-backed), ManagerKind-Enum (Language/Icons/Cursor/Theme/Container),
 gRPC (ListPanels/GetStatus/Health), REST+OpenAPI, CLI (list/status/daemon), FsView-Trait (view.rs),
-build.rs, proto/managers.proto. 7 Tests grün. Dioxus vollständig entfernt (alle *_panel.rs gelöscht).
+build.rs, proto/managers.proto. 7+12 Tests grün. Dioxus vollständig entfernt.
+H9b/H9c: language + cursor in Sections aufgeteilt (list/active/preview/download).
+FsView + ManagerLayout auf allen 5 Managern implementiert.
 
-Offen (G5 + Langfristig):
+Offen (Langfristig):
 [ ] Bekannter Bug: fs-manager-language: gix-API (pre-0.65) in git.rs migrieren
-[ ] G5: ManagerLayout-Trait, jeder Manager eigenständiges Fenster
 [ ] FTL-Keys migrieren
 [ ] Doku-Seite + commit + push
 ```
