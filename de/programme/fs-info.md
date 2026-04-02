@@ -28,7 +28,8 @@ FsInfo delegates to:
 
 Statische Daten (24h Cache):
   SysInfoCache     — ~/.config/fsn/sysinfo.toml
-  DetectedFeatures — systemd, Podman, Docker, Git, SSH, smartctl
+  DetectedFeatures — systemd, Podman, Docker, Git, SSH, smartctl,
+                     WaylandDisplay, X11Display, Terminal
 ```
 
 ### Traits
@@ -119,7 +120,14 @@ let cache = SysInfoCache::default_path(); // ~/.config/fsn/sysinfo.toml
 let (os_info, features) = cache.get_or_detect(); // aus Cache oder frisch ermitteln
 
 println!("OS: {} {}", os_info.os_type.label(), os_info.version);
-println!("systemd: {}", features.has(fs_info::Feature::Systemd));
+println!("systemd:  {}", features.has(fs_info::Feature::Systemd));
+println!("wayland:  {}", features.has(fs_info::Feature::WaylandDisplay));
+println!("x11:      {}", features.has(fs_info::Feature::X11Display));
+println!("terminal: {}", features.has(fs_info::Feature::Terminal));
+
+// Convenience-Methoden
+println!("display:  {}", features.has_display_server());
+println!("tty:      {}", features.has_terminal());
 ```
 
 ---

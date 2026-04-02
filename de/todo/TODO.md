@@ -258,43 +258,47 @@ Falls andere Grenzen nötig werden: in der Session besprechen.
 
 ---
 
-## 1.1 — fs-init: Capability-Detection
+## 1.1 — fs-init: Capability-Detection ✅
 
 ```
 Design Pattern: Strategy (BootstrapStrategy: GUI | TUI | Headless)
+Umgesetzt 2026-04-03
 
-[ ] Design Pattern + Trait-Struktur festlegen (BootstrapStrategy-Trait)
-[ ] fs-info einbinden: display_server / terminal / headless ermitteln
-[ ] Strategy wählen: GuiBootstrap | TuiBootstrap | HeadlessBootstrap
-[ ] Ausgabe vor Engine-Download: NUR println! — keine zusätzlichen Libraries
-[ ] i18n: alle println!-Ausgaben als FTL-Keys (en als Fallback hardcoded in Binary)
-[ ] cargo fmt + clippy + test grün
+fs-info: WaylandDisplay, X11Display, Terminal Features hinzugefügt
+BootstrapCapability: erkennt display / terminal / container / mode
+GuiBootstrap | TuiBootstrap | HeadlessBootstrap implementiert
+Ausgabe: nur println! — keine zusätzlichen Libraries
+i18n: alle Texte als FTL-Keys in keys.rs (en Fallback hardcoded)
+cargo fmt + clippy + test grün ✅
 ```
 
-## 1.2 — fs-init: Install-Wizard
+## 1.2 — fs-init: Install-Wizard ✅
 
 ```
-Design Pattern: State Machine (WizardStep: Welcome→Capability→Engine→Bundle→Confirm→Progress→Done)
+Design Pattern: State Machine (WizardStep-Trait, 7 Schritte)
+Umgesetzt 2026-04-03
 
-[ ] Design Pattern + Trait-Struktur festlegen (WizardStep-Trait)
-[ ] Wizard-Schritte implementieren (State Machine)
-[ ] Bundle-Auswahl anzeigen (aus Store/ Katalog)
-[ ] Render-Engine-Auswahl: verfügbare Engines aus Store anzeigen, User wählt
-[ ] Einzelpaket-Auswahl (falls kein Bundle)
-[ ] Install-Target pro Paket: Container | rpm | deb | flatpak | AppImage
-[ ] fs-info: OS-Detection → passende Variante vorschlagen
-[ ] Adapter immer mitinstallieren (nicht optional)
+Welcome → Capability → Engine → Bundle → Confirm → Progress → Done
+Bundle-Auswahl: Minimal | Server | Workstation | Developer
+Render-Engine-Auswahl: iced | bevy | tui | none
+Install-Target: Container | RPM | DEB | AppImage (OS-Detection)
+Store-Clone im Progress-Schritt via gix
+i18n: ALLE User-facing Texte als FTL-Keys ✅
+cargo fmt + clippy + test grün ✅
+
+Noch offen (Phase 2):
+[ ] Echte Paket-Installation im Progress-Schritt
+[ ] Adapter immer mitinstallieren
 [ ] Nach Install: Manager startet Konfiguration
-[ ] i18n: ALLE User-facing Texte in FTL — keine Ausnahme
-[ ] cargo fmt + clippy + test grün
+[ ] Bundle-Liste dynamisch aus Store/-Katalog lesen
 ```
 
-## 1.3 — fs-init: Standalone-Test
+## 1.3 — fs-init: Standalone-Test ✅
 
 ```
-[ ] fs-init ohne jedes andere FS-Service startbar
-[ ] Nur fs-info als Dependency (Compile-Time)
-[ ] Store-Download funktioniert ohne laufenden fs-store-Container
+fs-init ohne andere FS-Services startbar ✅
+Nur fs-info als Compile-Time-Dependency ✅
+Store-Clone ohne laufenden fs-store-Container ✅ (gix, kein System-git)
 ```
 
 ---
