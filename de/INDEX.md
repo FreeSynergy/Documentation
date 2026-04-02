@@ -46,6 +46,8 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [fs-managers](programme/fs-managers.md) — 7 Manager-Backends: Language, Theme, Icons, Cursor, AI, Bots, Container
 - [fs-lenses](programme/fs-lenses.md) — Aggregierte Daten-Views: Strategy Pattern, Wiki/Git/Chat/Tasks-Lenses
 - [fs-ai](programme/fs-ai.md) — AI-Assistent: Facade über fs-manager-ai, LLM-Engine-Verwaltung, Mistral.rs
+- [fs-tasks](programme/fs-tasks.md) — Task-Pipeline-Manager: Command Pattern, DataTrigger, FieldMapping, gRPC+REST+CLI
+- [fs-bots](programme/fs-bots.md) — Messenger-Bot-Manager: Strategy Pattern, Broadcast/Gatekeeper/Digest/Monitor
 - [fs-ui](programme/fs-ui.md) — Basis-UI-Komponenten: Button, Card, Form, Modal, Table, etc. (Dioxus → iced/G2)
 - [fs-components](programme/fs-components.md) — App-Komponenten: NavBar, Chat, AppShell, Toast (Dioxus → iced/G2)
 
