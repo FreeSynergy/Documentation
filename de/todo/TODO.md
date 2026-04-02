@@ -216,7 +216,7 @@ alle Tests aktualisiert, bus_wiring.rs + e2e_install.rs verwenden Konstanten.
 ## fs-db (library, kein Container) ✅ 2026-03-31
 
 ```
-Offen:
+Offen (Langfristig):
 [ ] CrudRepo auf neues Repository<T> migrieren oder ablösen (low priority)
 [ ] SqliteEngine + PostgresEngine: Filter<T> → SQL übersetzen (im jeweiligen Adapter-Repo, nach G8)
 ```
@@ -237,81 +237,15 @@ Offen:
 
 ---
 
-## fs-render (library, kein Container)
-
-> GUI-Abstraktions-Traits: RenderEngine, FsWidget, FsWindow, FsTheme, FsEvent, FsView
-
-```
-OOP & Design
-[x] Abstract Factory: RenderEngine erstellt Widgets/Windows
-[x] FsView-Trait: view(&self) → Box<dyn FsWidget>
-    WARUM in fs-render: FsWidget ist der Rückgabetyp — Trait + Rückgabetyp müssen
-    im selben Crate sein. Domain-Objekte importieren fs-render NICHT direkt —
-    nur ihre view.rs (Bindeglied) darf fs-render importieren.
-[x] RenderEngine-Trait: create_window / run / set_context / dispatch_event / shutdown
-[x] FsWidget-Trait: widget_id / is_enabled / set_enabled + render_hint / layout_hint / style_hint
-[x] FsWindow-Trait: title / size / show / hide / minimize / restore / close / set_title / on_event
-[x] FsEvent-Enum: Key / Mouse / Window / Custom (handle via FsWindow::on_event)
-[x] AnimationSet / AnimationRegistry: load_set / activate / resolve (Registry Pattern)
-[x] Immer gegen Interface — kein iced / bevy direkt in Consumer-Code
-
-Repo
-[x] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[x] Kein Containerfile (reine Library)
-
-Code-Qualität
-[x] #![deny(clippy::all, clippy::pedantic, warnings)]
-[x] Keine FTL (reine Trait-Library, keine user-facing Texte)
-[x] cargo clippy: 0 Fehler
-[x] cargo fmt --check: sauber
-[x] cargo test: 40 Tests, alle grün (alle Traits mit Stub-Impl getestet)
-[x] cargo build --release: fehlerfrei
-
-Spezifisch
-[x] AppContext: Locale + Theme + FeatureFlags — durch RenderEngine::set_context durchgereicht
-[x] 3D-Erweiterungs-API: Fs3dExtension + Fs3dDescriptor (optional, FsView-Basis unverändert)
-
-Dokumentation
-[x] Doku-Seite: alle Traits, FsView-Pattern (Warum hier?), AppContext, 3D-Erweiterung
-[x] commit + push
-```
+## fs-render (library, kein Container) ✅ 2026-04-02
 
 ---
 
 ## fs-gui-engine-iced (adapter) ✅ 2026-03-29
 
-> iced-Implementierung von fs-render (libcosmic als Basis)
-
 ```
-OOP & Design
-[x] Adapter Pattern: IcedEngine adaptiert iced für fs-render Traits
-[x] IcedEngine implementiert RenderEngine-Trait (+ set_context, run)
-[x] IcedWidget implementiert FsWidget-Trait
-[x] IcedWindow implementiert FsWindow-Trait
-[x] IcedTheme implementiert FsTheme-Trait (iced::Theme-Wrapper)
-[x] Registriert Capability "render.engine.iced" — capability.rs + CAPABILITY_ID
-[x] Immer gegen Interface
-
-Repo
-[x] CLAUDE.md / rustfmt.toml / deny.toml / LICENSE / README.md / assets/icon.svg / package.toml
-[x] Containerfile
-
-Code-Qualität
-[x] #![deny(clippy::all, clippy::pedantic, warnings)]
-[x] FTL-Keys für Fehlermeldungen (gui-engine-iced.ftl en + de)
-[x] cargo clippy: 0 Fehler
-[x] cargo fmt --check: sauber
-[x] cargo test: 21 Tests grün
-[x] cargo build --release: fehlerfrei
-
-Spezifisch
-[x] Elm-Pattern (MVU): mvu.rs — MvuApp<S,M,U,V> mit FsMessage-Trait
+Offen (Langfristig):
 [ ] libcosmic: vollständige Integration (G2.8 — vanilla iced 0.13 als Basis)
-[x] Kein iced-Code in Consumer-Crates (pub use iced als Escape-Hatch)
-
-Dokumentation
-[x] Doku-Seite: de/programme/fs-gui-engine-iced.md
-[x] commit + push
 ```
 
 ---
@@ -447,13 +381,11 @@ Offen (Langfristig):
 ## fs-lenses ✅ 2026-04-01
 
 ```
-Erledigt: LensController (Strategy Pattern), gRPC, REST+OpenAPI, CLI, FsView-Trait, build.rs.
-Dioxus vollständig entfernt.
+Erledigt: LensController (Strategy Pattern), gRPC, REST+OpenAPI, CLI, FsView-Trait, build.rs,
+keys.rs (FTL-Konstanten), Doku-Seite. Dioxus vollständig entfernt.
 
 Offen (Langfristig):
-[ ] FTL-Keys migrieren
 [ ] LensRegistry: welcher Renderer für welchen Typ (Strategy Pattern vollständig)
-[ ] Doku-Seite + commit + push
 ```
 
 ---
@@ -462,13 +394,11 @@ Offen (Langfristig):
 
 ```
 Erledigt: AiController (Facade über fs-manager-ai), gRPC (list/status/start/stop/health),
-REST+OpenAPI, CLI (models/status/start/stop/daemon), FsView-Trait (view.rs), build.rs.
-Dioxus vollständig entfernt.
+REST+OpenAPI, CLI (models/status/start/stop/daemon), FsView-Trait (view.rs), build.rs,
+keys.rs (FTL-Konstanten), Doku-Seite. Dioxus vollständig entfernt.
 
 Offen (Langfristig):
-[ ] FTL-Keys migrieren
 [ ] DB: Konversationshistorie über fs-db DbEngine-Trait
-[ ] Doku-Seite + commit + push
 ```
 
 ---
@@ -493,15 +423,14 @@ Offen (Langfristig):
 ```
 Erledigt: TaskController (Command Pattern), gRPC (list/create/delete/toggle/health),
 REST+OpenAPI, CLI (list/create/delete/toggle/daemon), FsView-Trait (TasksView/TaskDetailView/CreateTaskView),
-build.rs, proto/tasks.proto. 9 Tests grün. Dioxus vollständig entfernt.
+build.rs, proto/tasks.proto, keys.rs (FTL-Konstanten), Doku-Seite. 9 Tests grün.
+Dioxus vollständig entfernt (app.rs, pipeline_editor.rs, templates.rs gelöscht).
 
 Offen (Langfristig):
-[ ] FTL-Keys migrieren
 [ ] DB: TaskStore über fs-db DbEngine-Trait
 [ ] O1: Data Offers / Accepts
 [ ] O2: Task Builder UI
 [ ] O3: Task-Templates aus Store
-[ ] Doku-Seite + commit + push
 ```
 
 ---
@@ -510,15 +439,15 @@ Offen (Langfristig):
 
 ```
 Erledigt: BotController (Strategy Pattern via bot_strategy), gRPC (list/get/enable/disable/health),
-REST+OpenAPI, CLI (list/enable/disable/daemon), FsView-Trait (view.rs), build.rs, proto/bots.proto.
-13 Tests grün. Dioxus vollständig entfernt.
+REST+OpenAPI, CLI (list/enable/disable/daemon), FsView-Trait (view.rs), build.rs, proto/bots.proto,
+keys.rs (FTL-Konstanten), Doku-Seite. 13 Tests grün.
+Dioxus vollständig entfernt (accounts_view, broadcast_view, components, context, gatekeeper_view,
+groups_view, view_trait gelöscht).
 
 Offen (Langfristig):
-[ ] FTL-Keys migrieren
 [ ] H8: bot-db/src/lib.rs aufteilen (735 Zeilen)
         → bot_db/conversation.rs + bot_db/user.rs + bot_db/state.rs + bot_db/command_log.rs
 [ ] DB: nur über fs-db DbEngine-Trait
-[ ] Doku-Seite + commit + push
 ```
 
 ---
