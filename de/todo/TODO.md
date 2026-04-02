@@ -7,7 +7,7 @@
 ## Regeln für Claude-Sessions
 
 - TODO vollständig lesen zu Beginn jeder Session
-- Erledigte Items löschen — kein [✓] behalten, spart Token
+- Erledigte Items löschen — kein Erledigtes behalten, spart Token
 - Vor jeder Entscheidung fragen — nie eigenmächtig handeln
 - Repo-Arbeit immer: erst lesen → dann planen → dann umsetzen
 
@@ -20,6 +20,45 @@
 [o]  Wird gerade bearbeitet
 [~]  Muss noch getestet werden
 ```
+
+---
+
+## Standard-Checkliste — gilt für JEDE Aufgabe
+
+Jede Phase / jeder Task wird in dieser Reihenfolge bearbeitet.
+Kein Task gilt als erledigt, bevor alle Punkte erfüllt sind:
+
+```
+1. Design Pattern festlegen (Strategy / MVC / Command / Observer / ...)
+   → Entscheidung ZUERST, BEVOR Code geschrieben wird
+
+2. OOP-Struktur definieren
+   → Traits + Structs zuerst, dann Impl
+   → Traits statt match-Blöcke
+   → Objekte statt reine Daten
+   → Immer gegen Interface (Trait) — nie gegen konkrete Impl
+
+3. i18n von Anfang an
+   → Jeder user-facing Text bekommt einen FTL-Key
+   → KEINE Ausnahme — auch nicht "erstmal hardcoded"
+   → KEINE Stubs oder leere Implementierungen — immer konkret
+   → keys.rs mit FTL-Konstanten anlegen
+   → .ftl-Datei in fs-i18n/locales/{lang}/{programm}.ftl
+
+4. Kompilierbarkeit sicherstellen
+   → cargo build muss nach jeder Änderung grün sein
+   → Kein "wird später fixen" — sofort beheben
+
+5. Abschluss-Check (exakt wie im Git-Hook):
+   → cargo fmt --check (gleiche Konfiguration wie pre-commit)
+   → cargo clippy (gleiche Flags wie pre-commit — kein Abweichen)
+   → cargo test (alle Tests grün)
+   → Erst wenn alle drei grün: Phase / Task abgeschlossen
+```
+
+**Wichtig zu clippy/fmt:** Die Einstellungen im Git-Hook sind maßgeblich.
+Claude verwendet dieselben Flags wie der Hook — nie abweichende Konfigurationen,
+um Fehler beim Commit zu vermeiden.
 
 ---
 
@@ -36,23 +75,34 @@ Everything through the Store:
   Was nicht im Store ist, existiert für das System nicht.
   Pakete, Engines, Themes, Sprachen, Adapter — alles ist ein Store-Artifact.
 
-Engine-Auswahl zur Laufzeit:
-  fs-info ermittelt Capabilities (display, terminal, headless).
-  Die passende Render-Engine wird als Artifact geladen — nie hartgekodiert.
-  display_server available → GUI (iced oder bevy)
+Engine-Auswahl zur Laufzeit (entschieden 2026-04-02):
+  fs-info ermittelt Capabilities (display_server, terminal, headless).
+  fs-init zeigt anfangs NUR println! — keine zusätzlichen Libraries.
+  Die Render-Engine wird danach als Artifact aus dem Store geladen.
+  display_server available → GUI (iced oder bevy — User wählt)
   nur terminal             → TUI
-  headless / SSH           → API + CLI
+  headless / SSH           → API + CLI only
+
+Engine-Wahl im Bundle (entschieden 2026-04-02):
+  Bundles mit UI-Anforderung enthalten "render-engine" als required-Artifact.
+  Beim Install: User wählt aus verfügbaren Engines (Select / Dropdown).
+  Standard-Vorschlag: iced (wenn display_server vorhanden), TUI sonst.
+  Keine Engine ist hartgekodiert.
 
 Adapter kommt immer mit:
   Jedes program-Paket hat einen adapter als Dependency.
   Store installiert beides zusammen.
   Adapter registriert Capability in fs-registry.
 
-Deklarative UI-Abstraktion:
-  Layout wird als Konfiguration beschrieben (engine-unabhängig).
-  Jede Engine (iced, bevy, TUI, web) interpretiert sie eigenständig.
-  Komponenten registrieren sich mit ComponentId.
-  Neue Komponenten kommen als Store-Artifacts.
+Deklarative UI-Abstraktion (entschieden 2026-04-02):
+  Layout-Format: TOML (pro Komponente eine eigene .toml-Datei).
+  Hot-Reload via inotify (wie FTL in fs-i18n).
+  Komponenten als WASM-Plugins (fs-plugin-sdk / fs-plugin-runtime).
+  Vorab kompiliert + gecheckt — dynamisch geladen zur Laufzeit.
+  Desktop liefert Basis-Komponenten.
+  Andere Programme können eigene Komponenten/Widgets mitbringen.
+  ComponentId-Registry: Komponente meldet sich beim Start an.
+  Engine (iced/bevy/TUI) interpretiert Layout eigenständig.
 ```
 
 ### Install-Kette
@@ -60,13 +110,14 @@ Deklarative UI-Abstraktion:
 ```
 fs-init
   1. fs-info: ermittelt Capabilities (display? terminal? headless?)
-  2. Zeigt minimale Bootstrap-UI (basierend auf Capability)
+  2. Ausgabe: nur println! — keine Bibliotheken außer fs-info
   3. Lädt Store-Service
   4. Store zeigt Bundles + Einzelpakete
-  5. User wählt Install-Target: Container (bevorzugt) | rpm | deb | flatpak | AppImage
-  6. fs-info schlägt passende Variante vor (OS-Detection)
-  7. Adapter wird IMMER mitinstalliert (nicht optional)
-  8. Manager übernimmt Konfiguration nach Install
+  5. User wählt Render-Engine aus verfügbaren (Select in Bundle)
+  6. User wählt Install-Target: Container (bevorzugt) | rpm | deb | flatpak | AppImage
+  7. fs-info schlägt passende Variante vor (OS-Detection)
+  8. Adapter wird IMMER mitinstalliert (nicht optional)
+  9. Manager übernimmt Konfiguration nach Install
 ```
 
 ### Package-Typen im Store
@@ -75,40 +126,43 @@ fs-init
 bundle   — Gruppe von Paketen (z.B. Workstation, Server, Minimal)
 program  — Laufender Dienst (Container bevorzugt)
 adapter  — Implementiert Trait, registriert Capability (kommt mit program)
-artifact — Reine Daten (Sprachen, Themes, DB-Engines, Render-Engines, Bots)
-fork     — 3rd-party Fork (Kanidm, Tuwunel, Stalwart, ...)
+artifact — Reine Daten (Sprachen, Themes, DB-Engines, Render-Engines, Bots, WASM-Komponenten)
+fork     — 3rd-party Fork (Kanidm, Tuwunel, Stalwart, Zentinel, ...)
 ```
 
-### Deklaratives Komponenten-System (fs-render)
+### Deklaratives Komponenten-System (fs-render, entschieden 2026-04-02)
 
 ```
-Layout wird als Konfiguration beschrieben:
-  Shells: Sidebar | Topbar | Bottombar | Main
-  Jede Shell hat Slots: anchor = top | fill | bottom
-  Komponenten deklarieren ihren bevorzugten Slot
-  Mehrere top-Komponenten stacken automatisch
-  fill-Komponenten teilen sich den Raum
+Format: TOML — pro Komponente eine eigene Datei (hotpluggable)
+Hot-Reload: inotify überwacht Komponenten-Verzeichnis
+Implementierung: WASM-Plugins via fs-plugin-sdk + fs-plugin-runtime
+  → Vorab kompiliert + gecheckt (Compile-Time-Sicherheit)
+  → Dynamisch geladen zur Laufzeit (kein Neustart nötig)
 
-Beispiel sidebar-layout:
-  slot(top)  → InventoryList (installierte Programme)
-  slot(fill) → AppSections (nach Kategorie)
-  slot(bottom) → PinnedApps (angepinnte Programme)
+Shell-Container: Sidebar | Topbar | Bottombar | Main
+Slots pro Container: top | fill | bottom
+  → mehrere top-Komponenten stacken
+  → fill-Komponenten teilen den verbleibenden Raum
+  → mehrere bottom-Komponenten stacken
 
-Engine-Interpretation:
-  iced  → native Widgets, Pixel-perfekt
-  bevy  → 3D-Panels, gleiche Slot-Logik + Z-Achse
-  TUI   → ASCII-Boxen, keine SVG/Animationen
-  web   → HTML/CSS Grid
+Komponente kennt ihre Mindest-/Maxgröße (responsive).
+Neue Komponenten kommen als Store-Artifacts (WASM + TOML-Config).
+```
 
-Komponenten kennen ihre Größe selbst (responsive).
-Neue Komponenten kommen als Store-Artifacts.
+### Bundle-Definitionen (entschieden 2026-04-02)
+
+```
+Minimal:     fs-init + fs-store + fs-registry + fs-inventory
+Server:      Minimal + fs-auth(Kanidm) + fs-node + Zentinel + Stalwart
+Workstation: Server + Desktop + render-engine(User-Wahl) + fs-managers + Apps
+Developer:   Workstation + Forgejo + erweiterte Manager-Tools
 ```
 
 ### API-Standard
 
 ```
-gRPC (tonic):   primär — intern + extern, type-safe
-REST (axum):    zusätzlich — universell, Browser-kompatibel
+gRPC (tonic):     primär — intern + extern, type-safe
+REST (axum):      zusätzlich — universell, Browser-kompatibel
 OpenAPI (utoipa): auto-generiert
 NIE direkte Calls über Repo-Grenzen — immer über gRPC/REST
 ```
@@ -116,7 +170,7 @@ NIE direkte Calls über Repo-Grenzen — immer über gRPC/REST
 ### OOP-Grundregeln
 
 ```
-Design Pattern ZUERST festlegen
+Design Pattern ZUERST festlegen — Entscheidung vor dem ersten Code
 Traits + Structs definieren — erst dann Impl schreiben
 Traits statt match-Blöcke, Objekte statt Daten
 Immer gegen Interface (Trait) — nie gegen konkrete Impl
@@ -127,9 +181,12 @@ view.rs ist das einzige Bindeglied zwischen Domain + fs-render
 ### i18n-Grundregeln
 
 ```
-Jeder user-facing Text braucht FTL — egal ob UI, CLI, Fehler, Log
+Jeder user-facing Text braucht FTL — KEINE AUSNAHME
+Gilt für: UI, CLI, Fehler, Logs, man-Pages
 "Sieht ein Mensch den Text?" → FTL. Interner Code → kein FTL nötig
+KEINE Stubs / KEIN "erstmal hardcoded" — immer sofort konkret
 Fallback: en (immer eingebaut), weitere Sprachen als Artifacts
+keys.rs: FTL-Konstanten — nie Magic Strings im Code
 ```
 
 ### DB-Grundregeln
@@ -142,60 +199,34 @@ DbEngine-Trait + direktes SeaORM/sqlx nur in Adapter-Repos
 
 ---
 
-## Offene Konzept-Entscheidungen (vor Umsetzung klären)
+## Offene Konzept-Entscheidungen
 
-### O1 — Bootstrap ohne Render-Engine
+Alle O1–O5 aus der vorherigen Version wurden am 2026-04-02 entschieden.
+Dokumentiert im Architektur-Überblick oben.
 
-Wie sieht die allererste Ausgabe von fs-init aus, BEVOR eine Engine geladen ist?
-Optionen: reiner Terminaltext (println!) | minimales TUI (ratatui hardcoded) | beides je nach Capability
+Noch offen:
 
-```
-[ ] Entscheidung: Was zeigt fs-init vor dem ersten Engine-Download?
-```
+### O6 — Komponenten-Verzeichnis-Struktur
 
-### O2 — LayoutDescriptor-Format
-
-Wie wird das deklarative Layout beschrieben?
-- TOML (einfach, lesbar, bereits in fs-config)
-- eigenes Rust-DSL (typsicher, aber kein Hot-Reload)
-- JSON (universell, aber verbose)
-Anforderung: Hot-Reload via inotify (wie FTL), Engine-unabhängig, erweiterbar
+Wo liegen die TOML-Konfigurations-Dateien der Komponenten?
+- Pro Programm: `~/.config/freesynergy/components/{program}/{component}.toml`
+- Global: `/etc/freesynergy/components/{component}.toml`
+- User überschreibt Global?
 
 ```
-[ ] Entscheidung: Format für LayoutDescriptor
-[ ] Entscheidung: Wie registriert eine Komponente ihre ComponentId im Store?
-[ ] Entscheidung: Wie lädt fs-render eine Komponente zur Laufzeit (dynamic dispatch vs. static)?
+[ ] Entscheidung: Verzeichnis-Struktur für Komponenten-TOML
+[ ] Entscheidung: Priorität User vs. Global vs. Store-Default
 ```
 
-### O3 — Bundle-Definitionen
+### O7 — WASM-Komponenten: Sandbox-Grenzen
 
-Welche Standard-Bundles gibt es?
-- Minimal: fs-init + fs-store + fs-registry + fs-inventory
-- Server: Minimal + fs-auth (Kanidm) + fs-node + Zentinel + Stalwart
-- Workstation: Server + fs-desktop + fs-gui-engine-iced + fs-managers + fs-apps
-- Developer: Workstation + Forgejo + fs-builder-integration
-
-```
-[ ] Entscheidung: Bundles definieren und in Store/ Katalog eintragen
-[ ] Entscheidung: Welche Engine ist Standard für Workstation? (iced empfohlen)
-```
-
-### O4 — Wiki: Wiki.js oder Outline?
-
-Beide haben ähnliche APIs. Outline: modernere REST-API, bessere SSO-Integration.
-Wiki.js: etablierter, mehr Features, aber schwerer.
+Welche Capabilities bekommt eine WASM-Komponente?
+- Lesen: fs-inventory, fs-session, fs-info (via gRPC)
+- Schreiben: nur über Bus-Events (nie direkt)
+- UI-Rendering: nur eigene Slot-Area
 
 ```
-[ ] Entscheidung: Outline als Standard, Wiki.js als Alternative? Oder beide im Store?
-```
-
-### O5 — fs-builder Status
-
-fs-builder-Funktionalität ist bereits in fs-managers integriert.
-fs-builder Repo ist strukturell fertig (Pipeline Pattern, 9 Tests grün).
-
-```
-[ ] Entscheidung: fs-builder archivieren (wie fs-apps)? Oder als Standalone behalten für CLI-Build-Pipelines?
+[ ] Entscheidung: WASM-Capability-Set für UI-Komponenten
 ```
 
 ---
@@ -206,28 +237,39 @@ fs-builder Repo ist strukturell fertig (Pipeline Pattern, 9 Tests grün).
 
 > Ziel: System kann sich selbst initialisieren und den Store laden.
 > Jedes Teilsystem muss standalone funktionieren.
+> Standard-Checkliste gilt vollständig.
 
 ---
 
 ## 1.1 — fs-init: Capability-Detection
 
 ```
+Design Pattern: Strategy (BootstrapStrategy: GUI | TUI | Headless)
+
+[ ] Design Pattern + Trait-Struktur festlegen (BootstrapStrategy-Trait)
 [ ] fs-info einbinden: display_server / terminal / headless ermitteln
-[ ] Bootstrap-Modus wählen: GUI | TUI | CLI-only
-[ ] Minimal-UI vor Engine-Download (O1 muss entschieden sein)
-[ ] Engine als Artifact aus Store laden (nach O1-Entscheidung)
+[ ] Strategy wählen: GuiBootstrap | TuiBootstrap | HeadlessBootstrap
+[ ] Ausgabe vor Engine-Download: NUR println! — keine zusätzlichen Libraries
+[ ] i18n: alle println!-Ausgaben als FTL-Keys (en als Fallback hardcoded in Binary)
+[ ] cargo fmt + clippy + test grün
 ```
 
 ## 1.2 — fs-init: Install-Wizard
 
 ```
-[ ] Wizard-Schritte: Welcome → Capability-Info → Engine-Wahl → Bundle-Wahl → Bestätigung → Progress
+Design Pattern: State Machine (WizardStep: Welcome→Capability→Engine→Bundle→Confirm→Progress→Done)
+
+[ ] Design Pattern + Trait-Struktur festlegen (WizardStep-Trait)
+[ ] Wizard-Schritte implementieren (State Machine)
 [ ] Bundle-Auswahl anzeigen (aus Store/ Katalog)
+[ ] Render-Engine-Auswahl: verfügbare Engines aus Store anzeigen, User wählt
 [ ] Einzelpaket-Auswahl (falls kein Bundle)
 [ ] Install-Target pro Paket: Container | rpm | deb | flatpak | AppImage
 [ ] fs-info: OS-Detection → passende Variante vorschlagen
 [ ] Adapter immer mitinstallieren (nicht optional)
 [ ] Nach Install: Manager startet Konfiguration
+[ ] i18n: ALLE User-facing Texte in FTL — keine Ausnahme
+[ ] cargo fmt + clippy + test grün
 ```
 
 ## 1.3 — fs-init: Standalone-Test
@@ -246,6 +288,7 @@ fs-builder Repo ist strukturell fertig (Pipeline Pattern, 9 Tests grün).
 
 > Ziel: Alles installierbar machen. Store ist Single Source of Truth.
 > fs-store läuft als eigenständiger Container.
+> Standard-Checkliste gilt vollständig.
 
 ---
 
@@ -253,31 +296,44 @@ fs-builder Repo ist strukturell fertig (Pipeline Pattern, 9 Tests grün).
 
 ```
 [ ] Alle bestehenden Repos auf einheitliches package.toml-Format migrieren
-[ ] Bundles definieren: Minimal | Server | Workstation | Developer (O3)
+[ ] Bundles definieren: Minimal | Server | Workstation | Developer
+[ ] Bundle "Workstation": render-engine als required-Artifact mit Engine-Wahl
 [ ] Für jedes program-Paket: artifact-Einträge für container, rpm, deb, flatpak
 [ ] Adapter-Dependencies in package.toml eintragen
-[ ] Fork-Pakete: Kanidm, Tuwunel, Stalwart, Zentinel, Zentinel-Plane
-[ ] Neue Pakete: Outline (oder Wiki.js), Forgejo, Bulwark Mail
+[ ] Fork-Pakete: Kanidm, Tuwunel, Stalwart, Zentinel, Zentinel-Plane, Forgejo
+[ ] Neue Pakete: Outline, Wiki.js, Bulwark Mail
+[ ] Telegram: als reiner Adapter (kein eigener Container — nur API-Integration)
 ```
 
 ## 2.2 — fs-store: Install-Pipeline
 
 ```
+Design Pattern: Pipeline (Download→Validate→Install→Configure→Register)
+
+[ ] Design Pattern + Trait-Struktur festlegen (InstallStep-Trait)
 [ ] InstallRequest: Paket + Target (Container/rpm/deb/flatpak) + Variante
 [ ] Download: aus Store-Katalog → URL ermitteln → Artifact holen
 [ ] Adapter-Auto-Install: wenn program installiert → zugehöriger Adapter auch
 [ ] fs-inventory: nach Install updaten (upsert_resource)
 [ ] fs-registry: nach Install registrieren (Register Capability)
 [ ] Bus: install::completed publishen
+[ ] i18n: ALLE User-facing Texte in FTL
+[ ] cargo fmt + clippy + test grün
 ```
 
 ## 2.3 — fs-store: UI + CLI
 
 ```
-[ ] Store-UI: Paket-Liste, Suche, Detail, Install-Wizard (SelectStep → ConfirmStep → ProgressStep → DoneStep)
+Design Pattern: MVC (StoreController, StoreModel, StoreView via FsView-Trait)
+
+[ ] Design Pattern bestätigen / anpassen
+[ ] Store-UI: Paket-Liste, Suche, Detail-View, Install-Wizard
+[ ] Install-Wizard: SelectStep → ConfirmStep → ProgressStep → DoneStep
+[ ] Engine-Wahl im Wizard: Select/Dropdown aus verfügbaren Engines
 [ ] Store-CLI: search / install / remove / list-installed / update
-[ ] Install-Target wählbar (Container bevorzugt, OS-passende Alternative vorgeschlagen)
 [ ] Bundle-Install: alle Pakete des Bundles auf einmal
+[ ] i18n: ALLE User-facing Texte in FTL
+[ ] cargo fmt + clippy + test grün
 ```
 
 ## 2.4 — fs-store: Standalone-Test
@@ -293,39 +349,66 @@ fs-builder Repo ist strukturell fertig (Pipeline Pattern, 9 Tests grün).
 
 # Phase 3 — fs-render: Component System
 
-> Ziel: Engine-unabhängiges deklaratives Layout.
+> Ziel: Engine-unabhängiges deklaratives Layout mit WASM-Komponenten.
 > Komponenten beschreiben WHAT, Engines rendern HOW.
+> Standard-Checkliste gilt vollständig.
 
 ---
 
-## 3.1 — LayoutDescriptor (O2 muss entschieden sein)
+## 3.1 — LayoutDescriptor (TOML, O6 + O7 müssen entschieden sein)
 
 ```
-[ ] LayoutDescriptor-Format definieren (TOML bevorzugt)
-[ ] Shell-Typen: Sidebar | Topbar | Bottombar | Main
-[ ] Slot-Typen: top | fill | bottom
-[ ] ComponentId-Registry: Komponente meldet sich an
-[ ] Hot-Reload via inotify (wie FTL in fs-i18n)
+Design Pattern: Interpreter (TOML → LayoutDescriptor → Engine-spezifisches Rendering)
+
+[ ] Design Pattern festlegen
+[ ] LayoutDescriptor-Structs (Rust): Shell, Slot, ComponentRef
+[ ] TOML-Format definieren: pro Komponente eine eigene .toml-Datei
+[ ] Verzeichnis-Struktur (O6 muss entschieden sein)
+[ ] fs-config einbinden: TOML laden + validieren
+[ ] Hot-Reload: inotify überwacht Komponenten-Verzeichnis
+[ ] i18n: alle Labels/Descriptions in FTL
+[ ] cargo fmt + clippy + test grün
 ```
 
-## 3.2 — Komponenten-System
+## 3.2 — WASM-Komponenten-System
 
 ```
-[ ] ComponentTrait: render(engine, slot_size) → Element
+Design Pattern: Plugin (ComponentTrait via fs-plugin-sdk)
+
+[ ] Design Pattern festlegen
+[ ] ComponentTrait: render(engine_context, slot_bounds) → LayoutElement
+[ ] ComponentId-Registry: Komponente meldet sich beim Start an
+[ ] Sandbox-Grenzen definieren (O7 muss entschieden sein)
+[ ] fs-plugin-runtime: WASM laden + instanziieren
 [ ] Slot-Layout-Algorithmus: top stacken, fill teilt Raum, bottom stacken
 [ ] Responsive: Komponente kennt ihre Mindest-/Maxgröße
-[ ] Engines: iced-Impl + TUI-Impl (bevy später)
+[ ] i18n: ComponentTrait liefert FTL-Key für seinen Namen/Beschreibung
+[ ] cargo fmt + clippy + test grün
 ```
 
-## 3.3 — Standard-Komponenten (für Desktop)
+## 3.3 — Engine-Implementierungen
 
 ```
-[ ] InventoryListComponent: zeigt installierte Programme (aus fs-inventory)
-[ ] PinnedAppsComponent: angepinnte Programme (aus fs-session)
+[ ] iced-Impl: LayoutDescriptor → iced-Widgets (fs-gui-engine-iced)
+[ ] TUI-Impl: LayoutDescriptor → ratatui-Widgets (neue Impl)
+[ ] bevy-Impl: langfristig (fs-gui-engine-bevy)
+[ ] Einschränkungen pro Engine dokumentieren (TUI: kein SVG, kein Bild)
+[ ] cargo fmt + clippy + test grün (pro Engine-Impl)
+```
+
+## 3.4 — Standard-Komponenten (für Desktop)
+
+```
+Design Pattern: pro Komponente eigenes Pattern festlegen
+
+[ ] InventoryListComponent: installierte Programme (aus fs-inventory via gRPC)
+[ ] PinnedAppsComponent: angepinnte Programme (aus fs-session via gRPC)
 [ ] AppSectionsComponent: Programme nach Kategorie
-[ ] SystemInfoComponent: CPU/RAM/Disk (aus fs-info)
+[ ] SystemInfoComponent: CPU/RAM/Disk (aus fs-info via gRPC)
 [ ] NotificationBellComponent: Bus-Events
 [ ] SearchBarComponent: global search (Phase 5)
+[ ] Jede Komponente: eigene .toml-Config + FTL-Keys + Tests
+[ ] cargo fmt + clippy + test grün
 ```
 
 ---
@@ -335,68 +418,75 @@ fs-builder Repo ist strukturell fertig (Pipeline Pattern, 9 Tests grün).
 # Phase 4 — Desktop
 
 > Ziel: Vollständige Desktop-Shell mit konfigurierbarem Layout.
-> Läuft auf fs-render + fs-gui-engine-iced.
+> Läuft auf fs-render + gewählter GUI-Engine.
+> Standard-Checkliste gilt vollständig.
 
 ---
 
 ## 4.1 — Desktop-Shell: Layout-System
 
 ```
+Design Pattern: Composite (ShellLayout enthält Shells, Shells enthalten Slots)
+
+[ ] Design Pattern festlegen
 [ ] ShellLayout: Sidebar | Topbar | Bottombar | Main (alle optional)
 [ ] Slot-basierte Konfiguration (aus Phase 3)
-[ ] Layout-Konfiguration in TOML (hotpluggable)
-[ ] Default-Layout: Topbar(brand + breadcrumbs + avatar) + Sidebar(inventory + pinned) + Main
+[ ] TOML-Config: desktop-layout.toml (hotpluggable)
+[ ] Default-Layout: Topbar(brand+breadcrumbs+avatar) + Sidebar(inventory+pinned) + Main
+[ ] i18n: ALLE Labels in FTL
+[ ] cargo fmt + clippy + test grün
 ```
 
 ## 4.2 — Desktop-Shell: Komponenten einbinden
 
 ```
-[ ] InventoryList in Sidebar (slot: fill)
-[ ] PinnedApps in Sidebar (slot: bottom)
-[ ] SystemInfo in Topbar oder Bottombar (slot: bottom)
-[ ] NotificationBell in Topbar (slot: top)
-[ ] SearchBar in Topbar (slot: fill)
+[ ] InventoryList in Sidebar (slot: fill) — aus Phase 3.4
+[ ] PinnedApps in Sidebar (slot: bottom) — aus Phase 3.4
+[ ] SystemInfo in Bottombar (slot: bottom) — aus Phase 3.4
+[ ] NotificationBell in Topbar (slot: top) — aus Phase 3.4
+[ ] SearchBar in Topbar (slot: fill) — aus Phase 3.4
+[ ] cargo fmt + clippy + test grün
 ```
 
 ## 4.3 — Desktop-Shell: App-Management
 
 ```
-[ ] App starten: aus Inventory oder Pinned → Fenster öffnen
-[ ] App-Fenster: FsWindow-Trait (fs-render)
-[ ] fs-session: geöffnete Apps tracken (app::opened / app::closed)
-[ ] Mehrfenster: Fenster-Liste in Taskbar
+Design Pattern: Observer (fs-session beobachtet App-Lifecycle via Bus)
+
+[ ] Design Pattern festlegen
+[ ] App starten: aus Inventory oder Pinned → FsWindow öffnen
+[ ] FsWindow-Trait (fs-render): pro laufende App ein Fenster
+[ ] fs-session: app::opened / app::closed via Bus
+[ ] Fenster-Liste in Taskbar
 [ ] App anpinnen / lösen (persist in fs-session)
+[ ] i18n: alle Fenster-Titel + Aktionen in FTL
+[ ] cargo fmt + clippy + test grün
 ```
 
 ## 4.4 — Desktop: Settings
 
 ```
-[ ] Appearance (Theme-Wahl)
-[ ] Language (Sprache global + per App)
-[ ] Desktop-Layout konfigurieren (welche Komponenten wo)
+Design Pattern: Strategy (pro Settings-Seite eigene Strategy-Impl)
+
+[ ] Appearance (Theme-Wahl via fs-theme)
+[ ] Language (Sprache global + per App via fs-i18n)
+[ ] Desktop-Layout konfigurieren (Slot-Belegung via TOML)
 [ ] Service Roles (welcher Service übernimmt welche Funktion)
 [ ] Accounts (IAM via Kanidm)
 [ ] Shortcuts
 [ ] Packages (Store-View)
+[ ] i18n: ALLE Texte in FTL
+[ ] cargo fmt + clippy + test grün
 ```
 
-## 4.5 — Desktop: i18n vollständig
+## 4.5 — Desktop: i18n-Abschluss
 
 ```
-[ ] Alle UI-Texte in .ftl migrieren (derzeit noch einige hardcoded)
+[ ] fs-settings: alle noch hardcodierten Texte in FTL migrieren
 [ ] fs-theme-app: FTL-Keys migrieren
 [ ] fs-container-app: FTL-Keys migrieren
-[ ] fs-builder: FTL-Keys migrieren (falls nicht archiviert)
-```
-
-## 4.6 — Desktop: Langfristige Polish
-
-```
-[ ] Action Registry + konfigurierbare Shortcuts (Q1-Q2)
-[ ] Menü: jeder Punkt ruft echte Aktion auf (Q3)
-[ ] Context-Menüs (Q6)
-[ ] Animationen konfigurierbar (AnimationSet aus Store) (Q7)
-[ ] Alle Stubs / toten Code entfernen (Q8)
+[ ] fs-gui-workspace: Shell-Texte vollständig in FTL
+[ ] cargo fmt + clippy + test grün
 ```
 
 ---
@@ -407,79 +497,124 @@ fs-builder Repo ist strukturell fertig (Pipeline Pattern, 9 Tests grün).
 
 > Ziel: Kritische Dienste installierbar, konfigurierbar, laufend.
 > Jeder Dienst standalone — Integration über Adapter + Bus.
+> Standard-Checkliste gilt vollständig.
 
 ---
 
-## 5.1 — Kanidm (Auth-Grundlage)
+## 5.1 — Kanidm (Auth-Grundlage — Blocker für alle anderen Services)
 
 ```
+Design Pattern: Adapter (4 Protokoll-Traits: OAuthProvider, ScimProvider, SsoProvider, PamProvider)
+
+[ ] Design Pattern bestätigen (Adapter-Pattern bereits definiert)
 [ ] Store-Eintrag: kanidm als fork-Paket (Container + fs-auth-Adapter)
-[ ] Nach Install: Konfigurationsassistent (Admin-Account, Domain, OIDC-Clients)
-[ ] fs-auth: Kanidm-Impl vollständig (OAuthProvider + ScimProvider + SsoProvider + PamProvider)
-[ ] Desktop: Login via Kanidm (fs-profile → IAM)
-[ ] API-Clients (alle Services): OIDC-Login über Kanidm
-[ ] Test: Kanidm standalone startbar (ohne fs-desktop)
+[ ] Konfigurationsassistent nach Install: Admin-Account, Domain, OIDC-Clients
+[ ] fs-auth: Kanidm-Impl vollständig (alle 4 Protokoll-Traits)
+[ ] Desktop-Login via Kanidm (fs-profile → IAM)
+[ ] API-Clients (alle Services): OIDC-Login konfigurierbar
+[ ] i18n: ALLE Wizard/Konfig-Texte in FTL
+[ ] Standalone-Test: Kanidm ohne fs-desktop startbar
+[ ] cargo fmt + clippy + test grün
 ```
 
 ## 5.2 — Zentinel + Zentinel Control Plane (Reverse-Proxy)
 
 ```
+Design Pattern: Facade (ZentinelManager als Facade über Zentinel API)
+
+[ ] Design Pattern festlegen
 [ ] Store-Eintrag: zentinel + zentinel-plane als fork-Pakete
-[ ] S3-Integration: Zentinel nutzt fs-s3 / opendal für Konfigurationsspeicher
-[ ] Control Plane: Routen-Konfiguration (welcher Service hinter welchem Pfad)
-[ ] Manager: ZentinelManager (konfiguriert Routen nach Service-Install)
+[ ] S3-Integration: Zentinel nutzt opendal für Konfigurations-Storage
+[ ] Control Plane: Routen-Konfiguration (Service → Pfad)
+[ ] ZentinelManager: konfiguriert Routen nach Service-Install
 [ ] fs-registry: neu registrierte Services → Zentinel-Route automatisch
-[ ] Test: Zentinel standalone (ohne fs-desktop, ohne Kanidm)
+[ ] i18n: ALLE Konfig-Texte in FTL
+[ ] Standalone-Test: Zentinel ohne fs-desktop + ohne Kanidm
+[ ] cargo fmt + clippy + test grün
 ```
 
 ## 5.3 — Stalwart + Bulwark Mail (E-Mail)
 
 ```
+Design Pattern: Adapter (MailAdapter: SmtpProvider + ImapProvider)
+
+[ ] Design Pattern festlegen
 [ ] Store-Eintrag: stalwart (fork) + bulwark-mail (webmail frontend)
-[ ] Nach Install: Domain-Konfiguration, IAM-Integration (Kanidm via OIDC/LDAP)
-[ ] Adapter: smtp + imap → fs-registry (Service Roles: mail)
-[ ] Domain-Konfiguration pro Node (fs-node Integration)
-[ ] Test: Stalwart standalone (ohne fs-desktop)
+[ ] Konfigurationsassistent nach Install: Domain, MX-Records, TLS
+[ ] IAM-Integration: Kanidm via OIDC/LDAP
+[ ] Adapter: smtp + imap → fs-registry (Service Role: mail)
+[ ] Domain-Konfiguration pro Node
+[ ] i18n: ALLE Konfig-Texte in FTL
+[ ] Standalone-Test: Stalwart ohne fs-desktop
+[ ] cargo fmt + clippy + test grün
 ```
 
 ## 5.4 — Tuwunel (Matrix-Messenger)
 
 ```
+Design Pattern: Adapter (MatrixAdapter via fs-channel-matrix)
+
+[ ] Design Pattern bestätigen (fs-channel-matrix bereits vorhanden)
 [ ] Store-Eintrag: tuwunel (fork) als Container
-[ ] fs-channel-matrix: MatrixAdapter vollständig
+[ ] fs-channel-matrix: MatrixAdapter vollständig implementieren
 [ ] IAM: Matrix-Accounts via Kanidm (OIDC)
-[ ] Bots: fs-bots → Tuwunel als Backend (via fs-channel-matrix)
-[ ] Test: Tuwunel standalone
+[ ] fs-bots: Tuwunel als Bot-Backend (via fs-channel-matrix)
+[ ] i18n: ALLE Konfig-Texte in FTL
+[ ] Standalone-Test: Tuwunel ohne fs-desktop
+[ ] cargo fmt + clippy + test grün
 ```
 
-## 5.5 — Telegram (externer Kanal)
+## 5.5 — Telegram (externer Kanal — kein eigener Container)
 
 ```
-[ ] fs-channel-telegram: TelegramAdapter vollständig
-[ ] fs-bots: Telegram als Bot-Backend (via fs-channel-telegram)
+Design Pattern: Adapter (TelegramAdapter via fs-channel-telegram)
+
+Hinweis: Telegram läuft EXTERN — FreeSynergy installiert keinen Telegram-Server.
+Nur der Adapter (API-Integration + Bot-Support) wird installiert.
+Nachgeladen wird er automatisch wenn fs-bots oder fs-channel-telegram installiert wird.
+
+[ ] Design Pattern bestätigen (fs-channel-telegram bereits vorhanden)
+[ ] fs-channel-telegram: TelegramAdapter vollständig implementieren
 [ ] Store-Eintrag: fs-channel-telegram als adapter-Paket
-[ ] Konfiguration: Bot-Token via fs-config / Manager
+[ ] fs-bots: Telegram als Bot-Backend (via fs-channel-telegram)
+[ ] Konfiguration: Bot-Token via fs-config + Manager
+[ ] i18n: ALLE Konfig-Texte in FTL
+[ ] cargo fmt + clippy + test grün
 ```
 
-## 5.6 — Outline (Wiki / Dokumentation)
+## 5.6 — Forgejo (Git-Server, Self-Hosted)
 
 ```
-[ ] Store-Eintrag: outline als Container-Paket
-[ ] IAM: SSO via Kanidm (OIDC)
-[ ] S3: Datei-Storage via opendal
-[ ] Adapter: outline-adapter → fs-registry (Service Role: wiki)
-[ ] Alternative: Wiki.js als zweites Store-Paket (beide unterstützen)
-[ ] Test: Outline standalone
-```
+Design Pattern: Adapter (ForgejoAdapter: GitProvider)
 
-## 5.7 — Forgejo (Git-Server, Self-Hosted)
-
-```
+[ ] Design Pattern festlegen
 [ ] Store-Eintrag: forgejo als Container-Paket
 [ ] IAM: Kanidm OIDC
 [ ] S3: Repository-Storage via opendal
-[ ] Adapter: forgejo-adapter → fs-registry (Service Role: git)
-[ ] Test: Forgejo standalone
+[ ] ForgejoAdapter: GitProvider-Trait → fs-registry (Service Role: git)
+[ ] i18n: ALLE Konfig-Texte in FTL
+[ ] Standalone-Test: Forgejo ohne fs-desktop
+[ ] cargo fmt + clippy + test grün
+```
+
+## 5.7 — Outline + Wiki.js (Dokumentation / Wiki)
+
+```
+Design Pattern: Adapter (WikiAdapter: WikiProvider) — für beide Implementierungen
+
+Hinweis: Beide im Store — guter Test für austauschbare Service-Implementierungen.
+Zeigt dass das Adapter-System funktioniert wenn zwei Programme denselben Trait implementieren.
+
+[ ] WikiProvider-Trait definieren (gemeinsame API für Outline + Wiki.js)
+[ ] Store-Eintrag: outline als Container-Paket (Standard-Empfehlung)
+[ ] Store-Eintrag: wikijs als Container-Paket (Alternative)
+[ ] IAM: Kanidm SSO (OIDC) für beide
+[ ] S3: Datei-Storage via opendal für beide
+[ ] OutlineAdapter + WikiJsAdapter: beide implementieren WikiProvider-Trait
+[ ] Service Role: wiki → wählbar zwischen Outline und Wiki.js
+[ ] i18n: ALLE Konfig-Texte in FTL
+[ ] Standalone-Test: Outline standalone, Wiki.js standalone
+[ ] cargo fmt + clippy + test grün
 ```
 
 ---
@@ -490,37 +625,37 @@ fs-builder Repo ist strukturell fertig (Pipeline Pattern, 9 Tests grün).
 
 > Alle Apps: UI (FsView-Trait) + CLI + API (gRPC + REST)
 > Standalone: jede App läuft ohne den Rest
+> Standard-Checkliste gilt vollständig.
 
 ---
 
-## 6.1 — Apps: Langfristige Open Items
+## 6.1 — Apps: Offene Items
 
 ```
-fs-db: CrudRepo → Repository<T> migrieren (low priority)
-fs-db: Filter<T> → SQL übersetzen in Adapter-Repos (nach G8)
-fs-bots: bot-db/src/lib.rs aufteilen (735 Zeilen) → conversation/user/state/command_log
-fs-bots: DB nur über fs-db DbEngine-Trait
-fs-ai: Konversationshistorie über fs-db DbEngine-Trait
-fs-tasks: TaskStore über fs-db DbEngine-Trait
-fs-lenses: LensRegistry vollständig (Strategy Pattern)
+fs-db:         CrudRepo → Repository<T> migrieren (low priority)
+fs-db:         Filter<T> → SQL übersetzen in Adapter-Repos
+fs-bots:       bot-db/src/lib.rs aufteilen (735 Zeilen)
+               → conversation.rs + user.rs + state.rs + command_log.rs
+fs-bots:       DB nur über fs-db DbEngine-Trait
+fs-ai:         Konversationshistorie über fs-db DbEngine-Trait
+fs-tasks:      TaskStore über fs-db DbEngine-Trait
+fs-lenses:     LensRegistry vollständig (Strategy Pattern)
 fs-manager-language: gix-API (pre-0.65) migrieren (bekannter Bug)
-matrix-sdk: PostgreSQL State Store (wartet auf rustc recursion-overflow Fix upstream)
+matrix-sdk:    PostgreSQL State Store (wartet auf rustc recursion-overflow Fix upstream)
 ```
 
-## 6.2 — Search (Phase M)
+## 6.2 — Search
 
 ```
+Design Pattern: Strategy (SearchStrategy: lokal | registry | host | föderal)
+
+[ ] Design Pattern festlegen
 [ ] Search-View (Suchfeld, gruppierte Ergebnisse, Preview)
 [ ] Service-Suche (lokal, fs-registry)
 [ ] Host-Suche (Bus-aggregiert)
 [ ] Föderale Suche
-```
-
-## 6.3 — libcosmic Integration (langfristig, G2.8)
-
-```
-[ ] fs-gui-engine-iced: libcosmic vollständige Integration
-    (vanilla iced 0.13 als Basis, libcosmic als Theme-Layer)
+[ ] i18n: ALLE Texte in FTL
+[ ] cargo fmt + clippy + test grün
 ```
 
 ---
@@ -529,79 +664,68 @@ matrix-sdk: PostgreSQL State Store (wartet auf rustc recursion-overflow Fix upst
 
 # Phase 7 — Federation & Infrastruktur
 
+> Standard-Checkliste gilt vollständig.
+
 ---
 
 ## 7.1 — Federation
 
 ```
+Design Pattern: Observer + Decorator (ActivityPub-Events über Bus)
+
+[ ] Design Pattern festlegen
 [ ] Federation-Grundstruktur (ActivityPub)
 [ ] Rechte-Kaskade + Audit-Log
 [ ] Föderaler Bus
-[ ] WireGuard (nach Federation)
-[ ] Hickory DNS (nach Federation)
+[ ] WireGuard (nach Federation-Grundstruktur)
+[ ] Hickory DNS (nach Federation-Grundstruktur)
+[ ] i18n: ALLE Texte in FTL
+[ ] cargo fmt + clippy + test grün
 ```
 
 ## 7.2 — Infrastruktur
 
 ```
-[ ] Vaultwarden (Passwort-Manager)
-[ ] Ntfy / UnifiedPush (Push-Benachrichtigungen)
-[ ] Element Call + coturn (WebRTC für Matrix-Calls)
+[ ] Vaultwarden (Passwort-Manager) — Store-Eintrag + Adapter
+[ ] Ntfy / UnifiedPush (Push-Benachrichtigungen) — Store-Eintrag + Adapter
+[ ] Element Call + coturn (WebRTC für Matrix-Calls) — Store-Eintrag
+[ ] libcosmic: vollständige Integration in fs-gui-engine-iced (G2.8, langfristig)
+[ ] i18n: ALLE Texte in FTL
+[ ] cargo fmt + clippy + test grün
 ```
 
 ---
 
-## Archiviert / Erledigt (Referenz)
+---
+
+## Archiviert (Referenz)
 
 ```
-fs-apps: archiviert 2026-04-01 (alle Apps in eigene Repos migriert)
-fs-builder: Entscheidung ausstehend (O5) — Funktionalität in fs-managers integriert
-fs-bootc: ✅ 2026-03-31 (GitHub Actions + Butane/Ignition)
-fs-libs (5 Primitives): ✅ 2026-03-26
-fs-bus: ✅ 2026-03-31
-fs-config: ✅ 2026-03-30
-fs-db: ✅ 2026-03-31 (Repository<T> Basis)
-fs-i18n: ✅ 2026-03-30
-fs-theme: ✅ 2026-03-30
-fs-render: ✅ 2026-04-02 (Traits; Component System kommt in Phase 3)
-fs-gui-engine-iced: ✅ 2026-03-29
-fs-gui-engine-bevy: ✅ 2026-03-30
-fs-web-engine + servo: ✅ 2026-03-30
-fs-auth: ✅ 2026-03-30 (Traits; Kanidm-Impl vollständig in Phase 5.1)
-fs-registry: ✅ 2026-03-31
-fs-inventory: ✅ 2026-03-31
-fs-session: ✅ 2026-03-31
-fs-info: ✅ 2026-03-31
-fs-container: ✅ 2026-03-30
-fs-browser: ✅ 2026-04-01
-fs-theme-app: ✅ 2026-04-01 (FTL-Migration offen, Phase 4.5)
-fs-lenses: ✅ 2026-04-01
-fs-ai: ✅ 2026-04-01
-fs-container-app: ✅ 2026-04-01
-fs-tasks: ✅ 2026-04-01
-fs-bots: ✅ 2026-04-01
-fs-builder: ✅ 2026-04-01 (Pipeline Pattern — Archivierung O5)
-fs-store (Wizard): ✅ 2026-04-02 (H9a-H9d)
-fs-managers: ✅ 2026-04-01
-Store/ Katalog: ✅ 2026-03-31 (Vervollständigung Phase 2.1)
-fs-documentation: ✅ 2026-03-30
-fs-ci + GitHub Actions: ✅ 2026-03-31
-Fork-Repos (CI): ✅ 2026-03-31
+fs-apps:    archiviert 2026-04-01 (alle Apps in eigene Repos migriert)
+fs-builder: archiviert 2026-04-02 (Funktionalität in fs-managers; Pipeline-Pattern erhalten)
+
+Abgeschlossen (nicht mehr in TODO):
+fs-bootc, fs-libs (5 Primitives), fs-bus, fs-config, fs-db, fs-i18n, fs-theme,
+fs-render (Traits), fs-gui-engine-iced, fs-gui-engine-bevy, fs-web-engine, fs-web-engine-servo,
+fs-auth (Traits), fs-registry, fs-inventory, fs-session, fs-info, fs-container,
+fs-browser, fs-theme-app, fs-lenses, fs-ai, fs-container-app, fs-tasks, fs-bots,
+fs-store (Wizard H9a-H9d), fs-managers, Store/ Katalog (Basis),
+fs-documentation, fs-ci, GitHub Actions (alle Repos), Fork-Repos (CI)
 ```
 
 ---
 
-## Reihenfolge (aktuell)
+## Reihenfolge
 
 ```
-1. Offene Konzept-Entscheidungen klären (O1-O5)
-2. Phase 1: Bootstrap (fs-init Wizard + Capability-Detection)
-3. Phase 2: Store (Install-Pipeline + Bundle-Katalog)
-4. Phase 5.1: Kanidm (Auth-Grundlage, Blocker für alle anderen Services)
-5. Phase 5.2: Zentinel (Proxy, Grundlage für Service-Routing)
-6. Phase 3: fs-render Component System (Layout-Abstraktion)
-7. Phase 4: Desktop (Shell + Komponenten)
-8. Phase 5.3-5.7: weitere Ecosystem-Services
-9. Phase 6: Apps & Search
+1.  O6 + O7: offene Konzept-Entscheidungen (Komponenten-Verzeichnis + WASM-Sandbox)
+2.  Phase 5.1: Kanidm (Auth-Grundlage — Blocker für alle anderen Services)
+3.  Phase 5.2: Zentinel (Proxy — Grundlage für Service-Routing)
+4.  Phase 2: Store (Install-Pipeline + Bundle-Katalog)
+5.  Phase 1: Bootstrap (fs-init Wizard + Capability-Detection)
+6.  Phase 3: fs-render Component System (Layout-Abstraktion + WASM)
+7.  Phase 4: Desktop (Shell + Komponenten)
+8.  Phase 5.3–5.7: weitere Ecosystem-Services (Stalwart, Tuwunel, Telegram, Forgejo, Outline/Wiki.js)
+9.  Phase 6: Apps & Search
 10. Phase 7: Federation & Infrastruktur
 ```
