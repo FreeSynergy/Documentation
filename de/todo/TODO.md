@@ -538,19 +538,17 @@ Offen (Langfristig):
 
 ---
 
-## fs-store (UI-Teil in fs-store Repo) ✅ H9a 2026-04-01
+## fs-store (UI-Teil in fs-store Repo) ✅ H9a–H9d 2026-04-02
 
 > Kein separates fs-store-app — die UI ist Teil von fs-store (Gruppe F)
 
 ```
 Erledigt H9a: installer/ Modul in fs-store (InstallRequest, InstallKind,
-download-Funktionen für Language/Theme/Container/App-Binary, env-var-Extraktion).
-wizard/done.rs in fs-store-app (InstallResult + FsWidget). 10 Tests grün.
-
-Offen (H9b–H9d):
-[ ] wizard/select.rs — Paketauswahl UI
-[ ] wizard/confirm.rs — Bestätigungsschritt
-[ ] wizard/progress.rs — Fortschrittsanzeige
+  download-Funktionen für Language/Theme/Container/App-Binary, env-var-Extraktion).
+Erledigt H9b: wizard/select.rs — SelectStep + SelectablePackage (Filter, is_complete).
+Erledigt H9c: wizard/confirm.rs — ConfirmStep + EnvVarField (TextInputWidget pro Var).
+Erledigt H9d: wizard/progress.rs — ProgressStep + InstallPhase State Machine.
+wizard/done.rs — InstallResult + FsWidget. 22 Tests grün.
 ```
 
 ---
