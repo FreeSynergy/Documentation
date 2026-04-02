@@ -305,67 +305,18 @@ Store-Clone ohne laufenden fs-store-Container ✅ (gix, kein System-git)
 
 ---
 
-# Phase 2 — Store
+# Phase 2 — Store ✅ 2026-04-03
 
-> Ziel: Alles installierbar machen. Store ist Single Source of Truth.
-> fs-store läuft als eigenständiger Container.
-> Standard-Checkliste gilt vollständig.
+> Abgeschlossen. Store-Katalog vollständig, Install-Pipeline live, CLI mit install/remove/update.
 
----
-
-## 2.1 — Store/ Katalog: Pakete vervollständigen
+## Offene Restpunkte aus Phase 2
 
 ```
-[ ] package.toml-Format erweitern:
-    - [[component]]-Einträge (id, slot, wasm, config)
-    - [storage]-Sektion (user, global, config, cache Pfade)
-    - [api]-Sektion (gRPC-Endpoints + REST-Endpoints für Doku-Tab)
-[ ] Alle bestehenden Repos auf erweitertes package.toml-Format migrieren
-[ ] Bundles definieren: Minimal | Server | Workstation | Developer
-[ ] Bundle "Workstation": render-engine als required-Artifact mit Engine-Wahl
-[ ] Für jedes program-Paket: artifact-Einträge für container, rpm, deb, flatpak
-[ ] Adapter-Dependencies in package.toml eintragen
-[ ] Fork-Pakete: Kanidm, Tuwunel, Stalwart, Zentinel, Zentinel-Plane, Forgejo
-[ ] Neue Pakete: Outline, Wiki.js, Bulwark Mail
-[ ] Telegram: als reiner Adapter (kein eigener Container — nur API-Integration)
-```
-
-## 2.2 — fs-store: Install-Pipeline
-
-```
-Design Pattern: Pipeline (Download→Validate→Install→Configure→Register)
-
-[ ] Design Pattern + Trait-Struktur festlegen (InstallStep-Trait)
-[ ] InstallRequest: Paket + Target (Container/rpm/deb/flatpak) + Variante
-[ ] Download: aus Store-Katalog → URL ermitteln → Artifact holen
-[ ] Adapter-Auto-Install: wenn program installiert → zugehöriger Adapter auch
-[ ] fs-inventory: nach Install updaten (upsert_resource)
-[ ] fs-registry: nach Install registrieren (Register Capability)
-[ ] Bus: install::completed publishen
-[ ] i18n: ALLE User-facing Texte in FTL
-[ ] cargo fmt + clippy + test grün
-```
-
-## 2.3 — fs-store: UI + CLI
-
-```
-Design Pattern: MVC (StoreController, StoreModel, StoreView via FsView-Trait)
-
-[ ] Design Pattern bestätigen / anpassen
-[ ] Store-UI: Paket-Liste, Suche, Detail-View, Install-Wizard
-[ ] Install-Wizard: SelectStep → ConfirmStep → ProgressStep → DoneStep
-[ ] Engine-Wahl im Wizard: Select/Dropdown aus verfügbaren Engines
-[ ] Store-CLI: search / install / remove / list-installed / update
-[ ] Bundle-Install: alle Pakete des Bundles auf einmal
-[ ] i18n: ALLE User-facing Texte in FTL
-[ ] cargo fmt + clippy + test grün
-```
-
-## 2.4 — fs-store: Standalone-Test
-
-```
-[ ] fs-store ohne fs-desktop startbar (CLI reicht)
-[ ] fs-store ohne laufenden fs-node startbar
+[ ] Store-UI: Paket-Detail zeigt [storage] + [api] Tabs (Phase 2.3, UI-Teil)
+[ ] Install-Wizard: Engine-Wahl SelectStep implementieren (Phase 2.3, UI-Teil)
+[ ] Bundle-Install: Komponenten iterieren + einzeln installieren (Phase 2.3)
+[ ] Telegram: als reiner Adapter in Store/ eintragen (package.toml)
+[ ] Outline: [storage]+[api] in catalog.toml nachtragen
 ```
 
 ---
@@ -744,6 +695,12 @@ fs-auth (Traits), fs-registry, fs-inventory, fs-session, fs-info, fs-container,
 fs-browser, fs-theme-app, fs-lenses, fs-ai, fs-container-app, fs-tasks, fs-bots,
 fs-store (Wizard H9a-H9d), fs-managers, Store/ Katalog (Basis),
 fs-documentation, fs-ci, GitHub Actions (alle Repos), Fork-Repos (CI)
+
+Phase 2 ✅ 2026-04-03:
+Store/ Katalog: [storage]+[api]+[adapter]+[install_targets] für alle Kern-Pakete,
+Developer-Bundle, Workstation render-engine-Wahl, Wiki.js + Bulwark Mail.
+fs-store: Install-Pipeline (Pipeline Pattern, 7 Steps), CLI install/remove/update,
+i18n FTL-Keys für Pipeline + CLI. cargo fmt + clippy + tests grün.
 ```
 
 ---
@@ -751,10 +708,10 @@ fs-documentation, fs-ci, GitHub Actions (alle Repos), Fork-Repos (CI)
 ## Reihenfolge
 
 ```
-1.  O6 + O7: offene Konzept-Entscheidungen (Komponenten-Verzeichnis + WASM-Sandbox)
+1.  O6 + O7: offene Konzept-Entscheidungen (Komponenten-Verzeichnis + WASM-Sandbox) ✅
 2.  Phase 5.1: Kanidm (Auth-Grundlage — Blocker für alle anderen Services)
 3.  Phase 5.2: Zentinel (Proxy — Grundlage für Service-Routing)
-4.  Phase 2: Store (Install-Pipeline + Bundle-Katalog)
+4.  Phase 2: Store (Install-Pipeline + Bundle-Katalog) ✅ 2026-04-03
 5.  Phase 1: Bootstrap (fs-init Wizard + Capability-Detection)
 6.  Phase 3: fs-render Component System (Layout-Abstraktion + WASM)
 7.  Phase 4: Desktop (Shell + Komponenten)
