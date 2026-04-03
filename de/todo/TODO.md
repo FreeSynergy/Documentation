@@ -327,76 +327,63 @@ Store-Clone ohne laufenden fs-store-Container ✅ (gix, kein System-git)
 
 ---
 
-# Phase 3 — fs-render: Component System
+# Phase 3 — fs-render: Component System ✅ 2026-04-03
 
-> Ziel: Engine-unabhängiges deklaratives Layout mit WASM-Komponenten.
-> Komponenten beschreiben WHAT, Engines rendern HOW.
-> Standard-Checkliste gilt vollständig.
+> Abgeschlossen. Deklaratives Layout mit WASM-Sandbox + 3 Engine-Impls + 5 Standard-Komponenten.
 
----
-
-## 3.1 — LayoutDescriptor (TOML)
+## 3.1 ✅ LayoutDescriptor (TOML)
 
 ```
-Design Pattern: Interpreter (TOML → LayoutDescriptor → Engine-spezifisches Rendering)
-
-[ ] Design Pattern festlegen
-[ ] LayoutDescriptor-Structs (Rust): Shell, Slot, ComponentRef, StoragePaths
-[ ] TOML-Format: pro Komponente eine eigene .toml-Datei mit Default-Einstellungen
-[ ] Pfade: ~/.config/freesynergy/{paket}/components/{component}.toml (User)
-           /etc/freesynergy/{paket}/components/{component}.toml (Global)
-           User überschreibt Global überschreibt Store-Default
-[ ] StoragePaths aus package.toml lesen (user / global / config / cache)
-[ ] fs-config einbinden: TOML laden + validieren
-[ ] Hot-Reload: inotify überwacht Komponenten-Verzeichnis
-[ ] i18n: alle Labels/Descriptions in FTL
-[ ] cargo fmt + clippy + test grün
-[ ] Dokumentation: konzepte/component-system.md anlegen
+Design Pattern: Interpreter — TOML → LayoutDescriptor → Engine-spezifisches Rendering
+fs-render: layout.rs (LayoutDescriptor, ShellConfig, SlotConfig, ComponentRef, StoragePaths)
+Layered load: Store-Default < Global < User — fehlende Schichten übersprungen
+Hot-Reload: HotReloadWatcher (notify/inotify) → HotReloadEvent (LayoutChanged/ComponentChanged)
+i18n: fs-i18n/locales/{en,de}/render.ftl — alle User-facing Texte als FTL-Keys
+cargo fmt + clippy + test grün (77 Tests) ✅
+Dokumentation: konzepte/component-system.md ✅
 ```
 
-## 3.2 — WASM-Komponenten-System
+## 3.2 ✅ WASM-Komponenten-System
 
 ```
-Design Pattern: Plugin (ComponentTrait via fs-plugin-sdk)
-
-[ ] Design Pattern festlegen
-[ ] ComponentTrait: render(engine_context, slot_bounds) → LayoutElement
-[ ] ComponentId-Registry: Komponente meldet sich beim Start an
-[ ] Sandbox-Grenzen (O7):
-    - Lesen: nur via gRPC zu FS-Services
-    - Schreiben: nur via Bus-Events
-    - UI: nur eigene Slot-Area
-[ ] fs-plugin-runtime: WASM laden + instanziieren
-[ ] Slot-Layout-Algorithmus: top stacken, fill teilt Raum, bottom stacken
-[ ] Responsive: Komponente kennt ihre Mindest-/Maxgröße
-[ ] i18n: ComponentTrait liefert FTL-Key für Namen/Beschreibung
-[ ] cargo fmt + clippy + test grün
-[ ] Dokumentation: konzepte/wasm-komponenten.md anlegen
+Design Pattern: Plugin — ComponentTrait + ComponentRegistry
+ComponentTrait: component_id, name_key, description_key, slot_preference, min_width/height, render
+LayoutElement-Baum: Text, Button, Icon, Row, Column, List, Separator, Badge, Spinner, Spacer
+Sandbox-Grenzen O7: gRPC read-only, Bus-Events write-only, eigene Slot-Area, kein Netzwerk
+fs-plugin-runtime: wasmtime + WASI P1 Sandbox (PluginSandbox::minimal/allow_read/allow_write)
+Dokumentation: konzepte/wasm-komponenten.md ✅
 ```
 
-## 3.3 — Engine-Implementierungen
+## 3.3 ✅ Engine-Implementierungen
 
 ```
-[ ] iced-Impl: LayoutDescriptor → iced-Widgets (fs-gui-engine-iced)
-[ ] TUI-Impl: LayoutDescriptor → ratatui-Widgets (neue Impl)
-[ ] bevy-Impl: langfristig (fs-gui-engine-bevy)
-[ ] Einschränkungen pro Engine dokumentieren (TUI: kein SVG, kein Bild)
-[ ] cargo fmt + clippy + test grün (pro Engine-Impl)
+iced (fs-gui-engine-iced):
+  iced_aw 0.11 — Spinner (Loading-Animation), Badge (Pills), Card (Panel)
+  IcedLayoutInterpreter: LayoutDescriptor → Element<'static, LayoutMessage>
+  cargo fmt + clippy + test grün (28 Tests) ✅
+
+TUI (fs-gui-engine-tui) — NEU:
+  ratatui 0.30 + tachyonfx 0.25 (fx::fade_from — Fade-In Animationen)
+  TuiLayoutInterpreter → TuiLayoutOutput (Lines + Animations)
+  shell_rects() / center_rects() Layout-Helfer
+  cargo fmt + clippy + test grün ✅
+
+Bevy: langfristig (fs-gui-engine-bevy) — bevy_tweening geplant
+Einschränkungen TUI dokumentiert (kein SVG/Bild)
 ```
 
-## 3.4 — Standard-Komponenten (für Desktop)
+## 3.4 ✅ Standard-Komponenten (für Desktop)
 
 ```
-Design Pattern: pro Komponente eigenes Pattern festlegen
-
-[ ] InventoryListComponent: installierte Programme (aus fs-inventory via gRPC)
-[ ] PinnedAppsComponent: angepinnte Programme (aus fs-session via gRPC)
-[ ] AppSectionsComponent: Programme nach Kategorie
-[ ] SystemInfoComponent: CPU/RAM/Disk (aus fs-info via gRPC)
-[ ] NotificationBellComponent: Bus-Events
-[ ] SearchBarComponent: global search (Phase 5)
-[ ] Jede Komponente: eigene .toml-Config + FTL-Keys + Tests
-[ ] cargo fmt + clippy + test grün
+5 Komponenten in fs-render/src/components/:
+  InventoryListComponent  — Sidebar/fill — fs-inventory gRPC
+  PinnedAppsComponent     — Sidebar/bottom — fs-session gRPC
+  AppSectionsComponent    — Main/fill — fs-inventory Kategorien
+  SystemInfoComponent     — Bottombar/bottom — fs-info gRPC
+  NotificationBellComponent — Topbar/top — fs-bus Notification
+register_standard_components() — registriert alle 5 beim Start
+SearchBarComponent → Phase 6 (Search)
+cargo fmt + clippy + test grün ✅
 ```
 
 ---

@@ -25,6 +25,8 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [Render-Architektur](architektur/render-architektur.md) — GUI-Abstraktion (fs-render), Engines (iced, Bevy), Browser-Engine (Servo), Animations-System
 - [fs-render](programme/fs-render.md) — GUI-Abstraktions-Traits: RenderEngine, FsView, FsWidget, FsWindow, FsTheme, FsEvent, AppContext, AnimationRegistry, Fs3dExtension
 - [fs-gui-engine-iced](programme/fs-gui-engine-iced.md) — iced Render-Engine: IcedEngine, MVU-Muster, IcedTheme, Capability "render.engine.iced"
+- [Komponenten-System](konzepte/component-system.md) — LayoutDescriptor (TOML), ComponentTrait, LayoutInterpreter, HotReload, Standard-Komponenten (5)
+- [WASM-Komponenten](konzepte/wasm-komponenten.md) — Plugin-SDK, wasmtime-Runtime, WASI-Sandbox (O7), Store-Distribution
 - [fs-auth](programme/fs-auth.md) — Auth-Service: OAuthProvider, ScimProvider, SsoProvider, PamProvider + Kanidm-Backend + KanidmSetupWizard
 - [fs-zentinel](programme/fs-zentinel.md) — Reverse-Proxy: ZentinelManager (Facade), RouteConfig, Auto-Routing via Bus
 - [fs-registry](programme/fs-registry.md) — Service-Registry: ServiceRegistry-Trait, Capability-Lookup, gRPC+REST+CLI
