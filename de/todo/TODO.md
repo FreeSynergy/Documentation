@@ -516,20 +516,30 @@ Noch offen:
 [ ] Standalone-Test mit laufendem Zentinel-Container
 ```
 
-## 5.3 — Stalwart + Bulwark Mail (E-Mail)
+## 5.3 — Stalwart + Bulwark Mail (E-Mail) ✅ 2026-04-04
 
 ```
-Design Pattern: Adapter (MailAdapter: SmtpProvider + ImapProvider)
+Design Pattern: Adapter (3 Protokoll-Traits) + State Machine (StalwartSetupWizard)
 
-[ ] Design Pattern festlegen
-[ ] Store-Eintrag: stalwart (fork) + bulwark-mail (webmail frontend)
-[ ] Konfigurationsassistent nach Install: Domain, MX-Records, TLS
-[ ] IAM-Integration: Kanidm via OIDC/LDAP
-[ ] Adapter: smtp + imap → fs-registry (Service Role: mail)
-[ ] Domain-Konfiguration pro Node
-[ ] i18n: ALLE Konfig-Texte in FTL
-[ ] Standalone-Test: Stalwart ohne fs-desktop
-[ ] cargo fmt + clippy + test grün
+fs-mail: SmtpProvider + ImapProvider + JmapProvider Traits ✅
+  StalwartBackend: implements alle 3 Traits + MailBackend ✅
+  MailCapabilities: mail.smtp / mail.imap / mail.jmap ✅
+  MailEvent: mail.received / mail.sent / mail.adapter.* ✅
+  Features: stalwart (reqwest), bus (fs-bus) ✅
+Store: stalwart catalog.toml — [adapter] + JMAP/web-admin routes ✅
+Store: bulwark catalog.toml — bereits vorhanden ✅
+StalwartSetupWizard: Domain → TlsCerts → OidcIntegration → Confirm → Done ✅
+  ACME (Let's Encrypt) oder manuelle Cert/Key-Pfade ✅
+  Kanidm OIDC (skippable für lokale Accounts) ✅
+i18n: fs-i18n/locales/{en,de}/mail.ftl — alle User-facing Texte ✅
+DNS-Hinweise: MX, SPF, DKIM, DMARC im Manager-UI ✅
+18 Tests (fs-mail) + 15 Tests (fs-manager-mail) ✅
+cargo fmt + clippy + test grün ✅
+Dokumentation: programme/fs-mail.md ✅
+
+Noch offen:
+[ ] Standalone-Test mit laufendem Stalwart-Container (env vars gesetzt)
+[ ] JMAP-Login-Flow in fs-settings konfigurierbar
 ```
 
 ## 5.4 — Tuwunel (Matrix-Messenger)
