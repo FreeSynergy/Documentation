@@ -482,36 +482,40 @@ Design Pattern: Strategy (pro Settings-Seite eigene Strategy-Impl)
 
 ---
 
-## 5.1 — Kanidm (Auth-Grundlage — Blocker für alle anderen Services)
+## 5.1 — Kanidm ✅ 2026-04-03
 
 ```
-Design Pattern: Adapter (4 Protokoll-Traits: OAuthProvider, ScimProvider, SsoProvider, PamProvider)
+Design Pattern: Adapter (4 Protokoll-Traits) + State Machine (KanidmSetupWizard)
 
-[ ] Design Pattern bestätigen (Adapter-Pattern bereits definiert)
-[ ] Store-Eintrag: kanidm als fork-Paket (Container + fs-auth-Adapter)
-[ ] Konfigurationsassistent nach Install: Admin-Account, Domain, OIDC-Clients
-[ ] fs-auth: Kanidm-Impl vollständig (alle 4 Protokoll-Traits)
+fs-auth: KanidmBackend (OAuthProvider, ScimProvider, SsoProvider, PamProvider) ✅
+Store-Eintrag: kanidm als fork-Container + fs-auth-Adapter ✅
+KanidmSetupWizard: Domain → Admin → OidcClients → Confirm → Done ✅
+  → fs-managers/auth (fs-manager-auth)
+i18n: fs-i18n/locales/{en,de}/auth-setup.ftl ✅
+cargo fmt + clippy + test grün ✅
+
+Noch offen (Phase 4/6):
 [ ] Desktop-Login via Kanidm (fs-profile → IAM)
-[ ] API-Clients (alle Services): OIDC-Login konfigurierbar
-[ ] i18n: ALLE Wizard/Konfig-Texte in FTL
-[ ] Standalone-Test: Kanidm ohne fs-desktop startbar
-[ ] cargo fmt + clippy + test grün
+[ ] API-Clients: OIDC-Login konfigurierbar
+[ ] Standalone-Test mit laufendem Kanidm-Container
 ```
 
-## 5.2 — Zentinel + Zentinel Control Plane (Reverse-Proxy)
+## 5.2 — Zentinel ✅ 2026-04-03
 
 ```
-Design Pattern: Facade (ZentinelManager als Facade über Zentinel API)
+Design Pattern: Facade (ZentinelManager) + Observer (ZentinelBusHandler)
 
-[ ] Design Pattern festlegen
-[ ] Store-Eintrag: zentinel + zentinel-plane als fork-Pakete
+Store-Einträge: zentinel + zentinel-plane als fork-Pakete ✅
+ZentinelManager: Facade über Zentinel Control Plane API ✅
+RouteConfig + RouteTable + ZentinelBusHandler ✅
+Auto-Routing: registry::service::registered → Zentinel-Route ✅
+Capability → Pfad-Mapping (/auth, /git, /mail, /wiki, /chat, /storage) ✅
+i18n: fs-i18n/locales/{en,de}/zentinel.ftl ✅
+cargo fmt + clippy + test grün (22 Tests) ✅
+
+Noch offen:
 [ ] S3-Integration: Zentinel nutzt opendal für Konfigurations-Storage
-[ ] Control Plane: Routen-Konfiguration (Service → Pfad)
-[ ] ZentinelManager: konfiguriert Routen nach Service-Install
-[ ] fs-registry: neu registrierte Services → Zentinel-Route automatisch
-[ ] i18n: ALLE Konfig-Texte in FTL
-[ ] Standalone-Test: Zentinel ohne fs-desktop + ohne Kanidm
-[ ] cargo fmt + clippy + test grün
+[ ] Standalone-Test mit laufendem Zentinel-Container
 ```
 
 ## 5.3 — Stalwart + Bulwark Mail (E-Mail)

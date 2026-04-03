@@ -62,10 +62,35 @@ KanidmBackend         ← Adapter Pattern: implementiert alle 4 Traits
 
 ---
 
+## KanidmSetupWizard (Phase 5.1)
+
+`fs-manager-auth` enthält einen **State Machine Wizard** zur Erstkonfiguration von Kanidm nach dem Install.
+
+**Schritte:**
+```
+Domain → AdminAccount → OidcClients → Confirm → Done
+```
+
+| Schritt       | Eingabe                             |
+|---------------|-------------------------------------|
+| Domain        | Kanidm-Domain, z. B. `idm.example.com` |
+| AdminAccount  | Admin-Benutzername + Passwort (≥ 8 Zeichen) |
+| OidcClients   | OIDC-Clients (ID, Anzeigename, Redirect-URI) — optional, wiederholbar |
+| Confirm       | Prüfen + Anwenden                   |
+| Done          | `KanidmConfig` bereit               |
+
+**Besonderheiten:**
+- `skip_oidc()` — OidcClients-Schritt überspringen (Clients später im Manager hinzufügen)
+- `KanidmConfig` ist das Output-Objekt; serialisierbar via fs-config
+- i18n: alle Texte in `fs-i18n/locales/{lang}/auth-setup.ftl`
+
+---
+
 ## Repo
 
 - Lokal: `/home/kal/Server/fs-auth/`
 - GitHub: `git@github.com:FreeSynergy/fs-auth.git`
+- Manager: `/home/kal/Server/fs-managers/auth/` (`fs-manager-auth`)
 
 ---
 

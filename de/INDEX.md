@@ -25,7 +25,8 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [Render-Architektur](architektur/render-architektur.md) — GUI-Abstraktion (fs-render), Engines (iced, Bevy), Browser-Engine (Servo), Animations-System
 - [fs-render](programme/fs-render.md) — GUI-Abstraktions-Traits: RenderEngine, FsView, FsWidget, FsWindow, FsTheme, FsEvent, AppContext, AnimationRegistry, Fs3dExtension
 - [fs-gui-engine-iced](programme/fs-gui-engine-iced.md) — iced Render-Engine: IcedEngine, MVU-Muster, IcedTheme, Capability "render.engine.iced"
-- [fs-auth](programme/fs-auth.md) — Auth-Service: OAuthProvider, ScimProvider, SsoProvider, PamProvider + Kanidm-Backend
+- [fs-auth](programme/fs-auth.md) — Auth-Service: OAuthProvider, ScimProvider, SsoProvider, PamProvider + Kanidm-Backend + KanidmSetupWizard
+- [fs-zentinel](programme/fs-zentinel.md) — Reverse-Proxy: ZentinelManager (Facade), RouteConfig, Auto-Routing via Bus
 - [fs-registry](programme/fs-registry.md) — Service-Registry: ServiceRegistry-Trait, Capability-Lookup, gRPC+REST+CLI
 - [fs-inventory](programme/fs-inventory.md) — Lokales Paket-Inventar: InventoryStore-Trait, InstalledResource, ServiceInstance, gRPC+REST+CLI
 - [fs-session](programme/fs-session.md) — Session-Management: SessionStore-Trait, SqliteSessionStore, SessionTracker, AppSession
@@ -43,7 +44,7 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [fs-store](programme/fs-store.md) — Paketmanager: Katalog, Suche, Installation, GUI+CLI, Pointer-Model
 - [fs-icons](programme/fs-icons.md) — SVG-Icon-Sets: homarrlabs, we10x; fs-icons-sync Binary (gix, kein System-git)
 - [fs-apps](programme/fs-apps.md) — 9 Apps: Store-App, Lenses, Theme, AI, Container, Tasks, Bots, Builder, Managers
-- [fs-managers](programme/fs-managers.md) — 7 Manager-Backends: Language, Theme, Icons, Cursor, AI, Bots, Container
+- [fs-managers](programme/fs-managers.md) — 9 Manager-Backends: Language, Theme, Icons, Cursor, AI, Bots, Container, Auth (KanidmSetupWizard), Zentinel (RouteConfig + BusHandler)
 - [fs-lenses](programme/fs-lenses.md) — Aggregierte Daten-Views: Strategy Pattern, Wiki/Git/Chat/Tasks-Lenses
 - [fs-ai](programme/fs-ai.md) — AI-Assistent: Facade über fs-manager-ai, LLM-Engine-Verwaltung, Mistral.rs
 - [fs-tasks](programme/fs-tasks.md) — Task-Pipeline-Manager: Command Pattern, DataTrigger, FieldMapping, gRPC+REST+CLI
