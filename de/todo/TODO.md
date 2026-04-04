@@ -611,79 +611,27 @@ Noch offen:
 [ ] gRPC subscribe: Streaming-Impl (derzeit deferred → REST long-poll)
 ```
 
-## 5.X — fs-pod-forge: Container YAML Configurator
+## 5.X — fs-pod-forge: Container YAML Configurator ✅ 2026-04-04
 
-```
-Design Pattern: Strategy (PodConfigurator-Trait) + Template Method (BasePodConfigurator)
-               Builder (PodManifestBuilder für pod.yml Konstruktion)
+Strategy + Builder + Template Method. PodConfigurator-Trait, PodManifestBuilder,
+BasePodConfigurator, ManifestDiff, ValidationResult, Systemd-Unit-Generierung, fs-pod CLI.
+KanidmPodConfigurator + StalwartPodConfigurator in fs-managers.
+i18n: pod-forge.ftl (en + de). Doku: technik/fs-pod-forge.md.
 
-Konzept:
-  Jedes Container-Paket bringt seine eigene PodConfigurator-Impl mit (als feature im package).
-  Manager ruft PodConfigurator::generate() auf → valides pod.yml.
-  export_yaml() gibt standalone-fähiges YAML aus (ohne laufende FS-Services).
-  validate() prüft semantische Korrektheit (Ports, Volumes, Env-Vars).
-
-Repos:
-  fs-pod-forge  — Trait-Definition + BasePodConfigurator + Builder
-  Pakete (kanidm, stalwart, etc.) implementieren PodConfigurator jeweils selbst
-
-[ ] Design Pattern festlegen + dokumentieren
-[ ] PodConfigurator-Trait definieren:
-    → generate(config: &PodConfig) -> PodManifest
-    → validate(manifest: &PodManifest) -> ValidationResult
-    → export_yaml(manifest: &PodManifest) -> String  (standalone-fähig)
-    → diff(old: &PodManifest, new: &PodManifest) -> ManifestDiff
-[ ] PodManifest-Typen: Container, Volume, Port, EnvVar, Secret, NetworkPolicy
-[ ] BasePodConfigurator: gemeinsame Logik (Port-Clash-Check, Secret-Referenz-Auflösung)
-[ ] PodManifestBuilder: typsicherer Builder für pod.yml (kein raw YAML String)
+Offen (G2):
 [ ] Manager-Integration: ManagerAction::UpdatePodConfig → PodConfigurator::apply()
     → podman play kube --replace <generated.yml>
-[ ] SystemdIntegration: generate_systemd_unit() für Container-Service
-    → systemctl enable + start via fs-managers
-[ ] CLI: fs-pod generate <paket> | validate <file> | diff <old> <new>
-[ ] Erste Implementierungen: KanidmPodConfigurator, StalwartPodConfigurator
-[ ] i18n: pod-forge.ftl (alle User-facing Texte)
-[ ] cargo fmt + clippy + test grün
-[ ] Dokumentation: technik/fs-pod-forge.md
-```
 
-## 5.X+1 — fs-app-forge: App Config File Configurator
+## 5.X+1 — fs-app-forge: App Config File Configurator ✅ 2026-04-04
 
-```
-Design Pattern: Strategy (AppConfigurator-Trait) + Schema-driven UI (ConfigSchema → Form)
-               Visitor (ConfigValidator besucht Schema-Knoten)
+Strategy + Schema-driven UI + Visitor. AppConfigurator-Trait, ConfigSchema,
+ConfigFormGenerator, TomlConfigAdapter + YamlConfigAdapter + EnvConfigAdapter,
+atomic write, fs-forge CLI.
+KanidmAppConfigurator + StalwartAppConfigurator in fs-managers.
+i18n: app-forge.ftl (en + de). Doku: technik/fs-app-forge.md.
 
-Konzept:
-  Jedes Paket bringt seine eigene AppConfigurator-Impl mit.
-  Schema-Prinzip: AppConfigurator::schema() liefert strukturiertes Schema →
-    Manager generiert automatisch das Konfigurations-Formular (kein hardcodiertes UI).
-  apply_changes() schreibt sicher in die Config-Datei (Backup + atomic write).
-  Unterschiedliche Formate: TOML, YAML, HOCON, .env — per Feature-Flag.
-
-Repos:
-  fs-app-forge  — Trait-Definition + ConfigSchema + FormGenerator
-  Pakete implementieren AppConfigurator jeweils selbst
-
-[ ] Design Pattern festlegen + dokumentieren
-[ ] AppConfigurator-Trait definieren:
-    → schema() -> ConfigSchema
-    → read() -> ConfigValues
-    → validate(values: &ConfigValues) -> ValidationResult
-    → apply(changes: ConfigChanges) -> Result<()>  (atomic write + backup)
-    → export() -> String  (lesbare Config-Datei für Standalone-Nutzung)
-[ ] ConfigSchema-Typen: Section, Field (String/Int/Bool/Enum/Secret/Path/List)
-    → Field hat: key, label_key (FTL), description_key (FTL), default, required, validator
-[ ] ConfigFormGenerator: ConfigSchema → LayoutDescriptor (automatisches UI)
-    → Kein hardcodiertes Formular — alles aus Schema generiert
-[ ] Format-Adapter: TomlConfigAdapter, YamlConfigAdapter, EnvConfigAdapter
-[ ] SecretField-Handling: Werte nie im Klartext — Referenz auf env:VAR / file:PATH
+Offen (G2):
 [ ] Manager-Integration: ManagerAction::EditConfig → AppConfigurator::apply()
-[ ] CLI: fs-forge show <paket> | edit <paket> <key>=<val> | export <paket>
-[ ] Erste Implementierungen: KanidmAppConfigurator, StalwartAppConfigurator
-[ ] i18n: app-forge.ftl (alle User-facing Texte)
-[ ] cargo fmt + clippy + test grün
-[ ] Dokumentation: technik/fs-app-forge.md
-```
 
 ## 5.X+2 — Manager-Upgrade: Service Controller + Category Manager ✅
 
