@@ -48,7 +48,7 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [fs-store](programme/fs-store.md) — Paketmanager: Katalog, Suche, Installation, GUI+CLI, Pointer-Model
 - [fs-icons](programme/fs-icons.md) — SVG-Icon-Sets: homarrlabs, we10x; fs-icons-sync Binary (gix, kein System-git)
 - [fs-apps](programme/fs-apps.md) — 9 Apps: Store-App, Lenses, Theme, AI, Container, Tasks, Bots, Builder, Managers
-- [fs-managers](programme/fs-managers.md) — 10 Manager-Backends: Language, Theme, Icons, Cursor, AI, Bots, Container, Auth (KanidmSetupWizard), Zentinel (RouteConfig + BusHandler), Mail (StalwartSetupWizard), Matrix (TuwunelSetupWizard)
+- [fs-managers](programme/fs-managers.md) — 13 Manager-Backends: Language, Theme, Icons, Cursor, AI, Bots, Container, Auth (KanidmSetupWizard + KanidmPodConfigurator + KanidmAppConfigurator + KanidmIamController), Zentinel, Mail (Stalwart*), Matrix, Telegram + fs-manager-core (ServiceController + CategoryManager)
 - [fs-lenses](programme/fs-lenses.md) — Aggregierte Daten-Views: Strategy Pattern, Wiki/Git/Chat/Tasks-Lenses
 - [fs-ai](programme/fs-ai.md) — AI-Assistent: Facade über fs-manager-ai, LLM-Engine-Verwaltung, Mistral.rs
 - [fs-tasks](programme/fs-tasks.md) — Task-Pipeline-Manager: Command Pattern, DataTrigger, FieldMapping, gRPC+REST+CLI
@@ -82,6 +82,7 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [Inventory](konzepte/inventory.md) — Vier Ebenen: Store / Inventory / Registry / Managers
 - [Registry](konzepte/registry.md) — Welche Services laufen gerade (Capabilities, Endpoints, Adapter-Lookup)
 - [Adapter-Pattern](konzepte/adapter.md) — Drittanbieter-Dienste einbinden via Standard-Traits (ersetzt Bridge)
+- [Manager Service Controller](konzepte/manager-service-controller.md) — ServiceController + CategoryManager: Dienst-Steuerung, Role-Switching, Services-Tab
 - [Message Bus](konzepte/bus.md) — Pub/Sub, Topic-Routing, kein direkter Service-Aufruf
 - [Bus-API Namespaces](konzepte/bus-api-namespaces.md) — Standardisierte Topic-Adressen, Event-Topics, Vertragsregeln
 - [Event-Driven Services](konzepte/event-driven-services.md) — Observer via Bus: fs-registry, fs-inventory, fs-session, fs-info; Startup-Reihenfolge
@@ -110,6 +111,8 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [Forks Build-Strategie](technik/forks-build-strategie.md) — OCI-only, Upstream-Sync via GitHub Actions, minimale Patches, Lizenz-Compliance
 - [Storage-Layer (S3)](technik/storage.md) — Eigener S3-Server, opendal, Profiles
 - [Datenspeicherung](technik/datenspeicherung.md) — SQLite-Architektur, Datenbank pro Service
+- [fs-pod-forge](technik/fs-pod-forge.md) — Container YAML Configurator: PodConfigurator-Trait, Builder, Systemd-Unit-Generierung
+- [fs-app-forge](technik/fs-app-forge.md) — Config File Configurator: AppConfigurator-Trait, Schema-driven UI, Atomic Write, Adapter
 - [fs-db](technik/fs-db.md) — DbEngine-Trait, CrudRepo, MigrationRunner, Strategy Pattern
 - [fs-bus](technik/fs-bus.md) — Async Event Bus: Topic-Routing, Retry, Transforms, Standing Orders, Bridge
 - [fs-config](technik/fs-config.md) — TOML Config Loader/Saver, Validierung, Auto-Repair, FeatureFlags

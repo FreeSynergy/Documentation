@@ -685,35 +685,19 @@ Repos:
 [ ] Dokumentation: technik/fs-app-forge.md
 ```
 
-## 5.X+2 — Manager-Upgrade: Service Controller + Category Manager
+## 5.X+2 — Manager-Upgrade: Service Controller + Category Manager ✅
 
-```
-Design Pattern: Command (ServiceCommand: Start/Stop/Restart/Enable/Disable)
-               Composite (CategoryManager verwaltet alle Services einer Kategorie)
+Erledigt 2026-04-04:
+- ServiceController-Trait + SystemdServiceController + ContainerServiceController (podman pod)
+- CategoryManager-Trait + update_available() Default-Methode
+- KanidmIamController, StalwartMailController, TuwunelMessengerController, ZentinelProxyController
+- Services-Tab in allen Manager-Views (auth/mail/matrix/zentinel)
+- Doku: konzepte/manager-service-controller.md aktualisiert
+- cargo fmt + clippy + test grün
 
-Konzept:
-  Manager ist nicht nur Konfigurator — er ist der Service Controller seiner Kategorie.
-  IAM-Manager steuert ALLE IAM-Services (Kanidm + Keycloak + ...) über IamProvider-Trait.
-  Manager kennt: PodConfigurator (pod.yml) + AppConfigurator (config files) + SystemdUnit.
-  Category-Sicht: zeigt alle Services desselben Typs — aktive + installierbare.
-
-[ ] ServiceController-Trait: start / stop / restart / enable / disable / status
-    → SystemdServiceController: systemctl via Command (kein direktes systemd-rs)
-    → ContainerServiceController: podman start/stop/restart via fs-container gRPC
-[ ] CategoryManager-Trait: list_all() → alle Services der Kategorie (installed + available)
-    → list_running() → nur aktive Services
-    → get_active() → welcher Service ist gerade "primary" für die Rolle
-[ ] Manager-UI: Tab "Services" — zeigt alle installierten Services der Kategorie
-    → Status-Badge (Running / Stopped / Failed)
-    → Buttons: Start / Stop / Restart / Config (→ AppConfigurator) / Pod (→ PodConfigurator)
-[ ] Role-Switching: IAM kann zwischen Kanidm und Keycloak wechseln (wenn beide installiert)
-    → fs-registry: Capability-Eintrag umschreiben → neuer Primary-Service
-[ ] Update-Check: Manager prüft Store auf neue Versionen → Update-Button
-[ ] Alle bestehenden Manager (fs-manager-auth, fs-manager-mail, etc.) nachrüsten
-[ ] i18n: manager-service-*.ftl Keys ergänzen
-[ ] cargo fmt + clippy + test grün
-[ ] Dokumentation: konzepte/manager-service-controller.md
-```
+Offen (G2):
+[ ] Role-Switching: fs-registry Capability-Eintrag umschreiben wenn set_active() aufgerufen
+[ ] Update-Check: update_available() mit echtem Store-Lookup implementieren
 
 ## 5.6 — Forgejo (Git-Server, Self-Hosted)
 
@@ -730,24 +714,23 @@ Design Pattern: Adapter (ForgejoAdapter: GitProvider)
 [ ] cargo fmt + clippy + test grün
 ```
 
-## 5.7 — Outline + Wiki.js (Dokumentation / Wiki)
+## 5.7 — Outline + Wiki.js (Dokumentation / Wiki) ✅ 2026-04-04
 
 ```
-Design Pattern: Adapter (WikiAdapter: WikiProvider) — für beide Implementierungen
+Design Pattern: Strategy (WikiProvider — OutlineAdapter / WikiJsAdapter)
+              + State Machine (WikiSetupWizard)
+              + Composite (WikiCategoryController — beide Impl.)
 
-Hinweis: Beide im Store — guter Test für austauschbare Service-Implementierungen.
-Zeigt dass das Adapter-System funktioniert wenn zwei Programme denselben Trait implementieren.
-
-[ ] WikiProvider-Trait definieren (gemeinsame API für Outline + Wiki.js)
-[ ] Store-Eintrag: outline als Container-Paket (Standard-Empfehlung)
-[ ] Store-Eintrag: wikijs als Container-Paket (Alternative)
-[ ] IAM: Kanidm SSO (OIDC) für beide
-[ ] S3: Datei-Storage via opendal für beide
-[ ] OutlineAdapter + WikiJsAdapter: beide implementieren WikiProvider-Trait
-[ ] Service Role: wiki → wählbar zwischen Outline und Wiki.js
-[ ] i18n: ALLE Konfig-Texte in FTL
-[ ] Standalone-Test: Outline standalone, Wiki.js standalone
-[ ] cargo fmt + clippy + test grün
+✅ WikiProvider-Trait definieren (gemeinsame API für Outline + Wiki.js)
+✅ Store-Eintrag: outline als Container-Paket (Standard-Empfehlung)
+✅ Store-Eintrag: wikijs als Container-Paket (Alternative)
+✅ IAM: Kanidm SSO (OIDC) für beide (pod.yml + OidcConfig im Wizard)
+✅ S3: Datei-Storage via opendal für beide (S3Config im Wizard, optional)
+✅ OutlineAdapter + WikiJsAdapter: beide implementieren WikiProvider-Trait
+✅ Service Role: wiki → wählbar zwischen Outline und Wiki.js (WikiCategoryController)
+✅ i18n: ALLE Konfig-Texte in FTL (en + de in fs-i18n)
+✅ Standalone-Test: 23 Unit-Tests grün (provider, wizard, service_controller)
+✅ cargo fmt + clippy + test grün
 ```
 
 ---
@@ -930,7 +913,7 @@ detail_panel, CLI install/remove/update. cargo fmt + clippy + tests grün.
 8.  Phase 5.X:  fs-pod-forge (Container YAML Configurator)
 9.  Phase 5.X+1: fs-app-forge (App Config File Configurator)
 10. Phase 5.X+2: Manager-Upgrade (Service Controller + Category Manager)
-11. Phase 5.6: Forgejo | Phase 5.7: Outline + Wiki.js
+11. Phase 5.6: Forgejo | Phase 5.7: Outline + Wiki.js ✅ 2026-04-04
 12. Phase 6: Apps & Search
 13. Phase 7: Federation & Infrastruktur
 ```
