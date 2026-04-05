@@ -206,51 +206,16 @@ Phase 7 ✅  Federation: Rechte-Kaskade, AuditLog, FederationEvent Bus (7 Topics
 
 ---
 
-## G1.1 — Navigations-Traits (fs-render)
+## G1.1 — Navigations-Traits (fs-render) ✅ 2026-04-05
 
-```
-Design Pattern: Descriptor Pattern (Traits beschreiben Struktur, Engines rendern)
-
-[ ] CornerMenuDescriptor trait:
-      corner: Corner (TopLeft | TopRight | BottomLeft | BottomRight)
-      items: Vec<MenuItemDescriptor>
-      indicator_style: IndicatorStyle (QuarterCircle)
-
-[ ] SideMenuDescriptor trait:
-      side: Side (Left | Right | Top | Bottom)
-      items: Vec<MenuItemDescriptor>
-      indicator_style: IndicatorStyle (HalfCircle)
-      distribution: Distribution (Centered | SpreadToEdges)
-
-[ ] MenuItemDescriptor struct:
-      id, icon, label_key, action, sub_items: Vec<MenuItemDescriptor>
-      → Sub-Items = neue Zeile/Ebene → beliebig tief schachtelbar
-
-[ ] HoverMagnification trait:
-      base_size: f32, max_size: f32, spread: f32
-      → MacOS Dock-Stil: Icon wächst on-hover, Nachbarn vergrößern sich auch
-
-[ ] CompositeIcon struct:
-      primary: IconRef, secondary: Option<IconRef>
-      overlap_factor: f32 (0.0 = kein Überlapp, 1.0 = vollständig überlappt)
-      → Stamm-Icon + Instanz-Icon — immer beide sichtbar
-
-[ ] ProgramView enum:
-      Start     — Programm starten
-      Info      — Titel, Beschreibung, Laufzeit, PIDs, Aktionen (kill/restart/update/...)
-      Manual    — Scrollbare Hilfe-Dokumentation
-      SettingsConfig   — Sofortige Konfig-Änderungen (View, Schrift, Sprache, ...)
-      SettingsContainer — Pod-YAML-Konfig (Restart erforderlich, Instanz kopieren)
-      Binding   — Workflow-Editor: Programm mit anderen verknüpfen (G2)
-
-[ ] ProgramViewProvider trait:
-      available_views() -> Vec<ProgramView>
-      → jede App deklariert welche Views sie anbietet
-
-[ ] i18n: navigation.ftl (en + de)
-[ ] cargo fmt + clippy + test grün
-[ ] Doku: konzepte/navigation-menus.md
-```
+Implementiert in `fs-render/src/navigation.rs` (90 Tests grün, clippy + fmt sauber).
+- `Corner`, `Side`, `IndicatorStyle`, `Distribution`, `IconRef`, `CompositeIcon`
+- `MenuItemDescriptor` (beliebig tief schachtelbar)
+- `CornerMenuDescriptor` trait, `SideMenuDescriptor` trait
+- `HoverMagnification` trait (`size_at_distance()` mit exponentialem Falloff)
+- `ProgramView` enum, `ProgramViewProvider` trait
+- i18n: `navigation.ftl` (en + de)
+- Doku: `konzepte/navigation-menus.md` + `konzepte/program-views.md` aktualisiert
 
 ## G1.2 — Navigation: iced-Implementierung (fs-gui-engine-iced)
 

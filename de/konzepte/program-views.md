@@ -141,12 +141,12 @@ Stattdessen: Tiling-Toggle (Fenster anordnen) als erstes Element.
 
 ## i18n
 
-Alle View-Labels und Beschriftungen in `fs-i18n/locales/{lang}/desktop.ftl`:
+Alle View-Labels und Beschriftungen in `fs-i18n/locales/{lang}/navigation.ftl`:
 ```
-program-view-start     = Start
-program-view-info      = Info
-program-view-manual    = Handbuch
-program-view-settings  = Einstellungen
-program-view-container = Container
-program-view-binding   = Verknüpfungen
+nav-program-view-start              = Start
+nav-program-view-info               = Info
+nav-program-view-manual             = Handbuch
+nav-program-view-settings-config    = Einstellungen
+nav-program-view-settings-container = Container
+nav-program-view-binding            = Verknüpfung
 ```

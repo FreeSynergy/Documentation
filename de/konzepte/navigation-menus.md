@@ -103,18 +103,25 @@ overlap_factor = 0.3        # 0.0 = kein Überlapp, 1.0 = vollständig
 
 ---
 
-## Traits (fs-render)
+## Traits & Types (fs-render — G1.1 ✅)
 
-| Trait / Struct | Zweck |
-|----------------|-------|
-| `CornerMenuDescriptor` | Beschreibt ein Corner Menu (Ecke + Items) |
-| `SideMenuDescriptor` | Beschreibt ein Side Menu (Seite + Items) |
-| `MenuItemDescriptor` | Ein Menüpunkt (Icon, Label, Aktion, Sub-Items) |
-| `HoverMagnification` | Hover-Zoom-Konfiguration |
-| `CompositeIcon` | Haupt-Icon + optionales Instanz-Icon |
+| Typ | Art | Zweck |
+|-----|-----|-------|
+| `Corner` | enum | TopLeft \| TopRight \| BottomLeft \| BottomRight |
+| `Side` | enum | Left \| Right \| Top \| Bottom |
+| `IndicatorStyle` | enum | QuarterCircle \| HalfCircle |
+| `Distribution` | enum | Centered \| SpreadToEdges |
+| `IconRef` | struct | Namespaced Icon-Key (`"fs:apps/browser"`) |
+| `CompositeIcon` | struct | Primary + optionales Instanz-Icon + overlap_factor |
+| `MenuItemDescriptor` | struct | ID, Icon, label_key (FTL), action, sub_items (beliebig tief) |
+| `CornerMenuDescriptor` | trait | Beschreibt ein Corner Menu (corner + items + indicator_style) |
+| `SideMenuDescriptor` | trait | Beschreibt ein Side Menu (side + items + indicator_style + distribution) |
+| `HoverMagnification` | trait | MacOS Dock-Stil: base_size, max_size, spread; `size_at_distance()` berechnet |
+| `ProgramView` | enum | Start \| Info \| Manual \| SettingsConfig \| SettingsContainer \| Binding |
+| `ProgramViewProvider` | trait | `available_views()` + `supports(view)` |
 
 Alle Traits sind **engine-agnostisch**. Implementierungen:
-- `fs-gui-engine-iced` (G1 — Standard)
+- `fs-gui-engine-iced` (G1.2 — Standard)
 - `fs-gui-engine-tui` (G2)
 - `fs-gui-engine-bevy` (G2)
 
