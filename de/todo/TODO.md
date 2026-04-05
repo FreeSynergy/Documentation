@@ -247,24 +247,14 @@ Primär: iced (G1). TUI + bevy folgen automatisch (gleiche Traits, separater Dur
 [ ] cargo fmt + clippy + test grün
 ```
 
-## G1.3 — Navigation: Komponenten (fs-components)
+## G1.3 — Navigation: Komponenten (fs-components) ✅ 2026-04-05
 
-```
-Design Pattern: Composite (MenuTree) + FsView (Domain → Widget)
-
-[ ] CornerMenu struct + FsView impl
-      field: corner, items, config (Größe, Stil)
-[ ] SideMenu struct + FsView impl
-      field: side, items, config
-[ ] SidebarPanel struct + FsView impl
-      Overlay-Sidebar: kommt über den Inhalt (Bildschirm verschiebt sich NICHT)
-      Gleiche Items wie SideMenu, anderes Aussehen
-      Einstellung: "Menü-Stil: Rund | Sidebar" in Settings > Ansicht
-
-[ ] Alle drei mit scroll-Fallback (kleine Screens / Mobile)
-[ ] i18n: Komponenten-Beschriftungen in navigation.ftl
-[ ] cargo fmt + clippy + test grün
-```
+Implementiert in `fs-components/src/navigation_menu.rs` (20 Tests grün, clippy + fmt sauber).
+- `CornerMenuConfig` + `CornerMenu` + `CornerMenuWidget` (FsView + CornerMenuDescriptor + HoverMagnification)
+- `SideMenuConfig` + `SideMenu` + `SideMenuWidget` (FsView + SideMenuDescriptor + HoverMagnification)
+- `SidebarPanelConfig` + `SidebarPanel` + `SidebarPanelWidget` (FsView, Overlay-Sidebar, kein Content-Shift)
+- Alle drei mit `scroll_fallback` für kleine Screens / Mobile
+- i18n: `navigation.ftl` (en + de) um `nav-menu-style-*`, `nav-sidebar-panel-*`, `nav-scroll-more-items` ergänzt
 
 ## G1.4 — Program-Modell-Erweiterungen (fs-inventory + fs-store)
 
