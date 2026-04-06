@@ -295,57 +295,22 @@ wallpaper.rs ist bereits vorhanden → einbinden.
 [ ] Doku: programme/fs-desktop.md überarbeiten
 ```
 
-## G1.6 — Activity Hub (fs-components + eigene Repos)
+## G1.6 — Activity Hub (fs-components + eigene Repos) ✅ 2026-04-06
 
-```
-Design Pattern: Registry (ActivityHub) + Strategy (ActivityEngine pro Programm)
-               Composite (Activity enthält Sub-Activities)
-
-Kernkonzept: Jede Activity IST ein Program-Angebot.
-Ein Programm kann einen ActivityEngine-Adapter mitbringen und wird damit zur Activity.
-Activity Hub fragt nur den Trait — egal ob Container, eingebettetes Modul oder WASM-Plugin.
-
-[ ] ActivityEngine trait (fs-render):
-      activity_id() -> &str
-      activity_name_key() -> &str
-      supported_actions() -> Vec<ActivityAction>
-        ActivityAction: New | Open | Recent | Browse | Custom(String)
-      default_view() -> ProgramView
-      category() -> ActivityCategory
-        ActivityCategory: Document | Communication | Media | Data | Code | System | Custom(String)
-
-[ ] Activity struct (fs-components):
-      id, icon: CompositeIcon, name_key, category
-      engine: Arc<dyn ActivityEngine>
-      sub_activities: Vec<Activity>
-      → Nesting: "Office" enthält "Write", "Spreadsheet", "Presentation"
-      → "Office" selbst ist eine Activity (eigenes Icon, eigene Aktionen)
-
-[ ] ActivityHub struct (fs-components):
-      activities: Vec<Activity>   (per Store ladbar, per fs-inventory gefiltert)
-      Registry-Methoden: register(activity), by_category(), search(query)
-      Nur installierte Aktivitäten werden angezeigt (fs-inventory gRPC)
-
-[ ] Activity-Views (was in der Activity angezeigt wird):
-      "Neu"              — neues Dokument/Datei/Termin/... erstellen
-      "Zuletzt bearbeitet" — letzte N Elemente (aus fs-session oder Programm)
-      "Programme"        — 2. Ebene: welches Programm für diese Activity nutzen?
-      Standard-Programm pro Activity konfigurierbar
-      Start-View pro Activity konfigurierbar (Einstellung: womit öffne ich die Activity)
-
-[ ] Activity als eigenständiges Programm (optional):
-      Eigener Container + Adapter (Adapter implementiert ActivityEngine)
-      Eigene GUI optional (via FsView-Trait)
-      Im Store als program-Paket mit ActivityEngine-Capability
-      Kann auch eingebettet bleiben (kein eigener Container nötig)
-
-[ ] ActivityHub als Corner-Menu-Entry oder Widget
-      Einstellbar: als Corner Menu | als Desktop-Widget | beides
-
-[ ] i18n: activity-hub.ftl (en + de)
-[ ] cargo fmt + clippy + test grün
-[ ] Doku: konzepte/activity-hub.md
-```
+Implementiert in `fs-render/src/activity.rs` + `fs-components/src/activity_hub.rs`
+(105+85 Tests grün, clippy + fmt sauber).
+- `ActivityAction` (New/Open/Recent/Browse/Custom) + `label_key()`
+- `ActivityCategory` (6 Kategorien + Custom) + `label_key()`
+- `ActivityEngine` trait: `activity_id`, `activity_name_key`, `supported_actions`,
+  `default_view`, `category`, `can_be_default`
+- `Activity` struct: id, icon, name_key, category, `engine: Option<Arc<dyn ActivityEngine>>`,
+  `sub_activities: Vec<Activity>`; Konstruktoren `new()` + `container()`
+- `ActivityHub` Registry: `register`, `all`, `by_category`, `search`, `to_menu_items`;
+  `view_mode: ActivityHubView` (CornerMenuEntry | DesktopWidget | Both)
+- Widget-Typen: `ActivityWidget` (CSS `fs-activity`) + `ActivityHubWidget` (CSS `fs-activity-hub`)
+- i18n: `activity-hub.ftl` (en + de) in fs-i18n
+- Doku: `konzepte/activity-hub.md` vollständig
+- Offen (nach G1.4/G1.5): Activity-Views UI, fs-inventory gRPC Filter, Adapter-Impls
 
 ## G1.7 — Content-Komponenten
 
