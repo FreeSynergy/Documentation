@@ -186,13 +186,19 @@ Schlüssel-Präfix: `gui-iced-`
 
 ---
 
-## libcosmic-Integration (G2.8)
+## Optional Features
 
-Der aktuelle Build nutzt vanilla **iced 0.13**.  Eine vollständige
-[libcosmic](https://github.com/pop-os/libcosmic)-Integration
-(Pop!_OS COSMIC Design System, System-Palette, Portal-Support) ist für Phase
-**G2.8** geplant, wenn `fs-desktop` über Feature-Flag auf diese Engine
-wechselt.
+Feature-Flags aktivieren Desktop-Integration ohne Pflichtabhängigkeit.
+
+| Feature | Aktiviert | Crate | Zweck |
+|---|---|---|---|
+| `wayland` | `iced_layershell 0.17` | Wayland Layer Shell | Panel, Dock, Overlays (Corner/Side menus als echte Layer-Windows) |
+| `portals` | `ashpd 0.13` | XDG Portals (D-Bus) | File Picker, Notifications, Screenshots, OpenURI — desktop-agnostisch |
+| `theme-ext` | `palette 0.7` | Farbmathe | Oklch-Interpolation für Dark/Light-Übergänge, `FsTheme`-Erweiterung |
+| `icon-lookup` | `freedesktop-icons 0.4` | Icon-Theme-Lookup | Löst Icon-Namen per FreeDesktop-Standard zu Pfaden auf |
+| `desktop` | alle vier | — | Convenience: aktiviert alle Desktop-Integration-Features |
+
+Kein COSMIC, kein libcosmic. Alle Crates sind standalone.
 
 ---
 
@@ -201,7 +207,7 @@ wechselt.
 ```
 cargo clippy --all-targets -- -D warnings   → 0 Fehler
 cargo fmt --check                           → sauber
-cargo test                                  → 18+ Tests, alle grün
+cargo test                                  → 48+ Tests, alle grün
 cargo build --release                       → fehlerfrei
 ```
 
@@ -209,10 +215,15 @@ cargo build --release                       → fehlerfrei
 
 ## Abhängigkeiten
 
-| Crate | Rolle |
-|---|---|
-| `fs-render` | Trait-Definitionen (RenderEngine, FsWidget, …) |
-| `iced 0.13` | GUI-Framework (features: tokio) |
+| Crate | Version | Rolle |
+|---|---|---|
+| `fs-render` | path | Trait-Definitionen (RenderEngine, FsWidget, …) |
+| `iced` | 0.14 | GUI-Framework — reaktives Rendering, native Animation API, IME |
+| `iced_aw` | 0.13 | Zusatz-Widgets: Badge, Card, Spinner, TabBar, ContextMenu |
+| `iced_layershell` | 0.17 | Wayland Layer Shell *(optional: `wayland`)* |
+| `ashpd` | 0.13 | XDG Portals *(optional: `portals`)* |
+| `palette` | 0.7 | Farbmathe *(optional: `theme-ext`)* |
+| `freedesktop-icons` | 0.4 | Icon-Lookup *(optional: `icon-lookup`)* |
 
 ---
 
