@@ -136,6 +136,10 @@ pub enum LayoutElement {
     Badge { content, color },
     Spinner,
     Spacer { pixels },
+    // G1.7:
+    ExpandableGroup { label_key, icon_key, children, expanded },  // aufklappbare Gruppe
+    TextInput { placeholder_key, value, on_change_action },        // Texteingabe
+    SearchResult { icon_key, label, source, action },              // Suchergebnis-Zeile
 }
 ```
 
@@ -158,13 +162,82 @@ Die Desktop-Shell lauscht auf dem `Receiver<HotReloadEvent>` und lädt die betro
 
 Werden beim Start der Desktop-Shell automatisch registriert (`register_standard_components`):
 
-| ID | Slot | Datenquelle |
-|----|------|-------------|
-| `inventory-list` | Sidebar / fill | `fs-inventory` via gRPC |
-| `pinned-apps` | Sidebar / bottom | `fs-session` via gRPC |
-| `app-sections` | Main / fill | `fs-inventory` Kategorien |
-| `system-info` | Bottombar / bottom | `fs-info` via gRPC |
-| `notification-bell` | Topbar / top | `fs-bus` Notification-Topic |
+| ID | Slot | Datenquelle | Repo |
+|----|------|-------------|------|
+| `inventory-list` | Sidebar / fill | `fs-inventory` via gRPC (G1.7: ProgramGroup + ExpandableGroup) | `fs-render` |
+| `pinned-apps` | Sidebar / bottom | `fs-session` via gRPC | `fs-render` |
+| `app-sections` | Main / fill | `fs-inventory` Kategorien | `fs-render` |
+| `system-info` | Bottombar / bottom | `fs-info` via gRPC | `fs-render` |
+| `notification-bell` | Topbar / top | `fs-bus` Notification-Topic | `fs-render` |
+| `general-help` | Sidebar / sidebar | `fs-help` via gRPC — Kontext-Strategie | `fs-render` |
+| `focus-help` | Sidebar / sidebar | FocusObserver — Element-spezifisch | `fs-render` |
+| `settings-config` | Main / fill | Settings-Sektionen (Facade) | `fs-settings` |
+| `settings-container` | Main / fill | Pod-YAML-Konfig + Berechtigungscheck | `fs-container-app` |
+| `ai-chat` | Sidebar / sidebar | AiController (Capability-Guard: `ai.chat`) | `fs-ai` |
+| `search` | Main / fill | Bus-aggregierte Suchergebnisse (Strategy) | `fs-gui-workspace` |
+
+---
+
+## G1.7 — Content-Komponenten (2026-04-06)
+
+### Design Patterns
+
+```
+Strategy  — HelpSource:  jede Maske deklariert ihren context_key + action_keys
+Observer  — FocusObserver: Shell liefert das fokussierte Element an FocusHelpComponent
+Facade    — SettingsHub: bündelt Einstellungs-Sektionen nach program_id
+```
+
+### HelpSource-Trait
+
+```rust
+pub trait HelpSource: Send + Sync {
+    fn context_key(&self) -> &'static str;        // z.B. "store.install"
+    fn action_keys(&self) -> Vec<&'static str>;   // verfügbare Aktionen dieser Maske
+}
+```
+
+Wiring: Shell injiziert `context_key` + `action_keys` in `ComponentCtx.config`.
+
+### FocusObserver-Trait
+
+```rust
+pub trait FocusObserver: Send + Sync {
+    fn on_focus(&self, element: FocusedElement);
+    fn focused_element(&self) -> Option<FocusedElement>;
+}
+
+pub struct FocusedElement {
+    pub element_id: String,
+    pub help_key: Option<String>,  // None → generische Hilfe
+}
+```
+
+Wiring: Shell ruft `on_focus()` beim Fokus-Wechsel, `FocusHelpComponent` liest via `ctx.config["focus_element_id"]`.
+
+### SettingsConfigComponent
+
+Multi-Section Panel mit Sektionen: Appearance, Language, Background, Shortcuts.  
+`ctx.config["program_id"]` scoped die Sektionen:
+- `"desktop"` → 4 Standard-Sektionen
+- anderes Programm → + Custom-Sektion `"settings-program-{id}"`
+
+### SettingsContainerComponent
+
+Pod-YAML-Konfiguration für Container-Dienste.  
+`ctx.config["has_permission"] == "true"` steuert ob Aktionen sichtbar sind.  
+Aktionen mit `RestartPolicy::Required` zeigen ein "Neustart erforderlich"-Badge.
+
+### AiComponent
+
+Chat-Interface (Textbox + Verlauf).  
+Nur sichtbar wenn `ctx.config["ai_chat_available"] == "true"` (prüft fs-registry via gRPC).
+
+### SearchComponent
+
+Eingabefeld + aufklappbarer Filterbereich.  
+Ergebnisse werden per `LayoutElement::SearchResult` nach Quelle gruppiert angezeigt.  
+Filters: All | ByTag | InProgram | InGroup | CrossProgram.
 
 ---
 

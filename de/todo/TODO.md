@@ -192,6 +192,9 @@ Phase 7 ✅  Federation: Rechte-Kaskade, AuditLog, FederationEvent Bus (7 Topics
            Infrastruktur: Vaultwarden, Ntfy, Element Call im Store
 G1.1  ✅  Navigations-Traits (fs-render): Corner/Side/HoverMag/ProgramView (2026-04-05)
 G1.4  ✅  Program-Modell: caption, ProgramGroup, CompositeIcon-Felder, ProgramViewProvider (2026-04-06)
+G1.7  ✅  Content-Komponenten: ExpandableGroup, HelpSource, FocusObserver, GeneralHelp, FocusHelp, InventoryList (2026-04-06)
+           SettingsConfigComponent (fs-settings), SettingsContainerComponent (fs-container-app)
+           AiComponent (fs-ai), SearchComponent (fs-gui-workspace)
 ```
 
 ---
@@ -285,61 +288,24 @@ Implementiert in `fs-render/src/activity.rs` + `fs-components/src/activity_hub.r
 - Doku: `konzepte/activity-hub.md` vollständig
 - Offen (nach G1.4/G1.5): Activity-Views UI, fs-inventory gRPC Filter, Adapter-Impls
 
-## G1.7 — Content-Komponenten
+## G1.7 — Content-Komponenten ✅ 2026-04-06
 
 ```
 Design Pattern: Strategy (HelpSource) + Observer (FocusObserver) + Facade (SettingsHub)
 
-[ ] InventoryComponent (fs-render Standard-Komponente erweitern):
-      Zeigt alle installierten Programme (fs-inventory gRPC)
-      Gruppen-Darstellung: ProgramGroup mit aufklappbaren Instanzen
-      Composite-Icons für Instanzen
-      Slot: fill (Sidebar oder Main)
-
-[ ] GeneralHelpComponent:
-      Was kann man auf dieser Maske tun?
-      Welche Aktionen sind verfügbar?
-      Kontext-sensitiv per HelpSystem (fs-help)
-      Jedes Programm pflegt eigene Hilfetexte (.ftl in fs-i18n)
-
-[ ] FocusHelpComponent:
-      Erklärt das Element mit aktuellem Fokus
-      Beispiel: Email-Input → zeigt gültige Zeichen, Format-Beispiel
-      Jedes Input-Element kann Hilfe-Metadaten tragen (help_key: Option<String>)
-      Wird auch in TUI angezeigt (gleiche Traits)
-
-[ ] SettingsConfigComponent (fs-settings):
-      Multi-Section, passt sich Fenster/Programm an
-      Sektionen: Ansicht, Schrift (später), Sprache, Hintergrund, Tastaturkürzel, ...
-      Desktop: zeigt Desktop-spezifische Einstellungen
-      Andere Programme: zeigen ihre programmspezifischen Einstellungen
-      Sofort-Änderung (kein Neustart)
-
-[ ] SettingsContainerComponent (fs-container-app):
-      Pod-YAML-Konfig für Container-Programme
-      Änderung erfordert Restart (Hinweis im UI)
-      Instanz kopieren: Neue Instanz mit gleicher Konfig + anderem Namen
-      Dann: Instanz starten, Instanz stoppen, Instanz löschen
-      Berechtigungscheck: nicht jeder darf Container konfigurieren
-
-[ ] SearchComponent (fs-desktop, Phase 6.2 erweitern):
-      Input-Feld (Schnellsuche über alles)
-      Erweiterter Bereich (aufklappbar):
-        Nach Tags suchen
-        In bestimmtem Programm suchen
-        In Programm-Gruppe suchen
-        Programm-übergreifend suchen
-      Resultat: LensItems gruppiert nach Quelle
-      i18n: search.ftl ergänzen
-
-[ ] AiComponent (fs-ai — NICHT in fs-desktop):
-      Textbox für KI-Chat
-      Nur eingeblendet wenn "ai.chat" Capability vorhanden (fs-registry)
-      Gehört in fs-ai Repo, nicht in allgemeine Komponenten
-      Wird als Corner-Menu-Entry eingebunden (unten rechts)
-
-[ ] i18n: alle Komponenten in passende .ftl-Dateien
-[ ] cargo fmt + clippy + test grün
+Implementiert:
+- InventoryListComponent (fs-render): ProgramGroup + ExpandableGroup + CompositeIcon
+- GeneralHelpComponent (fs-render): context_key + action_keys via ComponentCtx.config
+- FocusHelpComponent (fs-render): focus_element_id + focus_help_key via ComponentCtx.config
+- HelpSource trait (fs-render): context_key() + action_keys() — Screen deklariert Kontext
+- FocusObserver trait (fs-render): on_focus() + focused_element()
+- ExpandableGroup / TextInput / SearchResult Varianten in LayoutElement
+- SettingsConfigComponent (fs-settings): 4 Sektionen + Custom per program_id
+- SettingsContainerComponent (fs-container-app): Pod-YAML + Berechtigungscheck + Restart-Badge
+- AiComponent (fs-ai): Chat mit Capability-Guard (ai_chat_available)
+- SearchComponent (fs-gui-workspace): Input + Filter (Strategy) + Ergebnisse nach Quelle
+- i18n: render.ftl (en+de) + ai.ftl (en+de) erweitert
+- Alle Repos committed + gepusht
 ```
 
 ## G1.8 — Offene Items (konsolidiert aus G0)
