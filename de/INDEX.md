@@ -129,6 +129,7 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [fs-error](technik/fs-error.md) — FsError, FsErrorTrait, ErrorSeverity, Repairable, ValidationIssue
 - [fs-crypto](technik/fs-crypto.md) — CryptoProvider-Trait, age, HMAC-SHA256, Ed25519, mTLS, KeyGen, JoinToken
 - [fs-health](technik/fs-health.md) — HealthCheck-Trait, HealthStatus, HealthLevel, HealthRules, HealthMonitor
+- [Store Catalog Spec](technik/store-catalog-spec.md) — catalog.toml Format: Pflichtfelder, Typen, Capabilities, Screenshots
 - [Bibliotheken](technik/bibliotheken.md) — Welche Crates wofür
 - [Typen-System](technik/typen.md) — FsValue, FsUrl, LanguageCode, SemVer, FsPort, FsTag
 - [fs-theme](technik/fs-theme.md) — ThemeEngine, ThemeRegistry, Palette, CSS-Generierung, Tailwind-Config
