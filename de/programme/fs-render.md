@@ -13,17 +13,27 @@ Implementierungen leben in separaten Engine-Repos (`fs-gui-engine-iced`,
 
 ```
 fs-render  (Traits — kein iced / bevy / Dioxus)
-    ├── RenderEngine     — Engine-Lebenszyklus + Widget/Window-Factory
-    ├── FsWidget         — Widget-Abstraktion
-    ├── FsWindow         — Fenster-Lebenszyklus
-    ├── FsTheme          — Theme-Schnittstelle
-    ├── FsEvent          — Eingabe- und Fenster-Events
-    ├── FsView           — Domain→Widget-Projektion (Adapter Pattern)
-    ├── AppContext        — Locale + Theme-Name + FeatureFlags
-    ├── RenderCtx        — Locale + AnimationConfig
-    ├── AnimationSet     — Store-verteilbare Animations-Pakete
-    ├── AnimationRegistry — Registry Pattern für aktive Sets
-    └── Fs3dExtension    — Optionale 3-D-Erweiterung
+    ├── engine.rs        — RenderEngine: Lebenszyklus + Widget/Window-Factory
+    ├── widget.rs        — FsWidget: Widget-Abstraktion
+    ├── window.rs        — FsWindow: Fenster-Lebenszyklus
+    ├── theme.rs         — FsTheme: Theme-Schnittstelle
+    ├── event.rs         — FsEvent: Eingabe- und Fenster-Events
+    ├── view.rs          — FsView: Domain→Widget-Projektion (Adapter Pattern)
+    ├── ctx.rs           — AppContext, RenderCtx, FeatureFlags
+    ├── action.rs        — AppAction: Animation-Trigger-Enum (27 Varianten)
+    ├── animation.rs     — AnimationSet, AnimationDefinition, AnimationRegistry
+    ├── registry.rs      — AnimationActionMap: AppAction → AnimationDefinition
+    ├── manager.rs       — ManagerLayout: Standard-Sidebar-Layout für Manager-Fenster
+    ├── component.rs     — ComponentTrait, LayoutInterpreter, Standard-Komponenten
+    ├── navigation.rs    — Descriptor-Traits: CornerMenu, SideMenu, HoverMagnification,
+    │                      CompositeIcon, ProgramView, ProgramViewProvider  (G1.1)
+    ├── activity.rs      — ActivityAction, ActivityCategory, ActivityEngine  (G1.6)
+    ├── help_source.rs   — HelpSource, FocusObserver, FocusedElement  (G1.7)
+    ├── ux_extras.rs     — BadgedIcon, WindowLayoutMode, QuickSwitchCommand,
+    │                      NotificationCenter, WorkspaceProfileManager,
+    │                      ClipboardHistory, WindowSnapManager, …  (G1.9)
+    ├── render3d.rs      — Fs3dExtension: optionale 3-D-Erweiterung
+    └── hot_reload.rs    — HotReloadWatcher: inotify-basierte Layout-Aktualisierung
 ```
 
 **Kein Dioxus.** Alle Pfade der Rendering-Pipeline führen über diese Traits.

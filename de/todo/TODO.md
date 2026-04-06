@@ -315,32 +315,20 @@ Implementiert:
 ## G1.8 — Offene Items (konsolidiert aus G0)
 
 ```
-Settings-Seiten (fs-settings):
-[ ] Appearance-Settings: Theme-Wahl via fs-theme
-[ ] Language-Settings: Sprache global + per App (fs-manager-language)
-[ ] Service Roles Settings: Dienst-Rollen konfigurieren
+Settings-Seiten (fs-settings):  ← Appearance + Language + ServiceRoles + Packages ✅ 2026-04-06
 [ ] Accounts-Settings: IAM via Kanidm (OIDC-Login-Flow)
 [ ] Shortcuts-Settings: Tastaturkürzel-Editor
-[ ] Packages-Settings: Store-View direkt in Settings
 
-Desktop-Shell (fs-gui-workspace):
-[ ] Hot-Reload Layout via inotify (Phase 3 HotReloadWatcher einbinden)
-[ ] IcedLayoutInterpreter vollständig in Shell-View einbinden
+Desktop-Shell (fs-gui-workspace):  ← HotReload + IcedLayoutInterpreter ✅ 2026-04-06
 [ ] AiHelpSource: echte gRPC-Anbindung an fs-ai
 
-Store (fs-store + Store/):
-[ ] Alle catalog.toml vollständig ergänzen:
-    kanidm, stalwart, tuwunel, zentinel, telegram, outline, wikijs,
-    fs-desktop, fs-init, fs-store, fs-auth, fs-managers,
-    Render-Engines, DB-Engines (als Artifacts)
-[ ] Screenshots-System: Store zeigt Bilder im Detail-Panel
+Store (fs-store + Store/):  ← Screenshots + BrowseMode + Install-Button ✅ 2026-04-06
+[ ] catalog.toml ergänzen: zentinel, telegram, fs-desktop, fs-init,
+    fs-store, fs-auth, fs-managers, Render-Engines, DB-Engines
 [ ] Doku: technik/store-catalog-spec.md anlegen
-[ ] BrowseMode: "Verfügbar"-Tab (alle Store-Pakete, auch nicht installierte)
-[ ] "Installieren"-Button nur aktiv wenn fs-store Service läuft
 
-Datenbank (fs-db):
-[ ] CrudRepo → Repository<T> migrieren
-[ ] Filter<T> → SQL in Adapter-Repos übersetzen
+Datenbank (fs-db):  ← CrudRepo entfernt + DbRecord für 9 Entities ✅ 2026-04-06
+[ ] Filter<T> → SQL in konkreten Adapter-Repos (ResourceRepo etc.)
 
 Bots (fs-bots):
 [ ] bot-db/src/lib.rs aufteilen: conversation.rs + user.rs + ...
