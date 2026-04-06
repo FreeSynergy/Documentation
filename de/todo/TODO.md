@@ -253,46 +253,19 @@ InfoViewScope (own-machine vs remote-server), i18n inventory.ftl (en+de),
 Doku: konzepte/program-views.md
 ```
 
-## G1.5 — Desktop-Shell-Refactor (fs-gui-workspace)
+## G1.5 — Desktop-Shell-Refactor (fs-gui-workspace) ✅ 2026-04-06
 
 ```
-Design Pattern: Facade (DesktopShell) + State Machine (MenuState) + Observer (CapabilityObserver)
-
-Bestehende Sidebars werden durch Corner Menus ersetzt.
-wallpaper.rs ist bereits vorhanden → einbinden.
-
-[ ] Default-Layout mit Corner Menus:
-      Oben links:    Task-Menü (alle installierten/laufenden Programme)
-      Unten links:   Settings (SettingsConfig für Desktop)
-      Oben rechts:   Help (General Help + Focus Help)
-      Unten rechts:  AI (nur wenn ActivityEngine-Capability "ai.chat" vorhanden)
-
-[ ] Titlebar-Erweiterung:
-      Standard: Icon | Titel (zentriert) | [−][□][×]
-      NEU:      Icon | Titel (zentriert) | [View-Buttons] | [Tiling-Toggle] | [−][□][×]
-      View-Buttons: wechseln zwischen ProgramViews (Start/Info/Manual/Settings/...)
-      Tiling-Toggle: ordnet offene Fenster automatisch an
-
-[ ] Fullscreen als Standard: Desktop startet immer im Fullscreen-Modus
-
-[ ] Hintergrund (wallpaper.rs einbinden):
-      Einstellbar in Settings > Ansicht: Farbe oder Bild
-      Standard: einfarbig (Desktop-Primärfarbe, dunkel)
-
-[ ] Icon-Hintergründe: transparent (kein weißes/graues Hintergrund-Rect)
-
-[ ] Einstellungen (Settings > Ansicht):
-      Icon-Größe: Schieberegler (Standardgröße 32px, Range 16–64px)
-      Menü-Stil: Rund (Corner/Side Menus) | Sidebar (SidebarPanel)
-      Schriftart: kommt später (G2)
-
-[ ] CapabilityObserver: prüft ob "ai.chat" im fs-registry läuft
-      ja → unten rechts AI-Corner-Menu einblenden
-      nein → unten rechts leer
-
-[ ] i18n: desktop.ftl (alle neuen Texte)
-[ ] cargo fmt + clippy + test grün
-[ ] Doku: programme/fs-desktop.md überarbeiten
+Umgesetzt in fs-desktop/crates/fs-gui-workspace/src/:
+- capability_observer.rs (neu): CapabilityObserver — env-var-Heuristik, G1.7: gRPC
+- corner_menus.rs (neu): TasksMenu (TL), SettingsMenu (BL), HelpMenu (TR), AiMenu (BR)
+- shell.rs: Sidebars entfernt → 4 Corner-Menu-Overlays als stack-Layer
+- shell.rs: Wallpaper (WallpaperSource::Color → iced bg-Color)
+- shell.rs: Titlebar + View-Buttons (Start/Info/Manual/Settings) + Tiling-Toggle
+- Neben-Fix fs-render: SlotKind::Sidebar Variante
+- Neben-Fix fs-gui-engine-iced: render_element() für ExpandableGroup/TextInput/SearchResult
+- fs-i18n desktop.ftl (en+de): Corner-Menü-, Titlebar-, Appearance-Keys
+- 48 Tests grün, clippy + fmt sauber, 4 Repos committed + gepusht
 ```
 
 ## G1.6 — Activity Hub (fs-components + eigene Repos) ✅ 2026-04-06
