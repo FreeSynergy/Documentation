@@ -323,19 +323,15 @@ Desktop-Shell (fs-gui-workspace):  ← HotReload + IcedLayoutInterpreter ✅ 202
     AiHelpSource: REST → POST /ai/chat ✅ 2026-04-06
 
 Store (fs-store + Store/):  ← Screenshots + BrowseMode + Install-Button ✅ 2026-04-06
-[ ] catalog.toml ergänzen: zentinel, telegram, fs-desktop, fs-init,
-    fs-store, fs-auth, fs-managers, Render-Engines, DB-Engines
-[ ] Doku: technik/store-catalog-spec.md anlegen
+    catalog.toml: zentinel, telegram, desktop, init, store, auth, managers, Render-Engines, DB-Engines ✅ 2026-04-07
+    Doku: technik/store-catalog-spec.md ✅ 2026-04-07
 
 Datenbank (fs-db):  ← CrudRepo entfernt + DbRecord für 9 Entities ✅ 2026-04-06
-[ ] Filter<T> → SQL in konkreten Adapter-Repos (ResourceRepo etc.)
+    Filter<T> → find_filtered() in allen 9 Repos via SeaORM raw SQL ✅ 2026-04-07
 
-Bots (fs-bots):
-[ ] bot-db/src/lib.rs aufteilen: conversation.rs + user.rs + ...
-[ ] DB nur über fs-db DbEngine-Trait
+Bots (fs-bots):  ← bot-db auf DbEngine-Trait migriert ✅ 2026-04-07
 
-Search (fs-lenses + fs-search):
-[ ] BusSearchStrategy: echte fs-bus Integration (aktuell Demo-Impl)
+Search (fs-lenses + fs-search):  ← BusSearchStrategy (wire+collect via mpsc+timeout) ✅ 2026-04-07
 [ ] Service-Suche: lokal via fs-registry
 [ ] Host-Suche: Bus-aggregiert via BusSearchStrategy
 [ ] Föderale Suche
