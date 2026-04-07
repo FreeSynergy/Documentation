@@ -98,6 +98,8 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [Tasks](konzepte/tasks.md) — Automatisierungs-Pipelines, Data Offers/Accepts
 - [Bots](konzepte/bots.md) — Bot-Framework, Messenger-Adapter, mehrere Binaries pro Paket
 - [Themes](konzepte/themes.md) — Visuelles Design-System, Theme-Ressourcen
+- [Icon-System](konzepte/icon-system.md) — Dual-Icon-Prinzip (Action/Identity), Layouts, i18n, wo Icons eingesetzt werden
+- [Icon-Baum](konzepte/icon-baum.md) — Ontologische Gruppe (places/people/things/actions/…), Einzahl/Mehrzahl, Corporate Design Regeln
 - [UI-Standards](konzepte/ui-standards.md) — Naming Convention, Aktions-Icons, Menüpunkte
 - [Navigation: Corner & Side Menus](konzepte/navigation-menus.md) — Corner Menus, Side Menus, HoverMagnification, CompositeIcons, Responsive
 - [Activity Hub](konzepte/activity-hub.md) — Absichts-zentrische Navigation, Activities, Nesting, ActivityEngine-Trait, Program-as-Activity
