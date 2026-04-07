@@ -373,6 +373,139 @@ Vollständig implementiert — siehe Abgeschlossene Phasen oben.
 
 ---
 
+# G-S — Daten-Standards
+
+> Canonical Data Model als Superset vorhandener Standards (SCIM, vCard, schema.org, OIDC).
+> FS erfindet kein eigenes Format — was RFC/ISO definiert, übernehmen wir 1:1.
+> FS-Extensions via `urn:freeSynergy:schemas:1.0` — langfristiges Ziel: IETF Draft.
+> Group-driven Provisioning: Gruppen tragen DataProfiles → automatische Service-Anmeldung via Bus.
+
+**Grundprinzip:** CDM = Superset der Standards (wie ODF = XML + SVG + MathML).
+**Adapter-Prinzip:** Nie N×M Konverter — jeder Standard bekommt genau einen Adapter.
+**Doku:** [technik/standards.md](../technik/standards.md)
+
+---
+
+## G-S.1 — fs-standards Repo (Spec + Traits, kein App-Code)
+
+```
+[ ] GitHub Repo anlegen: FreeSynergy/fs-standards (lokal: /home/kal/Server/fs-standards/)
+[ ] Rust-Crate: fs-standards (library, kein binary)
+[ ] StandardAdapter<External>-Trait definieren:
+      fn standard_id() -> &'static str  (z.B. "RFC 7643", "RFC 6350")
+      fn to_external(&FsPerson) -> External
+      fn from_external(&External) -> Result<FsPerson, FsError>
+[ ] ProvisioningAdapter-Trait:
+      fn service_id() -> &'static str
+      async fn provision(&FsPerson, &DataProfile) -> Result<()>
+      async fn deprovision(&FsId) -> Result<()>
+      async fn sync(&FsPerson, &DataProfile) -> Result<SyncDiff>
+[ ] DataProfile + DataProfileEntry + FieldConsent Structs
+[ ] Doku: technik/standards.md ist bereits fertig — als spec/ Verzeichnis ins Repo
+[ ] README: Wie externe Entwickler mitmachen können (CONTRIBUTING.md)
+```
+
+## G-S.2 — fs-types: Kanonische Typen
+
+```
+Abhängigkeit: G-S.1 (Traits müssen definiert sein)
+
+[ ] FsPerson struct (SCIM + vCard + schema.org + OIDC Superset)
+      FsName, FsEmail, FsPhone, FsAddress, FsPersonExtension
+[ ] FsGroup struct (SCIM Groups + vCard KIND:group)
+      FsGroupMember, FsGroupExtension, DataProfile, DataProfileEntry
+[ ] FsOrg struct (schema.org/Organization + vCard + LDAP)
+      FsOrgExtension
+[ ] FsPersonField<T>: value + visibility + consent + encrypted
+      Visibility enum: Public | Group(FsId) | Private | Owner
+      ServiceConsent: service_id + allowed
+[ ] Alle Typen: serde (Serialize/Deserialize), Clone, Debug
+[ ] fs-types cargo build + clippy + tests grün
+[ ] fs-types committen + pushen
+```
+
+## G-S.3 — Adapter-Implementierungen (in jeweiligen Repos)
+
+```
+Abhängigkeit: G-S.2
+
+SCIM-Adapter (in fs-auth):
+[ ] ScimUserAdapter implements StandardAdapter<ScimUser>
+      → FsPerson ↔ SCIM RFC 7643 User
+[ ] ScimGroupAdapter implements StandardAdapter<ScimGroup>
+      → FsGroup ↔ SCIM RFC 7643 Group
+[ ] SCIM Enterprise Extension: FsPersonExtension → urn:freeSynergy:schemas:1.0:FsPerson
+
+vCard-Adapter (in fs-standards):
+[ ] VCardAdapter implements StandardAdapter<VCard>
+      → FsPerson ↔ vCard RFC 6350
+
+LDAP-Adapter (in fs-auth, bei Kanidm-Integration):
+[ ] LdapAdapter implements StandardAdapter<LdapEntry>
+      → FsPerson ↔ LDAP Attribute (dokumentierter Roundtrip-Verlust)
+
+ActivityPub-Adapter (in fs-federation):
+[ ] ActivityPubPersonAdapter implements StandardAdapter<ApActor>
+      → FsPerson ↔ ActivityPub Actor
+
+JSON-LD-Adapter (in fs-standards):
+[ ] SchemaOrgPersonAdapter implements StandardAdapter<JsonLdPerson>
+      → FsPerson ↔ schema.org/Person JSON-LD
+```
+
+## G-S.4 — Group-driven Provisioning (fs-managers + fs-bus)
+
+```
+Abhängigkeit: G-S.2, G-S.3
+
+[ ] Bus-Topics definieren (in konzepte/bus-api-namespaces.md ergänzen):
+      fs.identity.user.joined_group  { user_id, group_id }
+      fs.identity.user.left_group    { user_id, group_id }
+      fs.identity.person.updated     { person_id, changed_fields }
+      fs.identity.provision.request  { user_id, service_id, profile }
+
+[ ] ProvisioningCoordinator (fs-managers):
+      on UserJoinedGroup → DataProfile holen → ProvisionUser Events senden
+      on UserLeftGroup   → DeprovisionUser Events senden
+
+[ ] KanidmProvisioningAdapter (fs-managers):
+      implements ProvisioningAdapter
+      → Kanidm gRPC: User anlegen/deaktivieren
+
+[ ] OutlineProvisioningAdapter (fs-managers):
+      implements ProvisioningAdapter
+      → Outline REST API: User anlegen/deaktivieren
+
+[ ] MatrixProvisioningAdapter (fs-managers):
+      implements ProvisioningAdapter
+      → Matrix Admin API: User anlegen/deaktivieren
+
+[ ] DataProfile UI (fs-desktop / fs-managers UI):
+      Gruppe bearbeiten → DataProfile-Tab
+      Checkboxen: welche Services aktiv
+      Feld-Auswahl: welche Felder gehen zu welchem Service
+```
+
+## G-S.5 — SCIM Provider in fs-auth
+
+```
+Abhängigkeit: G-S.3
+
+[ ] ScimProvider-Trait (bereits in fs-auth geplant) vollständig implementieren:
+      GET /scim/v2/Users, GET /scim/v2/Users/{id}
+      POST /scim/v2/Users, PUT /scim/v2/Users/{id}, PATCH /scim/v2/Users/{id}
+      DELETE /scim/v2/Users/{id}
+      GET /scim/v2/Groups, analog
+      Filter-Unterstützung: ?filter=userName eq "bjensen"
+[ ] FS-Extension im SCIM-Response: urn:freeSynergy:schemas:1.0:FsPerson
+[ ] SCIM-Token-Auth: Bearer Token via Kanidm
+[ ] OpenAPI: utoipa Spec für SCIM Endpoints
+```
+
+---
+
+---
+
 # Reihenfolge
 
 ```
@@ -388,9 +521,17 @@ G1.7  Content-Komponenten                 ← parallel zu G1.5
 G1.8  Offene Items konsolidiert           ← parallel wenn möglich
 G1.9  UX-Extras ✅                        ← abgeschlossen 2026-04-06
 
+--- Daten-Standards (G-S) — parallel zu G1.8 startbar ---
+
+G-S.1  fs-standards Repo + Traits         ← Fundament für alle Adapter
+G-S.2  fs-types: FsPerson, FsGroup, FsOrg ← nach G-S.1
+G-S.3  Adapter-Implementierungen          ← nach G-S.2 (SCIM, vCard, LDAP, AP)
+G-S.4  Group-driven Provisioning          ← nach G-S.2 + G-S.3
+G-S.5  SCIM Provider in fs-auth           ← nach G-S.3
+
 --- Langfristig (G1+) ---
 
-G1+   ActivityPub Federation (7.1 Grundstruktur → echte AP-Impl)
+G1+   ActivityPub Federation (7.1 Grundstruktur → echte AP-Impl) ← nutzt G-S.3
 G1+   WireGuard (nach AP-Grundstruktur)
 G1+   Hickory DNS (nach AP-Grundstruktur)
 
@@ -401,6 +542,7 @@ G2    fs-gui-engine-tui: Navigation-Traits implementieren (Corner/Side Menu in T
 G2    fs-gui-engine-bevy: Navigation-Traits implementieren (3D-fähig)
 G2    fs-render + iced/bevy: Dioxus komplett raus (G2 plan)
 G2    ProgramView::Binding — Workflow-Editor (Programme verknüpfen)
+G2    IETF Draft: urn:freeSynergy:schemas:1.0 → draft-freeSynergy-scim-extensions   ← nach G-S stabil
 ```
 
 ---

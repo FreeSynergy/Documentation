@@ -132,6 +132,11 @@ Wenn er tiefer eintauchen will, klickt er sich zum Werkzeug durch — aber erst 
 - [fs-crypto](technik/fs-crypto.md) — CryptoProvider-Trait, age, HMAC-SHA256, Ed25519, mTLS, KeyGen, JoinToken
 - [fs-health](technik/fs-health.md) — HealthCheck-Trait, HealthStatus, HealthLevel, HealthRules, HealthMonitor
 - [Store Catalog Spec](technik/store-catalog-spec.md) — catalog.toml Format: Pflichtfelder, Typen, Capabilities, Screenshots
+- [Daten-Standards Strategie](technik/standards.md) — CDM als Standards-Superset, StandardAdapter-Trait, DataProfile, Provisioning-Pipeline, FS-Namespace
+- [FsPerson Field Mappings](technik/standards-person.md) — SCIM + vCard + schema.org + OIDC + LDAP → kanonische Felder
+- [FsGroup Field Mappings](technik/standards-group.md) — SCIM Groups + vCard GROUP + LDAP + DataProfile + Provisioning
+- [FsOrg Field Mappings](technik/standards-org.md) — schema.org/Organization + vCard + LDAP + Hierarchie
+- [FS Namespace Registry](technik/standards-namespaces.md) — urn:freeSynergy:schemas:1.0, SCIM/vCard/JSON-LD Beispiele, Versionierung
 - [Bibliotheken](technik/bibliotheken.md) — Welche Crates wofür
 - [Typen-System](technik/typen.md) — FsValue, FsUrl, LanguageCode, SemVer, FsPort, FsTag
 - [fs-theme](technik/fs-theme.md) — ThemeEngine, ThemeRegistry, Palette, CSS-Generierung, Tailwind-Config
